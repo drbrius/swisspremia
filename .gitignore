@@ -1,3 +1,6 @@
 .claude/
 node_modules/
 tools/*.xlsx
+.vercel/
+.vercel
+.env*
