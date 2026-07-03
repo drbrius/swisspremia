@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrämienCheck Schweiz – Versicherungen vergleichen &amp; sparen</title>
+  <meta name="description" content="Krankenkassen-Prämien 2026 vergleichen (offizielle BAG-Daten), Auto- und Hausratversicherung berechnen. Kostenlos, unverbindlich, ohne Anmeldung.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23d52b1e'/><rect x='42' y='20' width='16' height='60' fill='white'/><rect x='20' y='42' width='60' height='16' fill='white'/></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a href="#" class="logo">
+      <span class="logo-cross" aria-hidden="true"></span>
+      <span>Prämien<strong>Check</strong> <small>Schweiz</small></span>
+    </a>
+    <nav class="nav">
+      <a href="#rechner" data-tab-link="kk">Krankenkasse</a>
+      <a href="#rechner" data-tab-link="auto">Auto</a>
+      <a href="#rechner" data-tab-link="hausrat">Hausrat</a>
+      <a href="#beratung" class="btn btn-small btn-primary">Kostenlose Beratung</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <h1>Versicherungsprämien vergleichen – <span class="accent">in 1 Minute</span></h1>
+      <p class="lead">Krankenkassen-Prämien 2026 mit offiziellen Daten des Bundes (BAG&nbsp;/&nbsp;priminfo.admin.ch) vergleichen, Auto- und Hausratversicherung berechnen – und auf Wunsch berät Sie ein Experte persönlich.</p>
+      <ul class="hero-benefits">
+        <li>100&nbsp;% kostenlos &amp; unverbindlich</li>
+        <li>Ohne Anmeldung – keine Registrierung nötig</li>
+        <li>Offizielle Prämiendaten 2026 des BAG</li>
+        <li>Persönliche Beratung durch Experten</li>
+      </ul>
+      <div class="hero-cta">
+        <a href="#rechner" class="btn btn-primary btn-big">Jetzt Prämien vergleichen</a>
+        <a href="#beratung" class="btn btn-ghost btn-big">Beratung anfordern</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-stat">
+        <div class="stat-num" id="statSparen">CHF 2'000+</div>
+        <div class="stat-label">mögliches Sparpotenzial pro Jahr bei der Krankenkasse*</div>
+      </div>
+      <div class="hero-products">
+        <button class="product-chip" data-tab-link="kk">🏥 Krankenkasse</button>
+        <button class="product-chip" data-tab-link="auto">🚗 Autoversicherung</button>
+        <button class="product-chip" data-tab-link="hausrat">🏠 Hausrat &amp; Haftpflicht</button>
+      </div>
+      <p class="hero-note">*je nach Region, Franchise und Modell. Quelle: BAG-Prämiendaten 2026.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RECHNER ============ -->
+<section id="rechner" class="section">
+  <div class="container">
+    <h2>Was möchten Sie vergleichen?</h2>
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="kk">🏥 Krankenkasse</button>
+      <button class="tab" data-tab="auto">🚗 Autoversicherung</button>
+      <button class="tab" data-tab="hausrat">🏠 Hausrat &amp; Haftpflicht</button>
+    </div>
+
+    <!-- ---- Krankenkasse ---- -->
+    <div class="tab-panel active" id="panel-kk">
+      <div class="calc-card">
+        <div class="calc-grid">
+          <div class="field">
+            <label for="kkPlz">Postleitzahl (Wohnort)</label>
+            <input type="text" id="kkPlz" inputmode="numeric" maxlength="4" placeholder="z. B. 8001" autocomplete="postal-code">
+            <div class="field-hint" id="kkPlzInfo"></div>
+          </div>
+          <div class="field" id="kkOrtField" hidden>
+            <label for="kkOrt">Ort / Gemeinde</label>
+            <select id="kkOrt"></select>
+          </div>
+          <div class="field">
+            <label for="kkAlter">Altersgruppe</label>
+            <select id="kkAlter">
+              <option value="E">Erwachsene (ab 26 Jahren)</option>
+              <option value="J">Junge Erwachsene (19–25)</option>
+              <option value="K">Kind (0–18)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="kkFranchise">Franchise (CHF pro Jahr)</label>
+            <select id="kkFranchise"></select>
+          </div>
+          <div class="field" id="kkUnfallField">
+            <label>Unfalldeckung einschliessen?</label>
+            <div class="radio-row">
+              <label class="radio"><input type="radio" name="kkUnfall" value="O" checked> Nein <small>(angestellt ≥ 8 Std./Woche – Unfall ist über den Arbeitgeber versichert)</small></label>
+              <label class="radio"><input type="radio" name="kkUnfall" value="M"> Ja <small>(nicht erwerbstätig, selbstständig, Student/in, pensioniert)</small></label>
+            </div>
+          </div>
+          <div class="field">
+            <label for="kkModell">Versicherungsmodell</label>
+            <select id="kkModell">
+              <option value="alle">Alle Modelle (günstigste zuerst)</option>
+              <option value="0">Standard (freie Arztwahl)</option>
+              <option value="1">Hausarzt-Modell</option>
+              <option value="2">HMO (Gruppenpraxis)</option>
+              <option value="3">Telmed / weitere Modelle</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-big btn-block" id="kkBerechnen">Prämien 2026 vergleichen</button>
+      </div>
+      <div id="kkResultat" class="results" hidden></div>
+    </div>
+
+    <!-- ---- Auto ---- -->
+    <div class="tab-panel" id="panel-auto">
+      <div class="calc-card">
+        <div class="calc-grid">
+          <div class="field">
+            <label for="autoKanton">Kanton</label>
+            <select id="autoKanton"></select>
+          </div>
+          <div class="field">
+            <label for="autoAlter">Alter der Hauptlenkerin / des Hauptlenkers</label>
+            <input type="number" id="autoAlter" min="18" max="99" value="35">
+          </div>
+          <div class="field">
+            <label for="autoWert">Fahrzeugwert (Neupreis inkl. Zubehör, CHF)</label>
+            <input type="number" id="autoWert" min="1000" step="1000" value="35000">
+          </div>
+          <div class="field">
+            <label for="autoDeckung">Gewünschte Deckung</label>
+            <select id="autoDeckung">
+              <option value="hp">Nur Haftpflicht (gesetzliches Minimum)</option>
+              <option value="tk">Haftpflicht + Teilkasko</option>
+              <option value="vk" selected>Haftpflicht + Vollkasko</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="autoBonus">Schadenfreie Jahre</label>
+            <select id="autoBonus">
+              <option value="1">0 Jahre (Neulenker)</option>
+              <option value="0.9">1–2 Jahre</option>
+              <option value="0.75" selected>3–5 Jahre</option>
+              <option value="0.6">6–9 Jahre</option>
+              <option value="0.5">10+ Jahre</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-big btn-block" id="autoBerechnen">Autoprämie berechnen</button>
+      </div>
+      <div id="autoResultat" class="results" hidden></div>
+    </div>
+
+    <!-- ---- Hausrat ---- -->
+    <div class="tab-panel" id="panel-hausrat">
+      <div class="calc-card">
+        <div class="calc-grid">
+          <div class="field">
+            <label for="hrPersonen">Personen im Haushalt</label>
+            <select id="hrPersonen">
+              <option value="1">1 Person</option>
+              <option value="2" selected>2 Personen</option>
+              <option value="3">3 Personen</option>
+              <option value="4">4 Personen</option>
+              <option value="5">5+ Personen</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="hrZimmer">Anzahl Zimmer</label>
+            <select id="hrZimmer">
+              <option value="1">1–1.5</option>
+              <option value="2">2–2.5</option>
+              <option value="3" selected>3–3.5</option>
+              <option value="4">4–4.5</option>
+              <option value="5">5+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="hrSumme">Versicherungssumme Hausrat (CHF)</label>
+            <input type="number" id="hrSumme" min="10000" step="5000" value="70000">
+            <div class="field-hint">Empfehlung wird automatisch angepasst – Sie können den Wert ändern.</div>
+          </div>
+          <div class="field">
+            <label class="check"><input type="checkbox" id="hrHaftpflicht" checked> Privathaftpflicht einschliessen (empfohlen, Deckung 5 Mio.)</label>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-big btn-block" id="hrBerechnen">Hausratprämie berechnen</button>
+      </div>
+      <div id="hrResultat" class="results" hidden></div>
+    </div>
+
+    <p class="source-note">Krankenkassen-Prämien: offizielle Daten des Bundesamts für Gesundheit,
+      <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a> (Prämienjahr 2026).
+      Auto-, Hausrat- und Haftpflichtprämien: Marktspannen auf Basis publizierter Prämienerhebungen
+      (moneyland.ch 2026, SRF Kassensturz 2024, Comparis) – für diese Sparten existiert keine amtliche Prämiendatenbank,
+      die verbindliche Offerte erstellt Ihr Berater.</p>
+  </div>
+</section>
+
+<!-- ============ SO FUNKTIONIERTS ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <h2>So einfach funktioniert's</h2>
+    <div class="steps">
+      <div class="step"><span class="step-num">1</span><h3>Berechnen</h3><p>Prämie online berechnen – ohne Anmeldung, ohne Angabe von Kontaktdaten.</p></div>
+      <div class="step"><span class="step-num">2</span><h3>Anfrage senden</h3><p>Gefällt Ihnen ein Angebot? Senden Sie uns unverbindlich Ihre Kontaktangaben.</p></div>
+      <div class="step"><span class="step-num">3</span><h3>Beratung erhalten</h3><p>Ein Berater meldet sich persönlich bei Ihnen, prüft Ihre Situation und holt die besten Offerten ein.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEAD-FORMULAR ============ -->
+<section id="beratung" class="section">
+  <div class="container narrow">
+    <h2>Kostenlose &amp; unverbindliche Beratung</h2>
+    <p class="center-note">Füllen Sie das Formular aus – ein Versicherungsberater meldet sich innert 24 Stunden bei Ihnen.</p>
+
+    <form id="leadForm" class="lead-card" novalidate>
+      <div id="leadBerechnung" class="lead-summary" hidden></div>
+      <div class="calc-grid">
+        <div class="field">
+          <label for="lfAnrede">Anrede</label>
+          <select id="lfAnrede" name="anrede">
+            <option>Frau</option><option>Herr</option><option>Keine Angabe</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="lfVorname">Vorname *</label>
+          <input type="text" id="lfVorname" name="vorname" required autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label for="lfName">Nachname *</label>
+          <input type="text" id="lfName" name="nachname" required autocomplete="family-name">
+        </div>
+        <div class="field">
+          <label for="lfTelefon">Telefon *</label>
+          <input type="tel" id="lfTelefon" name="telefon" required placeholder="079 123 45 67" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="lfEmail">E-Mail *</label>
+          <input type="email" id="lfEmail" name="email" required placeholder="name@beispiel.ch" autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="lfPlzOrt">PLZ / Ort</label>
+          <input type="text" id="lfPlzOrt" name="plz_ort" placeholder="z. B. 8001 Zürich">
+        </div>
+        <div class="field span-2">
+          <label>Ich interessiere mich für:</label>
+          <div class="check-row">
+            <label class="check"><input type="checkbox" name="interesse" value="Krankenkasse"> Krankenkasse</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Autoversicherung"> Auto</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Hausrat/Haftpflicht"> Hausrat / Haftpflicht</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Vorsorge/Leben"> Vorsorge / 3. Säule</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Anderes"> Anderes</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="lfZeit">Wann sind Sie am besten erreichbar?</label>
+          <select id="lfZeit" name="erreichbarkeit">
+            <option>Egal / jederzeit</option>
+            <option>Vormittag (8–12 Uhr)</option>
+            <option>Nachmittag (12–17 Uhr)</option>
+            <option>Abend (17–20 Uhr)</option>
+          </select>
+        </div>
+        <div class="field span-2">
+          <label for="lfNachricht">Bemerkung (optional)</label>
+          <textarea id="lfNachricht" name="nachricht" rows="3" placeholder="z. B. aktuelle Versicherung, besondere Wünsche …"></textarea>
+        </div>
+        <div class="field span-2">
+          <label class="check consent">
+            <input type="checkbox" id="lfConsent" required>
+            Ich bin einverstanden, dass mich ein Versicherungsberater telefonisch oder per E-Mail kontaktiert. Meine Daten werden vertraulich behandelt und nicht an Dritte weitergegeben. *
+          </label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-big btn-block" id="lfSubmit">Beratung anfordern – kostenlos &amp; unverbindlich</button>
+      <p class="form-error" id="lfError" hidden></p>
+    </form>
+
+    <div id="leadSuccess" class="success-card" hidden>
+      <div class="success-icon">✓</div>
+      <h3>Vielen Dank für Ihre Anfrage!</h3>
+      <p>Wir haben Ihre Angaben erhalten. Ein Berater meldet sich <strong>innert 24 Stunden</strong> bei Ihnen – kostenlos und unverbindlich.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo footer-logo"><span class="logo-cross" aria-hidden="true"></span> Prämien<strong>Check</strong> Schweiz</div>
+        <p>Unabhängiger Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
+      </div>
+      <div>
+        <h4>Datenquelle</h4>
+        <p>Krankenkassen-Prämien 2026: Bundesamt für Gesundheit (BAG),<br>
+        <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a></p>
+      </div>
+      <div>
+        <h4>Rechtliches</h4>
+        <p>Alle Angaben ohne Gewähr. Auto- und Hausratprämien sind Marktspannen aus publizierten Erhebungen (moneyland.ch, SRF Kassensturz, Comparis), keine Offerten. Ihre Daten werden ausschliesslich zur Kontaktaufnahme durch einen Berater verwendet.</p>
+      </div>
+    </div>
+    <p class="copyright">© 2026 PrämienCheck Schweiz</p>
+  </div>
+</footer>
+
+<script src="data/plz.js"></script>
+<script src="data/praemien.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
