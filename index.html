@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PrämienCheck Schweiz – Versicherungen vergleichen &amp; sparen</title>
-  <meta name="description" content="Krankenkassen-Prämien 2026 vergleichen (offizielle BAG-Daten), Auto- und Hausratversicherung berechnen. Kostenlos, unverbindlich, ohne Anmeldung.">
+  <title>SwissPremia – Krankenkassen-Prämien 2026 vergleichen</title>
+  <meta name="description" content="Krankenkassen-Prämien 2026 mit den offiziellen Daten des BAG vergleichen – alle Kassen, alle Prämienregionen. Kostenlos, unverbindlich, ohne Anmeldung.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23d52b1e'/><rect x='42' y='20' width='16' height='60' fill='white'/><rect x='20' y='42' width='60' height='16' fill='white'/></svg>">
+  <link rel="stylesheet" href="css/lp.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23005786'/><rect x='42' y='20' width='16' height='60' fill='white'/><rect x='20' y='42' width='60' height='16' fill='white'/></svg>">
 </head>
 <body>
 
@@ -14,23 +18,23 @@
   <div class="container topbar-inner">
     <a href="#" class="logo">
       <span class="logo-cross" aria-hidden="true"></span>
-      <span>Prämien<strong>Check</strong> <small>Schweiz</small></span>
+      <span>Swiss<strong>Premia</strong> <small>Krankenkassen-Vergleich</small></span>
     </a>
     <nav class="nav">
-      <a href="#rechner" data-tab-link="kk">Krankenkasse</a>
-      <a href="#rechner" data-tab-link="auto">Auto</a>
-      <a href="#rechner" data-tab-link="hausrat">Hausrat</a>
+      <a href="#rechner">Prämien vergleichen</a>
+      <a href="#situation">Ihre Situation</a>
       <a href="#beratung" class="btn btn-small btn-primary">Kostenlose Beratung</a>
     </nav>
   </div>
 </header>
 
 <!-- ============ HERO ============ -->
-<section class="hero">
+<section class="hero auf-dunkel hero--start">
   <div class="container hero-inner">
     <div class="hero-text">
-      <h1>Versicherungsprämien vergleichen – <span class="accent">in 1 Minute</span></h1>
-      <p class="lead">Krankenkassen-Prämien 2026 mit offiziellen Daten des Bundes (BAG&nbsp;/&nbsp;priminfo.admin.ch) vergleichen, Auto- und Hausratversicherung berechnen – und auf Wunsch berät Sie ein Experte persönlich.</p>
+      <span class="eyebrow">Grundversicherung 2026 · Offizielle BAG-Daten</span>
+      <h1>Krankenkassen-Prämien vergleichen – <span class="accent">in 1 Minute</span></h1>
+      <p class="lead">Alle 34 Versicherer, alle Prämienregionen, mit den offiziellen Daten des Bundes (BAG&nbsp;/&nbsp;priminfo.admin.ch). Die Leistungen der Grundversicherung sind gesetzlich überall identisch – nur der Preis nicht.</p>
       <ul class="hero-benefits">
         <li>100&nbsp;% kostenlos &amp; unverbindlich</li>
         <li>Ohne Anmeldung – keine Registrierung nötig</li>
@@ -38,21 +42,22 @@
         <li>Persönliche Beratung durch Experten</li>
       </ul>
       <div class="hero-cta">
-        <a href="#rechner" class="btn btn-primary btn-big">Jetzt Prämien vergleichen</a>
+        <a href="#rechner" class="btn btn-gold btn-big">Jetzt Prämien vergleichen</a>
         <a href="#beratung" class="btn btn-ghost btn-big">Beratung anfordern</a>
       </div>
     </div>
     <div class="hero-card">
       <div class="hero-stat">
         <div class="stat-num" id="statSparen">CHF 2'000+</div>
-        <div class="stat-label">mögliches Sparpotenzial pro Jahr bei der Krankenkasse*</div>
+        <div class="stat-label">Unterschied pro Jahr zwischen der günstigsten und der teuersten Kasse*</div>
       </div>
       <div class="hero-products">
-        <button class="product-chip" data-tab-link="kk">🏥 Krankenkasse</button>
-        <button class="product-chip" data-tab-link="auto">🚗 Autoversicherung</button>
-        <button class="product-chip" data-tab-link="hausrat">🏠 Hausrat &amp; Haftpflicht</button>
+        <a class="product-chip" href="lp/neu-in-der-schweiz.html">Neu in der Schweiz</a>
+        <a class="product-chip" href="lp/baby.html">Nachwuchs unterwegs</a>
+        <a class="product-chip" href="lp/junge-erwachsene.html">19 bis 25 Jahre</a>
+        <a class="product-chip" href="lp/praemien-2027.html">Prämien 2027</a>
       </div>
-      <p class="hero-note">*je nach Region, Franchise und Modell. Quelle: BAG-Prämiendaten 2026.</p>
+      <p class="hero-note">*je nach Region, Franchise und Modell, bei gesetzlich identischen Leistungen. Quelle: BAG-Prämiendaten 2026.</p>
     </div>
   </div>
 </section>
@@ -60,14 +65,8 @@
 <!-- ============ RECHNER ============ -->
 <section id="rechner" class="section">
   <div class="container">
-    <h2>Was möchten Sie vergleichen?</h2>
-    <div class="tabs" role="tablist">
-      <button class="tab active" data-tab="kk">🏥 Krankenkasse</button>
-      <button class="tab" data-tab="auto">🚗 Autoversicherung</button>
-      <button class="tab" data-tab="hausrat">🏠 Hausrat &amp; Haftpflicht</button>
-    </div>
+    <h2>Ihre Prämie 2026 berechnen</h2>
 
-    <!-- ---- Krankenkasse ---- -->
     <div class="tab-panel active" id="panel-kk">
       <div class="calc-card">
         <div class="calc-grid">
@@ -115,89 +114,67 @@
       <div id="kkResultat" class="results" hidden></div>
     </div>
 
-    <!-- ---- Auto ---- -->
-    <div class="tab-panel" id="panel-auto">
-      <div class="calc-card">
-        <div class="calc-grid">
-          <div class="field">
-            <label for="autoKanton">Kanton</label>
-            <select id="autoKanton"></select>
-          </div>
-          <div class="field">
-            <label for="autoAlter">Alter der Hauptlenkerin / des Hauptlenkers</label>
-            <input type="number" id="autoAlter" min="18" max="99" value="35">
-          </div>
-          <div class="field">
-            <label for="autoWert">Fahrzeugwert (Neupreis inkl. Zubehör, CHF)</label>
-            <input type="number" id="autoWert" min="1000" step="1000" value="35000">
-          </div>
-          <div class="field">
-            <label for="autoDeckung">Gewünschte Deckung</label>
-            <select id="autoDeckung">
-              <option value="hp">Nur Haftpflicht (gesetzliches Minimum)</option>
-              <option value="tk">Haftpflicht + Teilkasko</option>
-              <option value="vk" selected>Haftpflicht + Vollkasko</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="autoBonus">Schadenfreie Jahre</label>
-            <select id="autoBonus">
-              <option value="1">0 Jahre (Neulenker)</option>
-              <option value="0.9">1–2 Jahre</option>
-              <option value="0.75" selected>3–5 Jahre</option>
-              <option value="0.6">6–9 Jahre</option>
-              <option value="0.5">10+ Jahre</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-big btn-block" id="autoBerechnen">Autoprämie berechnen</button>
-      </div>
-      <div id="autoResultat" class="results" hidden></div>
-    </div>
+    <p class="source-note">Quelle: offizielle Prämiendaten des Bundesamts für Gesundheit,
+      <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a> (Prämienjahr 2026),
+      alle zugelassenen Versicherer und Prämienregionen. Angaben ohne Gewähr.</p>
+  </div>
+</section>
 
-    <!-- ---- Hausrat ---- -->
-    <div class="tab-panel" id="panel-hausrat">
-      <div class="calc-card">
-        <div class="calc-grid">
-          <div class="field">
-            <label for="hrPersonen">Personen im Haushalt</label>
-            <select id="hrPersonen">
-              <option value="1">1 Person</option>
-              <option value="2" selected>2 Personen</option>
-              <option value="3">3 Personen</option>
-              <option value="4">4 Personen</option>
-              <option value="5">5+ Personen</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="hrZimmer">Anzahl Zimmer</label>
-            <select id="hrZimmer">
-              <option value="1">1–1.5</option>
-              <option value="2">2–2.5</option>
-              <option value="3" selected>3–3.5</option>
-              <option value="4">4–4.5</option>
-              <option value="5">5+</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="hrSumme">Versicherungssumme Hausrat (CHF)</label>
-            <input type="number" id="hrSumme" min="10000" step="5000" value="70000">
-            <div class="field-hint">Empfehlung wird automatisch angepasst – Sie können den Wert ändern.</div>
-          </div>
-          <div class="field">
-            <label class="check"><input type="checkbox" id="hrHaftpflicht" checked> Privathaftpflicht einschliessen (empfohlen, Deckung 5 Mio.)</label>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-big btn-block" id="hrBerechnen">Hausratprämie berechnen</button>
-      </div>
-      <div id="hrResultat" class="results" hidden></div>
-    </div>
+<!-- ============ ZIELGRUPPEN ============ -->
+<section id="situation" class="section section-alt">
+  <div class="container">
+    <h2>In welcher Situation sind Sie?</h2>
+    <p class="center-note">Bei der Krankenkasse hängt alles am richtigen Zeitpunkt. Diese vier Situationen entscheiden über mehrere hundert bis tausend Franken pro Jahr.</p>
+    <div class="lp-facts" style="margin-top:26px">
 
-    <p class="source-note">Krankenkassen-Prämien: offizielle Daten des Bundesamts für Gesundheit,
-      <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a> (Prämienjahr 2026).
-      Auto-, Hausrat- und Haftpflichtprämien: Marktspannen auf Basis publizierter Prämienerhebungen
-      (moneyland.ch 2026, SRF Kassensturz 2024, Comparis) – für diese Sparten existiert keine amtliche Prämiendatenbank,
-      die verbindliche Offerte erstellt Ihr Berater.</p>
+      <div class="lp-fact">
+        <span class="eyebrow">Zuzug</span>
+        <h3>Neu in der Schweiz</h3>
+        <p>Sie müssen sich innert 3 Monaten nach Wohnsitznahme grundversichern. Rechtzeitig angemeldet, gilt die Deckung rückwirkend ab dem ersten Tag – zu spät, kann der Kanton einen Zuschlag erheben.</p>
+        <p style="margin-top:18px"><a class="btn btn-small btn-ghost" href="lp/neu-in-der-schweiz.html">Frist &amp; Vergleich ansehen</a></p>
+      </div>
+
+      <div class="lp-fact">
+        <span class="eyebrow">Familie</span>
+        <h3>Nachwuchs unterwegs</h3>
+        <p>Ihr Kind muss innert 3 Monaten nach der Geburt versichert sein. Wer vor der Geburt abschliesst, bekommt die Zusatzversicherung ohne Gesundheitsprüfung – danach wird es schwierig.</p>
+        <p style="margin-top:18px"><a class="btn btn-small btn-ghost" href="lp/baby.html">Was jetzt zu tun ist</a></p>
+      </div>
+
+      <div class="lp-fact">
+        <span class="eyebrow">Altersgruppe</span>
+        <h3>19 bis 25 Jahre</h3>
+        <p>Mit 19 und mit 26 springt Ihre Prämie sprunghaft nach oben – automatisch, ohne dass Sie etwas tun. Genau dann lohnt sich der Wechsel am meisten, und fast niemand nutzt das.</p>
+        <p style="margin-top:18px"><a class="btn btn-small btn-ghost" href="lp/junge-erwachsene.html">Prämiensprung abfedern</a></p>
+      </div>
+
+      <div class="lp-fact">
+        <span class="eyebrow">Prämienrunde</span>
+        <h3>Prämien 2027</h3>
+        <p>Ende September gibt das BAG die Prämien 2027 bekannt. Bis zum 30. November können Sie kündigen. Wir melden uns, sobald Ihre neue Prämie feststeht – rechtzeitig, nicht am 29. November.</p>
+        <p style="margin-top:18px"><a class="btn btn-small btn-ghost" href="lp/praemien-2027.html">Vormerken lassen</a></p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ BILD + TEXT ============ -->
+<section class="section">
+  <div class="container bild-text">
+    <figure class="bild-text__bild">
+      <img src="https://images.unsplash.com/photo-1573137785546-9d19e4f33f87?auto=format&amp;fit=crop&amp;crop=entropy&amp;w=900&amp;h=700&amp;q=70"
+           width="900" height="700" loading="lazy" decoding="async"
+           alt="Blick über Zürich – Prämienregionen bestimmen, was Ihre Grundversicherung kostet">
+      <figcaption>Foto: Unsplash</figcaption>
+    </figure>
+    <div>
+      <span class="eyebrow">Warum der Vergleich lohnt</span>
+      <h2>Gleiche Leistung, sehr unterschiedlicher Preis</h2>
+      <p>Der Leistungskatalog der Grundversicherung steht im Gesetz. Jede Kasse muss exakt dasselbe bezahlen – dieselben Medikamente, dieselben Behandlungen, dieselben Spitäler. Wer mehr Prämie zahlt, bekommt dafür nicht mehr.</p>
+      <p>Was sich unterscheidet, sind Prämienregion, Franchise und Versicherungsmodell. Genau diese drei Stellschrauben rechnen wir für Ihre Postleitzahl durch – mit den offiziellen Zahlen des Bundes, nicht mit Schätzungen.</p>
+      <a href="#rechner" class="btn btn-primary">Prämie jetzt berechnen</a>
+    </div>
   </div>
 </section>
 
@@ -249,13 +226,14 @@
           <input type="text" id="lfPlzOrt" name="plz_ort" placeholder="z. B. 8001 Zürich">
         </div>
         <div class="field span-2">
-          <label>Ich interessiere mich für:</label>
+          <label>Worum geht es? (Mehrfachauswahl)</label>
           <div class="check-row">
-            <label class="check"><input type="checkbox" name="interesse" value="Krankenkasse"> Krankenkasse</label>
-            <label class="check"><input type="checkbox" name="interesse" value="Autoversicherung"> Auto</label>
-            <label class="check"><input type="checkbox" name="interesse" value="Hausrat/Haftpflicht"> Hausrat / Haftpflicht</label>
-            <label class="check"><input type="checkbox" name="interesse" value="Vorsorge/Leben"> Vorsorge / 3. Säule</label>
-            <label class="check"><input type="checkbox" name="interesse" value="Anderes"> Anderes</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Grundversicherung"> Grundversicherung / Kassenwechsel</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Zusatzversicherung"> Zusatzversicherung (Zahn, Halbprivat, Ausland)</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Franchise"> Franchise optimieren</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Neu in der Schweiz"> Neu in der Schweiz</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Kind/Neugeborenes"> Kind / Neugeborenes versichern</label>
+            <label class="check"><input type="checkbox" name="interesse" value="Prämienverbilligung"> Prämienverbilligung prüfen</label>
           </div>
         </div>
         <div class="field">
@@ -295,8 +273,8 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="logo footer-logo"><span class="logo-cross" aria-hidden="true"></span> Prämien<strong>Check</strong> Schweiz</div>
-        <p>Unabhängiger Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
+        <div class="logo footer-logo"><span class="logo-cross" aria-hidden="true"></span> Swiss<strong>Premia</strong></div>
+        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
       </div>
       <div>
         <h4>Datenquelle</h4>
@@ -305,15 +283,16 @@
       </div>
       <div>
         <h4>Rechtliches</h4>
-        <p>Alle Angaben ohne Gewähr. Auto- und Hausratprämien sind Marktspannen aus publizierten Erhebungen (moneyland.ch, SRF Kassensturz, Comparis), keine Offerten. Ihre Daten werden ausschliesslich zur Kontaktaufnahme durch einen Berater verwendet.</p>
+        <p>Alle Angaben ohne Gewähr. Der Leistungskatalog der Grundversicherung ist gesetzlich festgelegt und bei allen Kassen identisch. Ihre Daten werden ausschliesslich zur Kontaktaufnahme durch einen Berater verwendet und nicht an Dritte weitergegeben.</p>
       </div>
     </div>
-    <p class="copyright">© 2026 PrämienCheck Schweiz</p>
+    <p class="copyright">© 2026 SwissPremia</p>
   </div>
 </footer>
 
 <script src="data/plz.js"></script>
 <script src="data/praemien.js"></script>
+<script src="js/lead-core.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

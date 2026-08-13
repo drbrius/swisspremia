@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danke – wir melden uns | SwissPremia</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/lp.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23005786'/><rect x='42' y='20' width='16' height='60' fill='white'/><rect x='20' y='42' width='60' height='16' fill='white'/></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a href="../index.html" class="logo">
+      <span class="logo-cross" aria-hidden="true"></span>
+      <span>Swiss<strong>Premia</strong> <small>Krankenkassen-Vergleich</small></span>
+    </a>
+    <div class="lang-switch">
+      <button type="button" data-lang-btn="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container narrow">
+    <div class="success-card">
+      <div class="success-icon" aria-hidden="true">✓</div>
+
+      <h1 data-de="Ihre Anfrage ist angekommen." data-en="We have received your request.">Ihre Anfrage ist angekommen.</h1>
+      <p class="lead" style="margin-top:12px"
+         data-de="Sie erhalten in den nächsten Minuten eine Bestätigung per E-Mail. Schauen Sie bitte auch im Spam-Ordner nach."
+         data-en="You will receive a confirmation email within the next few minutes. Please also check your spam folder.">
+        Sie erhalten in den nächsten Minuten eine Bestätigung per E-Mail. Schauen Sie bitte auch im Spam-Ordner nach.
+      </p>
+
+      <ol class="lp-next">
+        <li>
+          <strong data-de="Wir prüfen Ihre Angaben" data-en="We review your details">Wir prüfen Ihre Angaben</strong>
+          <span data-de="Wir vergleichen alle Kassen in Ihrer Prämienregion mit den offiziellen BAG-Daten 2026."
+                data-en="We compare every insurer in your premium region using the official 2026 FOPH data.">
+            Wir vergleichen alle Kassen in Ihrer Prämienregion mit den offiziellen BAG-Daten 2026.
+          </span>
+        </li>
+        <li>
+          <strong data-de="Wir rufen Sie an" data-en="We call you">Wir rufen Sie an</strong>
+          <span data-de="Werktags meist innert einer Stunde, spätestens innert 24 Stunden – zu der Zeit, die Sie angegeben haben. Das Gespräch dauert rund 10 Minuten."
+                data-en="Usually within an hour on working days, at the latest within 24 hours – at the time you selected. The call takes about 10 minutes.">
+            Werktags meist innert einer Stunde, spätestens innert 24 Stunden – zu der Zeit, die Sie angegeben haben. Das Gespräch dauert rund 10 Minuten.
+          </span>
+        </li>
+        <li>
+          <strong data-de="Sie entscheiden in Ruhe" data-en="You decide at your own pace">Sie entscheiden in Ruhe</strong>
+          <span data-de="Sie erhalten Ihre Übersicht schriftlich. Kein Druck, keine Kosten – wenn nichts passt, ist das auch in Ordnung."
+                data-en="You receive your overview in writing. No pressure, no cost – and if nothing suits you, that is perfectly fine.">
+            Sie erhalten Ihre Übersicht schriftlich. Kein Druck, keine Kosten – wenn nichts passt, ist das auch in Ordnung.
+          </span>
+        </li>
+      </ol>
+
+      <!-- Selbstbedienung für eilige Leads – nur sichtbar, wenn in lead-core.js hinterlegt -->
+      <div id="sofortKontakt" hidden>
+        <p style="margin:26px 0 14px;font-weight:600;color:var(--slate-tief)"
+           data-de="Es eilt oder Sie haben nur ein kurzes Zeitfenster?" data-en="In a hurry, or only a short window of time?">
+          Es eilt oder Sie haben nur ein kurzes Zeitfenster?
+        </p>
+        <div class="lp-aktionen">
+          <a id="btnTermin" class="btn btn-primary" href="#" hidden
+             data-de="📅 Termin selbst wählen" data-en="📅 Book a slot yourself">📅 Termin selbst wählen</a>
+          <a id="btnWhatsapp" class="btn btn-ghost" href="#" hidden rel="noopener"
+             data-de="💬 WhatsApp schreiben" data-en="💬 Message on WhatsApp">💬 WhatsApp schreiben</a>
+          <a id="btnAnruf" class="btn btn-ghost" href="#" hidden
+             data-de="📞 Direkt anrufen" data-en="📞 Call directly">📞 Direkt anrufen</a>
+        </div>
+      </div>
+
+      <p class="center-note" style="margin-top:28px">
+        <a href="../index.html" data-de="← Zurück zum Prämienvergleich" data-en="← Back to the premium comparison">← Zurück zum Prämienvergleich</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p class="copyright">
+      <span data-de="© 2026 SwissPremia · Prämiendaten: Bundesamt für Gesundheit (BAG), priminfo.admin.ch"
+            data-en="© 2026 SwissPremia · Premium data: Federal Office of Public Health (FOPH), priminfo.admin.ch">
+        © 2026 SwissPremia · Prämiendaten: Bundesamt für Gesundheit (BAG), priminfo.admin.ch
+      </span>
+    </p>
+  </div>
+</footer>
+
+<script src="../js/lead-core.js"></script>
+<script src="../js/lp.js"></script>
+<script>
+  LP.init({});
+
+  /* Kontaktbuttons nur zeigen, wenn in js/lead-core.js hinterlegt. */
+  (function () {
+    var c = LeadCore.config, sichtbar = false;
+
+    function aktiviere(id, href) {
+      var el = document.getElementById(id);
+      el.href = href;
+      el.hidden = false;
+      sichtbar = true;
+    }
+
+    if (c.TERMIN_URL) aktiviere("btnTermin", c.TERMIN_URL);
+    if (c.WHATSAPP_NUMMER) {
+      var text = LP.sprache === "en"
+        ? "Hi, I just requested a health insurance comparison via SwissPremia."
+        : "Guten Tag, ich habe soeben über SwissPremia einen Krankenkassen-Vergleich angefordert.";
+      aktiviere("btnWhatsapp", "https://wa.me/" + c.WHATSAPP_NUMMER + "?text=" + encodeURIComponent(text));
+    }
+    if (c.BERATER_TELEFON) aktiviere("btnAnruf", "tel:" + c.BERATER_TELEFON);
+
+    if (sichtbar) document.getElementById("sofortKontakt").hidden = false;
+  })();
+</script>
+
+</body>
+</html>

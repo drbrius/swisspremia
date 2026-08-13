@@ -1,9 +1,9 @@
-/* ===== PrämienCheck Schweiz – App-Logik ===== */
+/* ===== SwissPremia – App-Logik ===== */
 (function () {
   "use strict";
 
-  // >>> HIER die E-Mail-Adresse ändern, an die Leads gesendet werden: <<<
-  var LEAD_EMAIL = "drbrius@gmail.com";
+  // Empfänger-Adresse, Webhook und Auto-Antwort werden zentral in
+  // js/lead-core.js (CONFIG) gepflegt – für alle Seiten gemeinsam.
 
   var $ = function (id) { return document.getElementById(id); };
   var fmt = function (n) {
@@ -12,25 +12,6 @@
   var fmt2 = function (n) { return "CHF " + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); };
 
   var letzteBerechnung = ""; // wird ins Lead-Formular übernommen
-
-  /* ========== Tabs ========== */
-  function aktiviereTab(name) {
-    document.querySelectorAll(".tab").forEach(function (t) {
-      t.classList.toggle("active", t.dataset.tab === name);
-    });
-    document.querySelectorAll(".tab-panel").forEach(function (p) {
-      p.classList.toggle("active", p.id === "panel-" + name);
-    });
-  }
-  document.querySelectorAll(".tab").forEach(function (t) {
-    t.addEventListener("click", function () { aktiviereTab(t.dataset.tab); });
-  });
-  document.querySelectorAll("[data-tab-link]").forEach(function (el) {
-    el.addEventListener("click", function () {
-      aktiviereTab(el.dataset.tabLink);
-      document.getElementById("rechner").scrollIntoView({ behavior: "smooth" });
-    });
-  });
 
   /* ========== Krankenkasse ========== */
   var kkRegionen = []; // mögliche [ort, kanton, region] zur eingegebenen PLZ
@@ -168,7 +149,7 @@
     letzteBerechnung = "Krankenkasse " + window.KK_DATA.jahr + ": PLZ " + $("kkPlz").value + " " + region[0] +
       " (" + region[1] + "), " + alterText + ", Franchise CHF " + franchise + ", " + unfallText +
       ". Günstigstes Angebot: " + (window.KK_DATA.versicherer[liste[0][0]] || "") + " " + fmt2(liste[0][2]) + "/Monat.";
-    setzeInteresse("Krankenkasse");
+    setzeInteresse("Grundversicherung");
     zeigeLeadZusammenfassung();
 
     // "Offerte anfordern"-Buttons in der Tabelle
@@ -177,120 +158,11 @@
         var teile = btn.dataset.offerte.split("|");
         letzteBerechnung = "Offerten-Anfrage Krankenkasse " + window.KK_DATA.jahr + ": " + teile[0] + " – " + teile[1] +
           ", CHF " + teile[2] + "/Monat (PLZ " + $("kkPlz").value + ", " + alterText + ", Franchise CHF " + franchise + ", " + unfallText + ").";
-        setzeInteresse("Krankenkasse");
+        setzeInteresse("Grundversicherung");
         zeigeLeadZusammenfassung();
         document.getElementById("beratung").scrollIntoView({ behavior: "smooth" });
       });
     });
-  });
-
-  /* ========== Autoversicherung (Marktspanne) ==========
-     Kalibriert an publizierten Vergleichsdaten von moneyland.ch (2026).
-     Referenzprofil: 30 Jahre, Kanton ZH, VW Golf (Wert ~CHF 35'000),
-     10'000 km/Jahr, 5 schadenfreie Jahre. Jahresprämien:
-       Haftpflicht 350–750 | + Teilkasko 150–400 | + Vollkasko 600–1'500 */
-  var KANTONE = ["AG","AI","AR","BE","BL","BS","FR","GE","GL","GR","JU","LU","NE","NW","OW","SG","SH","SO","SZ","TG","TI","UR","VD","VS","ZG","ZH"];
-  var kantonSel = $("autoKanton");
-  KANTONE.forEach(function (k) {
-    var o = document.createElement("option");
-    o.value = k; o.textContent = k;
-    if (k === "ZH") o.selected = true;
-    kantonSel.appendChild(o);
-  });
-  var KANTON_FAKTOR = { GE: 1.2, TI: 1.2, BS: 1.15, VD: 1.12, ZH: 1.08, NE: 1.08, JU: 1.05, VS: 1.02,
-    AI: 0.88, AR: 0.9, GR: 0.9, UR: 0.9, OW: 0.9, NW: 0.9, GL: 0.9, TG: 0.95, SG: 0.97 };
-  var AUTO_REF = { HP: [350, 750], TK: [150, 400], VK: [600, 1500], wert: 35000, kantonF: 1.08, bonusF: 0.75 };
-
-  $("autoBerechnen").addEventListener("click", function () {
-    var kanton = kantonSel.value;
-    var alter = Number($("autoAlter").value) || 35;
-    var wert = Number($("autoWert").value) || 30000;
-    var deckung = $("autoDeckung").value;
-    var bonus = Number($("autoBonus").value);
-
-    // Faktoren relativ zum Referenzprofil (30 J., ZH, 5 schadenfreie Jahre)
-    var alterF = alter < 21 ? 1.75 : alter < 25 ? 1.45 : alter < 30 ? 1.15 : alter >= 75 ? 1.15 : 1.0;
-    var kantonF = (KANTON_FAKTOR[kanton] || 1.0) / AUTO_REF.kantonF;
-    var bonusF = bonus / AUTO_REF.bonusF;
-    var wertF = Math.min(3, Math.max(0.5, wert / AUTO_REF.wert));
-    var f = alterF * kantonF * bonusF;
-
-    var von = AUTO_REF.HP[0] * f, bis = AUTO_REF.HP[1] * f;
-    if (deckung === "tk") { von += AUTO_REF.TK[0] * wertF * f; bis += AUTO_REF.TK[1] * wertF * f; }
-    if (deckung === "vk") { von += AUTO_REF.VK[0] * wertF * f; bis += AUTO_REF.VK[1] * wertF * f; }
-
-    var deckungText = { hp: "Haftpflicht", tk: "Haftpflicht + Teilkasko", vk: "Haftpflicht + Vollkasko" }[deckung];
-    var box = $("autoResultat");
-    box.innerHTML =
-      '<div class="estimate-card"><div class="estimate-sub">Marktspanne Jahresprämie (' + deckungText + ")</div>" +
-      '<div class="estimate-range">' + fmt(von) + " – " + fmt(bis) + "</div>" +
-      '<div class="estimate-sub"><strong>günstigster bis teuerster Anbieter</strong> – bei identischer Deckung liegen die Prämien ' +
-      "in der Schweiz über 100&nbsp;% auseinander. Am günstigsten sind oft Online-Versicherer (z.&nbsp;B. Smile, Zurich Connect, Simpego).<br>" +
-      "Ihr Berater holt kostenlos konkrete Offerten mehrerer Gesellschaften ein und findet den besten Preis.</div>" +
-      '<a href="#beratung" class="btn btn-primary btn-big">Gratis Offerten anfordern</a>' +
-      '<p class="source-note">Quelle: Vergleichsdaten moneyland.ch (2026), Referenzprofil 30 J. / Kanton ZH / Fahrzeugwert CHF 35\'000 / ' +
-      "5 schadenfreie Jahre – angepasst an Ihre Angaben (Alter, Kanton, Fahrzeugwert, Bonusstufe). Unverbindliche Marktspanne, keine Offerte.</p></div>";
-    box.hidden = false;
-    box.scrollIntoView({ behavior: "smooth", block: "start" });
-
-    letzteBerechnung = "Autoversicherung: Kanton " + kanton + ", Lenker/in " + alter + " Jahre, Fahrzeugwert " +
-      fmt(wert) + ", " + deckungText + ". Marktspanne: " + fmt(von) + " – " + fmt(bis) + "/Jahr.";
-    setzeInteresse("Autoversicherung");
-    zeigeLeadZusammenfassung();
-  });
-
-  /* ========== Hausrat & Haftpflicht (Richtwert) ========== */
-  function empfehleSumme() {
-    var p = Number($("hrPersonen").value);
-    var z = Number($("hrZimmer").value);
-    $("hrSumme").value = 20000 + p * 20000 + z * 5000;
-  }
-  $("hrPersonen").addEventListener("change", empfehleSumme);
-  $("hrZimmer").addEventListener("change", empfehleSumme);
-  empfehleSumme();
-
-  /* Kalibriert an der SRF-Kassensturz-Erhebung vom März 2024 (inkl. Privathaftpflicht 5 Mio.):
-       Single, Mietwohnung, Summe CHF 72'000:  günstigster CHF 192 (Baloise), teuerste ~CHF 350 (Zurich/Mobiliar)
-       Paar mit Eigenheim, Summe CHF 220'000:  günstigster ~CHF 370 (Smile), teuerste >CHF 700 (AXA/Zurich)
-     Privathaftpflicht allein: Einzelperson ~CHF 60–150, Familie ~CHF 100–220 (Comparis/Marktübersicht). */
-  var HR_ANKER = { s1: 72000, min1: 192, max1: 350, s2: 220000, min2: 370, max2: 700 };
-
-  $("hrBerechnen").addEventListener("click", function () {
-    var summe = Math.min(400000, Math.max(20000, Number($("hrSumme").value) || 60000));
-    var personen = Number($("hrPersonen").value);
-    var mitHaftpflicht = $("hrHaftpflicht").checked;
-
-    // Lineare Interpolation zwischen den beiden publizierten Ankerprofilen (inkl. PHP)
-    var t = (summe - HR_ANKER.s1) / (HR_ANKER.s2 - HR_ANKER.s1);
-    var von = HR_ANKER.min1 + t * (HR_ANKER.min2 - HR_ANKER.min1);
-    var bis = HR_ANKER.max1 + t * (HR_ANKER.max2 - HR_ANKER.max1);
-    von = Math.max(120, von); bis = Math.max(220, bis);
-
-    // Anteil Privathaftpflicht herausrechnen, falls nicht gewünscht
-    if (!mitHaftpflicht) {
-      von = Math.max(80, von - (personen === 1 ? 60 : 100));
-      bis = Math.max(140, bis - (personen === 1 ? 150 : 220));
-    }
-
-    var box = $("hrResultat");
-    box.innerHTML =
-      '<div class="estimate-card"><div class="estimate-sub">Marktspanne Jahresprämie (Hausrat' +
-      (mitHaftpflicht ? " + Privathaftpflicht 5 Mio." : "") + ")</div>" +
-      '<div class="estimate-range">' + fmt(von) + " – " + fmt(bis) + "</div>" +
-      '<div class="estimate-sub"><strong>günstigster bis teuerster Anbieter</strong> bei Versicherungssumme ' + fmt(summe) +
-      ". Beim Wechsel zum günstigsten Anbieter sparen Singles bis 63&nbsp;%, Familien bis 40&nbsp;%.<br>" +
-      "Ihr Berater vergleicht die Angebote und prüft auch Selbstbehalt und Zusatzdeckungen (Glas, Diebstahl auswärts, Erdbeben).</div>" +
-      '<a href="#beratung" class="btn btn-primary btn-big">Gratis Offerten anfordern</a>' +
-      '<p class="source-note">Quelle: SRF-Kassensturz-Prämienerhebung März 2024 (Single, Summe CHF 72\'000: CHF 192–350/Jahr; ' +
-      "Paar mit Eigenheim, CHF 220'000: CHF 370–700+/Jahr, je inkl. Privathaftpflicht 5 Mio.), interpoliert auf Ihre Versicherungssumme. " +
-      "Unverbindliche Marktspanne, keine Offerte.</p></div>";
-    box.hidden = false;
-    box.scrollIntoView({ behavior: "smooth", block: "start" });
-
-    letzteBerechnung = "Hausrat" + (mitHaftpflicht ? " + Privathaftpflicht" : "") + ": Versicherungssumme " +
-      fmt(summe) + ", " + personen + " Person(en). Marktspanne: " + fmt(von) + " – " + fmt(bis) + "/Jahr.";
-    setzeInteresse("Hausrat/Haftpflicht");
-    zeigeLeadZusammenfassung();
   });
 
   /* ========== Lead-Formular ========== */
@@ -306,12 +178,15 @@
     }
   }
 
+  LeadCore.honeypotEinbauen($("leadForm"));
+
   $("leadForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var fehler = $("lfError");
     fehler.hidden = true;
 
     var form = ev.target;
+    if (LeadCore.istBot(form)) return;
     if (!form.checkValidity()) {
       fehler.textContent = "Bitte füllen Sie alle Pflichtfelder (*) korrekt aus.";
       fehler.hidden = false;
@@ -324,9 +199,12 @@
       function (c) { return c.value; }
     ).join(", ") || "Keine Angabe";
 
-    var lead = {
-      _subject: "🔥 Neue Lead-Anfrage – PrämienCheck Schweiz",
-      _template: "table",
+    var btn = $("lfSubmit");
+    btn.disabled = true;
+    btn.textContent = "Wird gesendet …";
+
+    // Versand, Quellen-Tracking, Sicherungskopie und Auto-Antwort: siehe js/lead-core.js
+    LeadCore.senden({
       Anrede: $("lfAnrede").value,
       Vorname: $("lfVorname").value.trim(),
       Nachname: $("lfName").value.trim(),
@@ -336,39 +214,11 @@
       Interessen: interessen,
       Erreichbarkeit: $("lfZeit").value,
       Bemerkung: $("lfNachricht").value.trim(),
-      Berechnung: letzteBerechnung || "Keine Berechnung durchgeführt",
-      Zeitpunkt: new Date().toLocaleString("de-CH")
-    };
-
-    // Lokale Sicherungskopie aller Leads im Browser
-    try {
-      var leads = JSON.parse(localStorage.getItem("leads") || "[]");
-      leads.push(lead);
-      localStorage.setItem("leads", JSON.stringify(leads));
-    } catch (e) { /* localStorage nicht verfügbar */ }
-
-    var btn = $("lfSubmit");
-    btn.disabled = true;
-    btn.textContent = "Wird gesendet …";
-
-    fetch("https://formsubmit.co/ajax/" + LEAD_EMAIL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(lead)
-    })
-      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(function () { zeigeErfolg(); })
-      .catch(function () {
-        // Fallback: E-Mail-Programm öffnen, damit kein Lead verloren geht
-        var body = Object.keys(lead)
-          .filter(function (k) { return k.charAt(0) !== "_"; })
-          .map(function (k) { return k + ": " + lead[k]; })
-          .join("\n");
-        window.location.href = "mailto:" + LEAD_EMAIL +
-          "?subject=" + encodeURIComponent("Neue Lead-Anfrage – PrämienCheck") +
-          "&body=" + encodeURIComponent(body);
-        zeigeErfolg();
-      });
+      Berechnung: letzteBerechnung || "Keine Berechnung durchgeführt"
+    }, {
+      betreff: "🔥 Neue Lead-Anfrage – SwissPremia",
+      prioritaet: letzteBerechnung ? "Hoch (hat gerechnet)" : "Normal"
+    }).then(zeigeErfolg);
 
     function zeigeErfolg() {
       form.hidden = true;
