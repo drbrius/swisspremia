@@ -28,8 +28,45 @@
   align-items: start;
 }
 @media (max-width: 980px) {
-  .lp-grid { grid-template-columns: 1fr; gap: 38px; }
-  .lp-hero { padding: 62px 0 70px; }
+  .lp-grid { grid-template-columns: 1fr; gap: 34px; }
+  .lp-hero { padding: 58px 0 64px; }
+}
+@media (max-width: 700px) {
+  .lp-hero { padding: 44px 0 50px; }
+  .lp-hero .lead { font-size: 1rem; }
+  .lp-grid { gap: 28px; }
+
+  /* Reihenfolge bleibt: erst die Botschaft, dann das Formular. Wer zuerst ein
+     Formular sieht und nicht weiss wofür, füllt es nicht aus. */
+  .lp-form-card { padding: 24px 20px; border-radius: 16px; }
+  .lp-form-card h2 { font-size: 1.2rem; }
+  .lp-form-card .sub { font-size: .88rem; margin-bottom: 18px; }
+  .lp-form-card .field { margin-bottom: 14px; }
+
+  .lp-alert { padding: 15px 16px; font-size: .9rem; gap: 11px; margin: 22px 0 4px; }
+  .lp-alert .ico { font-size: 1.15rem; }
+  .lp-usp { margin-top: 22px; gap: 9px; }
+  .lp-usp li { font-size: .94rem; padding-left: 28px; }
+
+  .lp-facts { gap: 16px; grid-template-columns: 1fr; }
+  .lp-fact { padding: 24px 20px; border-radius: 16px; }
+  .lp-fact:hover { transform: none; }
+
+  .lp-faq details { padding: 16px 18px; }
+  .lp-faq summary { font-size: .96rem; }
+  .lp-faq p { padding-left: 0; font-size: .91rem; }
+
+  .bild-text { gap: 26px; }
+  .bild-text__bild img { border-radius: 14px; }
+  .bild-text .btn { width: 100%; }
+
+  .lp-next { gap: 16px; margin: 26px 0; }
+  .lp-next li { padding-left: 48px; }
+  .lp-next li::before { width: 34px; height: 34px; font-size: .88rem; }
+  .lp-aktionen .btn { width: 100%; }
+
+  .lang-switch button { padding: 9px 14px; min-height: 40px; }
+  .lp-trust { gap: 8px 16px; font-size: .72rem; }
 }
 
 /* Auffälliger Hinweis auf die gesetzliche Frist */
