@@ -3,8 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SwissPremia – Krankenkassen-Prämien 2026 vergleichen</title>
-  <meta name="description" content="Krankenkassen-Prämien 2026 mit den offiziellen Daten des BAG vergleichen – alle Kassen, alle Prämienregionen. Kostenlos, unverbindlich, ohne Anmeldung.">
+  <title>Krankenkasse vergleichen &amp; wechseln 2026 | SwissPremia</title>
+  <meta name="description" content="Alle Schweizer Krankenkassen-Prämien 2026 vergleichen – mit den offiziellen BAG-Daten. Grundversicherung wechseln, Franchise optimieren. Kostenlos und unverbindlich.">
+  <link rel="canonical" href="https://www.swisspremia.ch/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="geo.region" content="CH">
+
+  <!-- Vorschau beim Teilen in sozialen Netzwerken -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_CH">
+  <meta property="og:site_name" content="SwissPremia">
+  <meta property="og:url" content="https://www.swisspremia.ch/">
+  <meta property="og:title" content="Krankenkasse vergleichen &amp; wechseln 2026 | SwissPremia">
+  <meta property="og:description" content="Alle Schweizer Krankenkassen-Prämien 2026 vergleichen – mit den offiziellen BAG-Daten. Grundversicherung wechseln, Franchise optimieren. Kostenlos und unverbindlich.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1573137785546-9d19e4f33f87?auto=format&fit=crop&w=1200&h=630&q=70">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Krankenkasse vergleichen &amp; wechseln 2026 | SwissPremia">
+  <meta name="twitter:description" content="Alle Schweizer Krankenkassen-Prämien 2026 vergleichen – mit den offiziellen BAG-Daten. Grundversicherung wechseln, Franchise optimieren. Kostenlos und unverbindlich.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1573137785546-9d19e4f33f87?auto=format&fit=crop&w=1200&h=630&q=70">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SwissPremia",
+    "url": "https://www.swisspremia.ch/",
+    "inLanguage": "de-CH",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.swisspremia.ch/?plz={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "InsuranceAgency",
+    "name": "SwissPremia",
+    "description": "Unabhängiger Vergleich der Schweizer Krankenkassen-Prämien auf Basis der offiziellen Daten des Bundesamts für Gesundheit.",
+    "url": "https://www.swisspremia.ch/",
+    "areaServed": {
+      "@type": "Country",
+      "name": "Schweiz"
+    },
+    "knowsLanguage": [
+      "de-CH",
+      "en"
+    ],
+    "priceRange": "Kostenlos"
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -226,6 +277,36 @@
         <div class="field">
           <label for="lfPlzOrt">PLZ / Ort</label>
           <input type="text" id="lfPlzOrt" name="plz_ort" placeholder="z. B. 8001 Zürich">
+        </div>
+
+        <div class="field span-2">
+          <p class="feld-gruppe">Ihre heutige Situation <span>– damit wir gezielt vergleichen können</span></p>
+        </div>
+        <div class="field">
+          <label for="lfKasseGrund">Grundversicherung – aktuelle Kasse</label>
+          <input type="text" id="lfKasseGrund" name="kasse_grund" list="kassenListe"
+                 placeholder="z. B. CSS, Helsana, SWICA …" autocomplete="off">
+          <div class="field-hint">Tippen genügt – die Liste schlägt vor.</div>
+        </div>
+        <div class="field">
+          <label for="lfFranchise">Aktuelle Franchise</label>
+          <select id="lfFranchise" name="franchise_aktuell">
+            <option value="">Weiss ich nicht</option>
+            <option value="CHF 300">CHF 300</option>
+            <option value="CHF 500">CHF 500</option>
+            <option value="CHF 1'000">CHF 1'000</option>
+            <option value="CHF 1'500">CHF 1'500</option>
+            <option value="CHF 2'000">CHF 2'000</option>
+            <option value="CHF 2'500">CHF 2'500</option>
+            <option value="Kind: CHF 0–600">Für ein Kind (CHF 0–600)</option>
+          </select>
+          <div class="field-hint">Steht auf Ihrer Police oder Prämienrechnung.</div>
+        </div>
+        <div class="field span-2">
+          <label for="lfKasseZusatz">Zusatzversicherung – aktuelle Kasse</label>
+          <input type="text" id="lfKasseZusatz" name="kasse_zusatz" list="kassenListe"
+                 placeholder="z. B. Helsana – oder «keine»" autocomplete="off">
+          <div class="field-hint">Oft eine andere Gesellschaft als bei der Grundversicherung. Wenn Sie keine haben, einfach «keine» eintragen.</div>
         </div>
         <div class="field span-2">
           <label>Worum geht es? (Mehrfachauswahl)</label>

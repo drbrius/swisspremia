@@ -3,9 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prämien 2027: Vormerken lassen – SwissPremia</title>
-  <meta name="description" content="Ende September gibt das BAG die Krankenkassenprämien 2027 bekannt. Wir melden uns mit Ihrem persönlichen Vergleich, rechtzeitig vor der Kündigungsfrist am 30. November.">
-  <meta name="robots" content="noindex">
+  <title>Krankenkasse künden 2027: Frist 30. November | SwissPremia</title>
+  <meta name="description" content="Die Prämien 2027 werden Ende September publiziert, die Kündigungsfrist ist der 30. November. Wir melden uns rechtzeitig mit Ihrem persönlichen Vergleich.">
+  <link rel="canonical" href="https://www.swisspremia.ch/lp/praemien-2027.html">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="geo.region" content="CH">
+
+  <!-- Vorschau beim Teilen in sozialen Netzwerken -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_CH">
+  <meta property="og:site_name" content="SwissPremia">
+  <meta property="og:url" content="https://www.swisspremia.ch/lp/praemien-2027.html">
+  <meta property="og:title" content="Krankenkasse künden 2027: Frist 30. November | SwissPremia">
+  <meta property="og:description" content="Die Prämien 2027 werden Ende September publiziert, die Kündigungsfrist ist der 30. November. Wir melden uns rechtzeitig mit Ihrem persönlichen Vergleich.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1506785017561-cd70a3c8d1c2?auto=format&fit=crop&w=1200&h=630&q=70">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Krankenkasse künden 2027: Frist 30. November | SwissPremia">
+  <meta name="twitter:description" content="Die Prämien 2027 werden Ende September publiziert, die Kündigungsfrist ist der 30. November. Wir melden uns rechtzeitig mit Ihrem persönlichen Vergleich.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1506785017561-cd70a3c8d1c2?auto=format&fit=crop&w=1200&h=630&q=70">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Verpflichte ich mich damit zu irgendetwas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nein. Sie erhalten im Oktober Ihre Zahlen und entscheiden dann. Wenn Ihre heutige Kasse gut abschneidet, sagen wir Ihnen das genauso – das kommt öfter vor, als man denkt."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Warum nicht einfach im November selbst vergleichen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Können Sie. Zwei Gründe sprechen dagegen: Erstens sind die Kassen in den letzten Novembertagen überlastet und Kündigungen kommen zu spät an. Zweitens braucht ein Wechsel der Zusatzversicherung eine Gesundheitsprüfung und mehr Vorlauf – wer erst Ende November anfängt, kann nur noch die Grundversicherung wechseln."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was passiert bis Oktober mit meinen Daten?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nichts ausser Aufbewahren. Sie hören bis zur Publikation der Prämien nichts von uns, ausser Sie melden sich selbst. Eine Abmeldung genügt formlos per E-Mail, dann löschen wir Ihre Angaben."
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -81,8 +130,27 @@
             </select>
           </div>
           <div class="field">
-            <label for="fKasse">Aktuelle Kasse (optional)</label>
-            <input type="text" id="fKasse" name="kasse" data-label="Aktuelle Kasse" placeholder="z. B. CSS, Helsana …">
+            <label for="fKasseGrund">Grundversicherung (optional)</label>
+            <input type="text" id="fKasseGrund" name="kasse_grund" data-label="Grundversicherung"
+                   list="kassenListe" autocomplete="off" placeholder="z. B. CSS, Helsana …">
+          </div>
+          <div class="field">
+            <label for="fFranchise">Aktuelle Franchise (optional)</label>
+            <select id="fFranchise" name="franchise_aktuell" data-label="Franchise">
+              <option value="">Weiss ich nicht</option>
+              <option value="CHF 300">CHF 300</option>
+              <option value="CHF 500">CHF 500</option>
+              <option value="CHF 1'000">CHF 1'000</option>
+              <option value="CHF 1'500">CHF 1'500</option>
+              <option value="CHF 2'000">CHF 2'000</option>
+              <option value="CHF 2'500">CHF 2'500</option>
+            </select>
+          </div>
+          <div class="field span-2">
+            <label for="fKasseZusatz">Zusatzversicherung (optional)</label>
+            <input type="text" id="fKasseZusatz" name="kasse_zusatz" data-label="Zusatzversicherung"
+                   list="kassenListe" autocomplete="off" placeholder="Kasse – oder «keine»">
+            <div class="field-hint">Je mehr wir wissen, desto konkreter wird Ihr Vergleich im Oktober.</div>
           </div>
           <div class="field span-2">
             <label class="check consent">

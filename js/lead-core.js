@@ -17,12 +17,19 @@
 
   var CONFIG = {
     /* Wohin die Lead-Benachrichtigung geht (formsubmit.co, gratis). */
-    LEAD_EMAIL: "drbrius@gmail.com",
+    LEAD_EMAIL: "info@swisspremia.ch",
 
-    /* Optional: URL der Google-Apps-Script-Web-App (…/exec).
-       Siehe tools/lead-webhook.gs – schreibt jeden Lead in ein Google Sheet
-       und schickt dir sofort eine Push-Nachricht. Leer lassen = deaktiviert. */
+    /* >>> HAUPTKANAL <<< URL der Google-Apps-Script-Web-App (endet auf /exec).
+       Siehe tools/lead-webhook.gs. Das Skript schreibt jeden Lead ins Google
+       Sheet, schickt dir die Meldung an LEAD_EMAIL und dem Interessenten die
+       Bestätigung mit seinen Angaben.
+       Solange dieses Feld leer ist, läuft der Versand nur über formsubmit.co –
+       und der Dienst hat sich als unzuverlässig erwiesen. Bitte eintragen. */
     WEBHOOK_URL: "",
+
+    /* Zweitkanal. Nur aktiv, wenn die Adresse einmalig bei formsubmit.co
+       bestätigt wurde. false = ausschliesslich der Webhook oben wird genutzt. */
+    FORMSUBMIT_AKTIV: true,
 
     /* Name, der in der automatischen Antwort an den Interessenten steht. */
     BERATER_NAME: "Ihr SwissPremia-Berater",
@@ -43,6 +50,40 @@
 
   var SPEICHER_KEY = "pc_quelle";
   var LEADS_KEY = "leads";
+
+  /* ---------------------------------------------------------------
+     Krankenkassen für die Vorschlagsliste
+     Grundlage sind die 34 vom BAG zugelassenen Versicherer (siehe
+     data/praemien.js). Ergänzt um die Konzern- und Zusatzversicherungs-
+     Marken, die Leute im Alltag nennen – bei der Zusatzversicherung ist
+     das oft eine andere Marke als bei der Grundversicherung.
+     Die Liste ist nur ein Vorschlag: Eingetippt werden darf alles.
+     --------------------------------------------------------------- */
+  var KASSEN = [
+    "Agrisano", "AMB", "Aquilana", "Arcosana", "Assura", "Atupri", "Avenir",
+    "Avanex", "Birchmeier", "Compact", "CONCORDIA", "CSS", "EGK",
+    "Einsiedler Krankenkasse", "Galenos", "Glarner", "Groupe Mutuel", "Helsana",
+    "Innova", "Intras", "KPT", "Luzerner Hinterland", "Mutuel", "ÖKK", "Philos",
+    "Progrès", "Provita", "rhenusana", "Sanagate", "sana24", "Sanitas", "SLKK",
+    "sodalis", "Steffisburg", "Sumiswalder", "SWICA", "Sympany",
+    "Vallée d'Entremont", "Visana", "Visperterminen", "vita surselva",
+    "Vivacare", "Vivao Sympany", "Wädenswil", "curaulta"
+  ];
+
+  /* Baut die <datalist> einmal pro Seite, sobald ein Feld sie referenziert. */
+  function kassenlisteEinbauen() {
+    if (!document.querySelector('[list="kassenListe"]')) return;
+    if (document.getElementById("kassenListe")) return;
+
+    var liste = document.createElement("datalist");
+    liste.id = "kassenListe";
+    KASSEN.forEach(function (name) {
+      var o = document.createElement("option");
+      o.value = name;
+      liste.appendChild(o);
+    });
+    document.body.appendChild(liste);
+  }
 
   /* ---------------------------------------------------------------
      1. Quelle erfassen (First-Touch-Attribution)
@@ -97,31 +138,52 @@
   /* ---------------------------------------------------------------
      2. Automatische Eingangsbestätigung an den Interessenten
      --------------------------------------------------------------- */
-  function autoAntwort(vorname) {
+  /* Steuer- und Verwaltungsfelder gehören nicht in die Kundenbestätigung. */
+  var NICHT_ANZEIGEN = [
+    "_subject", "_template", "_autoresponse", "_honey", "email",
+    "Priorität", "Kampagne", "Quelle", "Sprache", "Zeitpunkt"
+  ];
+
+  /* Baut aus den ausgefüllten Feldern eine lesbare Übersicht für den Kunden. */
+  function zusammenfassung(lead) {
+    return Object.keys(lead)
+      .filter(function (k) {
+        return k.charAt(0) !== "_" &&
+               NICHT_ANZEIGEN.indexOf(k) < 0 &&
+               String(lead[k] == null ? "" : lead[k]).trim() !== "";
+      })
+      .map(function (k) { return "  " + k + ": " + lead[k]; })
+      .join("\n");
+  }
+
+  function autoAntwort(vorname, lead) {
+    var uebersicht = zusammenfassung(lead);
+
     /* Der Interessent bekommt die Bestätigung in der Sprache, in der er
        das Formular gesehen hat – sonst wirkt der Erstkontakt unseriös. */
     if ((document.documentElement.lang || "").toLowerCase().indexOf("en") === 0) {
       return "Hello " + (vorname || "") + ",\n\n" +
         "Thank you for your request to SwissPremia – we have received it.\n\n" +
-        "What happens next:\n" +
+        "YOUR DETAILS\n" + uebersicht + "\n\n" +
+        "Something wrong or missing? Simply reply to this email.\n\n" +
+        "WHAT HAPPENS NEXT\n" +
         "1. We review your details and put together the offers that fit you.\n" +
         "2. " + CONFIG.BERATER_NAME + " will get in touch " + CONFIG.RUECKRUF_VERSPRECHEN_EN + ".\n" +
         "3. You receive a non-binding overview – and decide in your own time.\n\n" +
-        "The consultation is free of charge and without obligation.\n" +
-        "If anything changes or you prefer a particular time, simply reply to this email.\n\n" +
-        "Kind regards\n" + CONFIG.BERATER_NAME + "\nSwissPremia";
+        "The consultation is free of charge and without obligation.\n\n" +
+        "Kind regards\n" + CONFIG.BERATER_NAME + "\nSwissPremia\n" + CONFIG.LEAD_EMAIL;
     }
 
     return "Guten Tag " + (vorname || "") + "\n\n" +
       "Vielen Dank für Ihre Anfrage bei SwissPremia – sie ist bei uns eingegangen.\n\n" +
-      "Was jetzt passiert:\n" +
+      "IHRE ANGABEN\n" + uebersicht + "\n\n" +
+      "Stimmt etwas nicht oder fehlt eine Angabe? Antworten Sie einfach auf diese E-Mail.\n\n" +
+      "WAS JETZT PASSIERT\n" +
       "1. Wir prüfen Ihre Angaben und suchen die passenden Angebote heraus.\n" +
       "2. " + CONFIG.BERATER_NAME + " meldet sich " + CONFIG.RUECKRUF_VERSPRECHEN + " bei Ihnen.\n" +
       "3. Sie erhalten eine unverbindliche Übersicht – Sie entscheiden in Ruhe.\n\n" +
-      "Die Beratung ist für Sie kostenlos und unverbindlich.\n" +
-      "Falls sich etwas ändert oder Sie einen bestimmten Zeitpunkt bevorzugen, " +
-      "antworten Sie einfach auf diese E-Mail.\n\n" +
-      "Freundliche Grüsse\n" + CONFIG.BERATER_NAME + "\nSwissPremia";
+      "Die Beratung ist für Sie kostenlos und unverbindlich.\n\n" +
+      "Freundliche Grüsse\n" + CONFIG.BERATER_NAME + "\nSwissPremia\n" + CONFIG.LEAD_EMAIL;
   }
 
   /* ---------------------------------------------------------------
@@ -135,13 +197,6 @@
     var email = felder["E-Mail"] || felder.email || "";
 
     var lead = {
-      /* formsubmit-Steuerfelder */
-      _subject: optionen.betreff || "🔥 Neuer Lead – SwissPremia",
-      _template: "table",
-      _autoresponse: autoAntwort(vorname),
-      /* formsubmit nutzt das Feld "email" für die automatische Antwort */
-      email: email,
-
       Priorität: optionen.prioritaet || "Normal",
       Kampagne: optionen.kampagne || quelle.utm_campaign || "Direkt",
       Quelle: quelleAlsText(quelle),
@@ -153,41 +208,62 @@
       if (lead[k] === undefined) lead[k] = felder[k];
     });
 
+    /* Steuerfelder erst jetzt setzen – die Bestätigung soll die
+       ausgefüllten Angaben enthalten, also muss lead vorher vollständig sein. */
+    lead._subject = optionen.betreff || "🔥 Neuer Lead – SwissPremia";
+    lead._template = "table";
+    lead._autoresponse = autoAntwort(vorname, lead);
+    /* formsubmit nutzt das Feld "email" für die automatische Antwort */
+    lead.email = email;
+
     sicherungskopie(lead);
 
-    var versand = [];
+    var versuche = [];
 
-    /* a) E-Mail-Benachrichtigung via formsubmit.co */
-    versand.push(
-      fetch("https://formsubmit.co/ajax/" + CONFIG.LEAD_EMAIL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(lead)
-      }).then(function (r) {
-        if (!r.ok) throw new Error("formsubmit HTTP " + r.status);
-        return true;
-      })
-    );
-
-    /* b) Google-Sheet-CRM + Sofort-Push (fire and forget, blockiert nie). */
+    /* a) Hauptkanal: eigenes Google Apps Script.
+       Wegen mode:"no-cors" lässt sich die Antwort nicht auslesen – die
+       Anfrage geht aber zuverlässig raus. Kommt sie an, verschickt das
+       Skript beide Mails: Meldung an dich und Bestätigung an den Kunden. */
     if (CONFIG.WEBHOOK_URL) {
-      try {
+      versuche.push(
         fetch(CONFIG.WEBHOOK_URL, {
           method: "POST",
           mode: "no-cors",
           /* text/plain vermeidet den CORS-Preflight, den Apps Script nicht beantwortet */
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(lead)
-        }).catch(function () {});
-      } catch (e) { /* egal – die E-Mail ist der verbindliche Kanal */ }
+        })
+      );
     }
 
-    return Promise.all(versand)
-      .then(function () { return { ok: true, lead: lead }; })
-      .catch(function (fehler) {
-        mailtoFallback(lead);
-        return { ok: false, lead: lead, fehler: fehler };
-      });
+    /* b) Zweitkanal: formsubmit.co. Scheitert dieser, ist das unkritisch,
+       solange der Webhook oben eingerichtet ist. */
+    if (CONFIG.FORMSUBMIT_AKTIV) {
+      versuche.push(
+        fetch("https://formsubmit.co/ajax/" + CONFIG.LEAD_EMAIL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(lead)
+        }).then(function (r) {
+          if (!r.ok) throw new Error("formsubmit HTTP " + r.status);
+          return r.json();
+        })
+      );
+    }
+
+    if (!versuche.length) {
+      return Promise.resolve({ ok: false, lead: lead, fehler: new Error("Kein Versandkanal konfiguriert") });
+    }
+
+    /* Ein durchgekommener Kanal genügt. */
+    return Promise.all(versuche.map(function (p) {
+      return p.then(function () { return true; }, function () { return false; });
+    })).then(function (ergebnisse) {
+      var erfolg = ergebnisse.some(Boolean);
+      return erfolg
+        ? { ok: true, lead: lead }
+        : { ok: false, lead: lead, fehler: new Error("Alle Versandkanäle fehlgeschlagen") };
+    });
   }
 
   function sicherungskopie(lead) {
@@ -198,13 +274,18 @@
     } catch (e) { /* localStorage nicht verfügbar */ }
   }
 
-  function mailtoFallback(lead) {
+  /* Letzte Rettung – wird NICHT mehr automatisch ausgelöst.
+     Früher öffnete sich bei einem Versandfehler ungefragt das Mailprogramm
+     des Besuchers. Das wirkt defekt und kostet den Lead. Jetzt bekommt der
+     Besucher eine verständliche Meldung mit einem Link, den er bewusst
+     anklicken kann – dieser hier. */
+  function mailtoLink(lead) {
     var text = Object.keys(lead)
       .filter(function (k) { return k.charAt(0) !== "_"; })
       .map(function (k) { return k + ": " + lead[k]; })
       .join("\n");
-    global.location.href = "mailto:" + CONFIG.LEAD_EMAIL +
-      "?subject=" + encodeURIComponent("Neue Lead-Anfrage – SwissPremia") +
+    return "mailto:" + CONFIG.LEAD_EMAIL +
+      "?subject=" + encodeURIComponent("Neue Anfrage – SwissPremia") +
       "&body=" + encodeURIComponent(text);
   }
 
@@ -230,13 +311,22 @@
      --------------------------------------------------------------- */
   global.LeadCore = {
     config: CONFIG,
+    kassen: KASSEN,
     quelle: ermittleQuelle,
     quelleAlsText: quelleAlsText,
     senden: sendeLead,
+    mailtoLink: mailtoLink,
     honeypotEinbauen: honeypotEinbauen,
-    istBot: istBot
+    istBot: istBot,
+    kassenlisteEinbauen: kassenlisteEinbauen
   };
 
   /* Quelle sofort beim Laden festhalten – auch wenn erst später abgeschickt wird. */
   ermittleQuelle();
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", kassenlisteEinbauen);
+  } else {
+    kassenlisteEinbauen();
+  }
 })(window);

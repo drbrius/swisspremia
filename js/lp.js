@@ -97,11 +97,26 @@
         betreff: optionen.betreff,
         kampagne: optionen.kampagne,
         prioritaet: optionen.prioritaet || "Normal"
-      }).then(function () {
-        var ziel = optionen.danke || LeadCore.config.DANKE_URL;
-        global.location.href = ziel +
-          "?k=" + encodeURIComponent(optionen.kampagne) +
-          "&lang=" + global.LP.sprache;
+      }).then(function (ergebnis) {
+        if (ergebnis && ergebnis.ok) {
+          var ziel = optionen.danke || LeadCore.config.DANKE_URL;
+          global.location.href = ziel +
+            "?k=" + encodeURIComponent(optionen.kampagne) +
+            "&lang=" + global.LP.sprache;
+          return;
+        }
+
+        /* Versand fehlgeschlagen: nicht auf die Danke-Seite weiterleiten,
+           sonst glaubt der Interessent, die Anfrage sei angekommen. */
+        if (btn) { btn.disabled = false; btn.textContent = urspruenglich; }
+        if (fehler) {
+          fehler.innerHTML = global.LP.sprache === "en"
+            ? "We could not submit your request just now. Please try again – or send us your details " +
+              '<a href="' + LeadCore.mailtoLink(ergebnis.lead) + '">by email</a>.'
+            : "Ihre Anfrage konnte gerade nicht übermittelt werden. Bitte versuchen Sie es nochmals – " +
+              'oder senden Sie uns Ihre Angaben <a href="' + LeadCore.mailtoLink(ergebnis.lead) + '">per E-Mail</a>.';
+          fehler.hidden = false;
+        }
       }).catch(function () {
         if (btn) { btn.disabled = false; btn.textContent = urspruenglich; }
       });

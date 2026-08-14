@@ -211,6 +211,9 @@
       Telefon: $("lfTelefon").value.trim(),
       "E-Mail": $("lfEmail").value.trim(),
       "PLZ/Ort": $("lfPlzOrt").value.trim(),
+      Grundversicherung: $("lfKasseGrund").value.trim() || "Keine Angabe",
+      Franchise: $("lfFranchise").value || "Weiss ich nicht",
+      Zusatzversicherung: $("lfKasseZusatz").value.trim() || "Keine Angabe",
       Interessen: interessen,
       Erreichbarkeit: $("lfZeit").value,
       Bemerkung: $("lfNachricht").value.trim(),
@@ -218,7 +221,18 @@
     }, {
       betreff: "🔥 Neue Lead-Anfrage – SwissPremia",
       prioritaet: letzteBerechnung ? "Hoch (hat gerechnet)" : "Normal"
-    }).then(zeigeErfolg);
+    }).then(function (ergebnis) {
+      if (ergebnis.ok) { zeigeErfolg(); return; }
+
+      // Versand fehlgeschlagen: verständlich melden statt Erfolg vortäuschen
+      btn.disabled = false;
+      btn.textContent = "Erneut senden";
+      fehler.innerHTML =
+        "Ihre Anfrage konnte gerade nicht übermittelt werden. " +
+        "Bitte versuchen Sie es nochmals – oder senden Sie uns Ihre Angaben direkt " +
+        '<a href="' + LeadCore.mailtoLink(ergebnis.lead) + '">per E-Mail</a>.';
+      fehler.hidden = false;
+    });
 
     function zeigeErfolg() {
       form.hidden = true;

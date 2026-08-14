@@ -233,6 +233,16 @@ a { color: var(--petrol); text-underline-offset: 3px; }
 .radio small { color: var(--text-soft); }
 .check-row { display: flex; flex-wrap: wrap; gap: 10px 22px; }
 .span-2 { grid-column: 1 / -1; }
+/* Zwischenüberschrift, die ein Formular in Abschnitte gliedert */
+.feld-gruppe {
+  font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--slate-tief); margin-bottom: -4px;
+  border-top: 1px solid var(--line); padding-top: 20px;
+}
+.feld-gruppe span {
+  font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text-soft);
+  font-size: .88rem;
+}
 .consent { font-size: .84rem !important; color: var(--text-soft); line-height: 1.6; }
 
 /* ===== Resultate ===== */

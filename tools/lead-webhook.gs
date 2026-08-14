@@ -52,15 +52,18 @@ var KONFIG = {
   TELEGRAM_TOKEN: '',
   TELEGRAM_CHAT_ID: '',
 
-  // E-Mail-Benachrichtigung an dich (leer lassen = deaktiviert).
-  // Meist unnötig, weil formsubmit.co bereits eine E-Mail schickt.
-  BENACHRICHTIGUNG_EMAIL: '',
+  // >>> WICHTIG <<< Hierhin geht die Lead-Meldung.
+  BENACHRICHTIGUNG_EMAIL: 'info@swisspremia.ch',
 
-  // Eingangsbestätigung an den Interessenten über Gmail verschicken?
-  // Standard false, weil formsubmit.co das bereits erledigt.
-  // Auf true setzen, wenn du formsubmit ablösen willst.
-  AUTO_ANTWORT: false,
+  // Eingangsbestätigung an den Interessenten – mit seinen Angaben.
+  AUTO_ANTWORT: true,
   ABSENDER_NAME: 'SwissPremia',
+
+  // Absenderadresse der Bestätigung. Muss in Gmail unter
+  // Einstellungen ▸ Konten ▸ "Senden als" freigeschaltet sein,
+  // sonst verschickt Google die Mail von deiner Gmail-Adresse.
+  // Leer lassen = Standardadresse des Kontos.
+  ABSENDER_EMAIL: 'info@swisspremia.ch',
 
   // Nach wie vielen Minuten ohne Bearbeitung erinnert dich das Skript?
   ERINNERUNG_NACH_MINUTEN: 30
@@ -80,6 +83,9 @@ var SPALTEN = [
   'PLZ/Ort',
   'Personen',
   'Einreise',
+  'Grundversicherung',   // heutige Kasse (KVG)
+  'Franchise',
+  'Zusatzversicherung',  // heutige Kasse (VVG) – oft eine andere
   'Erreichbarkeit',
   'Sprache',
   'Interessen',
@@ -198,6 +204,9 @@ function benachrichtigen(daten, zeile) {
     'Ort:      ' + (daten['PLZ/Ort'] || '–') + '\n' +
     'Personen: ' + (daten.Personen || '–') + '\n' +
     'Einreise: ' + (daten.Einreise || '–') + '\n' +
+    'Heute:    ' + (daten.Grundversicherung || '–') +
+      ' / Franchise ' + (daten.Franchise || '–') +
+      ' / Zusatz ' + (daten.Zusatzversicherung || '–') + '\n' +
     'Sprache:  ' + (daten.Sprache || '–') + '\n' +
     'Erreichbar: ' + (daten.Erreichbarkeit || 'Egal') + '\n' +
     'Kampagne: ' + (daten.Kampagne || '–') + '\n\n' +
@@ -229,8 +238,26 @@ function telegramSenden(text) {
   });
 }
 
+/* Verwaltungsfelder gehören nicht in die Kundenbestätigung. */
+var NICHT_ANZEIGEN = ['Priorität', 'Kampagne', 'Quelle', 'Sprache', 'Zeitpunkt'];
+
+/* Baut aus den ausgefüllten Feldern eine lesbare Übersicht für den Kunden. */
+function angabenAuflisten(daten) {
+  var zeilen = [];
+  Object.keys(daten).forEach(function (schluessel) {
+    if (schluessel.charAt(0) === '_') return;
+    if (NICHT_ANZEIGEN.indexOf(schluessel) >= 0) return;
+    if (schluessel === 'email') return; // Dublette zu "E-Mail"
+    var wert = daten[schluessel];
+    if (wert === null || wert === undefined || String(wert).trim() === '') return;
+    zeilen.push('  ' + schluessel + ': ' + wert);
+  });
+  return zeilen.join('\n');
+}
+
 function autoAntwortSenden(daten) {
   var englisch = String(daten.Sprache || '').toLowerCase().indexOf('eng') === 0;
+  var uebersicht = angabenAuflisten(daten);
 
   var betreff = englisch
     ? 'Your health insurance comparison – we have received your request'
@@ -238,23 +265,35 @@ function autoAntwortSenden(daten) {
 
   var text = englisch
     ? 'Hello ' + (daten.Vorname || '') + ',\n\n' +
-      'Thank you for your request. We are preparing your personal comparison ' +
-      'based on the official federal premium data and will call you shortly.\n\n' +
-      'If you would prefer a different time, simply reply to this email.\n\n' +
-      'Kind regards\n' + KONFIG.ABSENDER_NAME
+      'Thank you for your request to SwissPremia – we have received it.\n\n' +
+      'YOUR DETAILS\n' + uebersicht + '\n\n' +
+      'Something wrong or missing? Simply reply to this email.\n\n' +
+      'WHAT HAPPENS NEXT\n' +
+      'We prepare your personal comparison based on the official federal premium ' +
+      'data and call you shortly. The consultation is free and without obligation.\n\n' +
+      'Kind regards\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '')
     : 'Guten Tag ' + (daten.Vorname || '') + '\n\n' +
-      'Vielen Dank für Ihre Anfrage. Wir stellen Ihren persönlichen Vergleich ' +
-      'auf Basis der offiziellen Prämiendaten des Bundes zusammen und melden uns ' +
-      'in Kürze telefonisch bei Ihnen.\n\n' +
-      'Passt Ihnen ein anderer Zeitpunkt besser? Antworten Sie einfach auf diese E-Mail.\n\n' +
-      'Freundliche Grüsse\n' + KONFIG.ABSENDER_NAME;
+      'Vielen Dank für Ihre Anfrage bei SwissPremia – sie ist bei uns eingegangen.\n\n' +
+      'IHRE ANGABEN\n' + uebersicht + '\n\n' +
+      'Stimmt etwas nicht oder fehlt eine Angabe? Antworten Sie einfach auf diese E-Mail.\n\n' +
+      'WAS JETZT PASSIERT\n' +
+      'Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
+      'des Bundes zusammen und melden uns in Kürze telefonisch bei Ihnen. ' +
+      'Die Beratung ist für Sie kostenlos und unverbindlich.\n\n' +
+      'Freundliche Grüsse\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '');
 
-  MailApp.sendEmail({
+  var optionen = {
     to: daten['E-Mail'],
     subject: betreff,
     body: text,
     name: KONFIG.ABSENDER_NAME
-  });
+  };
+  if (KONFIG.ABSENDER_EMAIL) {
+    optionen.from = KONFIG.ABSENDER_EMAIL;
+    optionen.replyTo = KONFIG.ABSENDER_EMAIL;
+  }
+
+  MailApp.sendEmail(optionen);
 }
 
 /* ======================== Nachfass-Erinnerung =========================== */

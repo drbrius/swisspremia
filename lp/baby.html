@@ -3,9 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baby unterwegs? Krankenkasse jetzt regeln – SwissPremia</title>
-  <meta name="description" content="Ihr Kind muss innert 3 Monaten nach der Geburt versichert sein. Wer die Zusatzversicherung vor der Geburt abschliesst, bekommt sie ohne Gesundheitsprüfung.">
-  <meta name="robots" content="noindex">
+  <title>Krankenkasse fürs Baby &amp; Zusatzversicherung | SwissPremia</title>
+  <meta name="description" content="Ihr Kind muss innert 3 Monaten nach der Geburt versichert sein. Die Zusatzversicherung vor der Geburt abschliessen – ohne Gesundheitsprüfung. Kostenlose Beratung.">
+  <link rel="canonical" href="https://www.swisspremia.ch/lp/baby.html">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="geo.region" content="CH">
+
+  <!-- Vorschau beim Teilen in sozialen Netzwerken -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_CH">
+  <meta property="og:site_name" content="SwissPremia">
+  <meta property="og:url" content="https://www.swisspremia.ch/lp/baby.html">
+  <meta property="og:title" content="Krankenkasse fürs Baby &amp; Zusatzversicherung | SwissPremia">
+  <meta property="og:description" content="Ihr Kind muss innert 3 Monaten nach der Geburt versichert sein. Die Zusatzversicherung vor der Geburt abschliessen – ohne Gesundheitsprüfung. Kostenlose Beratung.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&w=1200&h=630&q=70">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Krankenkasse fürs Baby &amp; Zusatzversicherung | SwissPremia">
+  <meta name="twitter:description" content="Ihr Kind muss innert 3 Monaten nach der Geburt versichert sein. Die Zusatzversicherung vor der Geburt abschliessen – ohne Gesundheitsprüfung. Kostenlose Beratung.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&w=1200&h=630&q=70">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Wir haben schon eine Kasse – lohnt sich das Gespräch trotzdem?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In den meisten Fällen ja, weil sich mit einem Kind die Rechnung ändert. Kinderprämien, Familienrabatte und die Franchise Ihres Kindes (CHF 0 bis 600) wirken zusammen. Und die Frage der Zusatzversicherung stellt sich unabhängig davon, bei welcher Kasse Sie sind."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was kostet mich die Beratung?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nichts. Wir werden – wie in der Schweiz üblich – vom Versicherer entschädigt, wenn ein Vertrag zustande kommt. Die Entschädigung ist gesetzlich begrenzt. Ihre Prämie in der Grundversicherung ändert sich dadurch nicht: Sie ist vom Bund genehmigt und überall gleich hoch."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Rufen Sie mich ungefragt an?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nein. Wir kontaktieren ausschliesslich Personen, die uns – wie über dieses Formular – ausdrücklich darum gebeten haben. Telefonische Kaltakquise ist in der Schweiz seit dem 1. September 2024 verboten, und wir halten uns daran. Wenn Sie nichts mehr hören möchten, genügt ein Wort."
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -92,6 +141,33 @@
               <option value="Wir planen erst">Wir planen erst</option>
             </select>
           </div>
+          <div class="field span-2">
+            <p class="feld-gruppe">Ihre heutige Situation <span>– optional, macht die Beratung konkreter</span></p>
+          </div>
+          <div class="field">
+            <label for="fKasseGrund">Grundversicherung</label>
+            <input type="text" id="fKasseGrund" name="kasse_grund" data-label="Grundversicherung"
+                   list="kassenListe" autocomplete="off" placeholder="z. B. CSS, Helsana …">
+          </div>
+          <div class="field">
+            <label for="fFranchise">Ihre Franchise</label>
+            <select id="fFranchise" name="franchise_aktuell" data-label="Franchise">
+              <option value="">Weiss ich nicht</option>
+              <option value="CHF 300">CHF 300</option>
+              <option value="CHF 500">CHF 500</option>
+              <option value="CHF 1'000">CHF 1'000</option>
+              <option value="CHF 1'500">CHF 1'500</option>
+              <option value="CHF 2'000">CHF 2'000</option>
+              <option value="CHF 2'500">CHF 2'500</option>
+            </select>
+          </div>
+          <div class="field span-2">
+            <label for="fKasseZusatz">Zusatzversicherung</label>
+            <input type="text" id="fKasseZusatz" name="kasse_zusatz" data-label="Zusatzversicherung"
+                   list="kassenListe" autocomplete="off" placeholder="Kasse – oder «keine»">
+            <div class="field-hint">Entscheidend für die Frage, wo Ihr Kind ohne Gesundheitsprüfung aufgenommen wird.</div>
+          </div>
+
           <div class="field span-2">
             <label for="fZeit">Wann erreichen wir Sie am besten?</label>
             <select id="fZeit" name="erreichbarkeit" data-label="Erreichbarkeit">

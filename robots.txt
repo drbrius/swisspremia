@@ -1,0 +1,12 @@
+# SwissPremia – Krankenkassen-Vergleich Schweiz
+# https://www.swisspremia.ch
+
+User-agent: *
+Allow: /
+
+# Die Danke-Seite gehört nicht in den Index: Sie ist ohne vorheriges Formular
+# sinnlos und würde die Auswertung der Konversionen verfälschen.
+Disallow: /lp/danke.html
+Disallow: /lp/danke
+
+Sitemap: https://www.swisspremia.ch/sitemap.xml
