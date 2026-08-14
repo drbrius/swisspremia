@@ -25,7 +25,7 @@
        Bestätigung mit seinen Angaben.
        Solange dieses Feld leer ist, läuft der Versand nur über formsubmit.co –
        und der Dienst hat sich als unzuverlässig erwiesen. Bitte eintragen. */
-    WEBHOOK_URL: "",
+    WEBHOOK_URL: "https://script.google.com/macros/s/AKfycbwCVz8C7HGbxV02ARXNIso-KJAZfRlL2ZASThr3J0Jio0aB59gLuIXXiJetHaYsyXM7/exec",
 
     /* Zweitkanal formsubmit.co – standardmässig AUS.
        Der Dienst war am 14.08.2026 über Stunden nicht erreichbar (HTTP 000)
