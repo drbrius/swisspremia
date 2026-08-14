@@ -204,13 +204,25 @@ function rohSichern(inhalt) {
 
 /* ======================== E-Mail an dich =============================== */
 
+/**
+ * Vergleicht Feldnamen unempfindlich gegen Gross-/Kleinschreibung und
+ * beschädigte Sonderzeichen: 'Priorität' und 'Priorit?t' ergeben beide
+ * 'prioritt'. Ohne das rutschen interne Felder in die Kundenmail, sobald
+ * ein Umlaut auf dem Transportweg kaputtgeht.
+ */
+function schluesselKern(name) {
+  return String(name).toLowerCase().replace(/[^a-z]/g, '');
+}
+
+var NICHT_ANZEIGEN_KERN = NICHT_ANZEIGEN.map(schluesselKern);
+
 /* Baut aus den ausgefüllten Feldern eine lesbare Liste. */
 function angabenAuflisten(daten, mitVerwaltung) {
   var zeilen = [];
   Object.keys(daten).forEach(function (schluessel) {
     if (schluessel.charAt(0) === '_') return;
     if (schluessel === 'email') return; // Dublette zu "E-Mail"
-    if (!mitVerwaltung && NICHT_ANZEIGEN.indexOf(schluessel) >= 0) return;
+    if (!mitVerwaltung && NICHT_ANZEIGEN_KERN.indexOf(schluesselKern(schluessel)) >= 0) return;
     var wert = String(daten[schluessel] == null ? '' : daten[schluessel]).trim();
     if (wert === '') return;
     // Platzhalter für leere Felder gehören nicht in die Kundenmail

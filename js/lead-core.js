@@ -146,11 +146,18 @@
     "Priorität", "Kampagne", "Quelle", "Sprache", "Zeitpunkt"
   ];
 
+  /* Vergleicht Feldnamen unempfindlich gegen beschädigte Sonderzeichen:
+     "Priorität" und "Priorit?t" ergeben beide "prioritt". */
+  function schluesselKern(name) {
+    return String(name).toLowerCase().replace(/[^a-z]/g, "");
+  }
+  var NICHT_ANZEIGEN_KERN = NICHT_ANZEIGEN.map(schluesselKern);
+
   /* Baut aus den ausgefüllten Feldern eine lesbare Übersicht für den Kunden. */
   function zusammenfassung(lead) {
     return Object.keys(lead)
       .filter(function (k) {
-        if (k.charAt(0) === "_" || NICHT_ANZEIGEN.indexOf(k) >= 0) return false;
+        if (k.charAt(0) === "_" || NICHT_ANZEIGEN_KERN.indexOf(schluesselKern(k)) >= 0) return false;
         var wert = String(lead[k] == null ? "" : lead[k]).trim();
         /* Platzhalter für leere Felder gehören nicht in die Kundenmail */
         return wert !== "" &&
