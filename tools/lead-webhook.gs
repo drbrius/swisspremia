@@ -61,6 +61,12 @@ var KONFIG = {
   // Bestätigung an den Interessenten verschicken?
   AUTO_ANTWORT: true,
 
+  // Lead zusätzlich ins Google Sheet schreiben?
+  // Die Mail geht in jedem Fall raus – das Sheet ist nur deine Übersicht.
+  // Auf false setzen, wenn du ausschliesslich E-Mails willst.
+  // Achtung: ohne Sheet gibt es auch keine Nachfass-Erinnerung.
+  SHEET_SPEICHERN: true,
+
   // Nach wie vielen Minuten erinnert dich das Skript per E-Mail an einen
   // Lead, der noch auf "Neu" steht? 0 = Erinnerung ausgeschaltet.
   ERINNERUNG_NACH_MINUTEN: 30
@@ -103,7 +109,17 @@ var NICHT_ANZEIGEN = ['Priorität', 'Kampagne', 'Quelle', 'Sprache', 'Zeitpunkt'
 function doPost(e) {
   try {
     var daten = JSON.parse(e.postData.contents);
-    var zeile = leadSpeichern(daten);
+
+    /* Die Mail hat Vorrang. Selbst wenn das Sheet zickt, geht der Lead raus. */
+    var zeile = 0;
+    if (KONFIG.SHEET_SPEICHERN) {
+      try {
+        zeile = leadSpeichern(daten);
+      } catch (sheetFehler) {
+        rohSichern('Sheet-Fehler: ' + sheetFehler + ' | ' + e.postData.contents);
+      }
+    }
+
     leadMelden(daten, zeile);
     if (KONFIG.AUTO_ANTWORT && daten['E-Mail']) bestaetigungSenden(daten);
     return antwort({ ok: true, zeile: zeile });
@@ -215,8 +231,8 @@ function leadMelden(daten, zeile) {
   var text =
     'Neue Anfrage über swisspremia.ch\n\n' +
     angabenAuflisten(daten, true) + '\n\n' +
-    '➡️ Jetzt anrufen – nicht später. Wer sofort zurückruft, erreicht deutlich mehr Leute.\n\n' +
-    'Der Lead steht als Zeile ' + zeile + ' im Google Sheet.';
+    '➡️ Jetzt anrufen – nicht später. Wer sofort zurückruft, erreicht deutlich mehr Leute.' +
+    (zeile ? '\n\nDer Lead steht als Zeile ' + zeile + ' im Google Sheet.' : '');
 
   MailApp.sendEmail({
     to: KONFIG.BENACHRICHTIGUNG_EMAIL,
@@ -279,6 +295,8 @@ function bestaetigungSenden(daten) {
  */
 function erinnerungPruefen() {
   if (!KONFIG.ERINNERUNG_NACH_MINUTEN || !KONFIG.BENACHRICHTIGUNG_EMAIL) return;
+  // Ohne Sheet gibt es nichts nachzuschlagen
+  if (!KONFIG.SHEET_SPEICHERN) return;
 
   var blatt = blattHolen();
   if (blatt.getLastRow() < 2) return;
@@ -320,7 +338,7 @@ function erinnerungPruefen() {
 /* ======================== Einmalige Einrichtung ========================= */
 
 function einrichten() {
-  blattHolen();
+  if (KONFIG.SHEET_SPEICHERN) blattHolen();
 
   // Alte Trigger entfernen, damit nichts doppelt läuft.
   ScriptApp.getProjectTriggers().forEach(function (trigger) {
@@ -329,7 +347,7 @@ function einrichten() {
     }
   });
 
-  if (KONFIG.ERINNERUNG_NACH_MINUTEN) {
+  if (KONFIG.ERINNERUNG_NACH_MINUTEN && KONFIG.SHEET_SPEICHERN) {
     ScriptApp.newTrigger('erinnerungPruefen').timeBased().everyMinutes(15).create();
   }
 
@@ -357,7 +375,7 @@ function testLead() {
     Erreichbarkeit: 'Vormittag (8–12 Uhr)',
     Sprache: 'Deutsch'
   };
-  var zeile = leadSpeichern(beispiel);
+  var zeile = KONFIG.SHEET_SPEICHERN ? leadSpeichern(beispiel) : 0;
   leadMelden(beispiel, zeile);
   if (KONFIG.AUTO_ANTWORT) bestaetigungSenden(beispiel);
   Logger.log('Probelauf: Zeile ' + zeile + ' geschrieben, Mails verschickt.');
