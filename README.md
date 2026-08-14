@@ -18,7 +18,7 @@ Krankenkassenprämie, fordern eine Beratung an – und der Lead landet sofort be
 | `js/lead-core.js` | **Zentrale Konfiguration**, Quellen-Tracking, Versand, Auto-Antwort |
 | `js/lp.js` | Sprachumschaltung und Formularlogik der Landingpages |
 | `js/app.js` | Prämienrechner der Startseite |
-| `tools/lead-webhook.gs` | Google Apps Script: Sheet-CRM, Telegram-Push, Nachfass-Erinnerung |
+| `tools/lead-webhook.gs` | Google Apps Script: Lead-Mail an Sie, Bestätigung an den Kunden, Sheet-Übersicht |
 | `tools/build_data.js` | Erzeugt `data/praemien.js` und `data/plz.js` aus den BAG-Dateien |
 
 ## Design
@@ -57,41 +57,64 @@ identisch – der Preis ist der einzige echte Unterschied. Genau das ist das Ver
 
 ## Einrichtung (einmalig)
 
-### 1. Zentrale Konfiguration
+### So läuft eine Anfrage
+
+```
+Besucher füllt das Formular aus
+        │
+        ▼
+Google Apps Script (tools/lead-webhook.gs)
+        │
+        ├──► Lead-Mail an info@swisspremia.ch
+        ├──► Bestätigung an den Interessenten, mit seinen Angaben
+        └──► Zeile im Google Sheet (Status, Kontaktversuche, Wiedervorlage)
+```
+
+Kein Fremddienst dazwischen. Das Skript läuft unter Ihrem Google-Konto und ist gratis.
+
+### 1. Postfach anlegen
+
+`info@swisspremia.ch` muss als Postfach existieren – dorthin gehen alle Lead-Mails.
+
+### 2. Apps Script veröffentlichen (Pflicht)
+
+Die vollständige Anleitung steht als Kommentar am Anfang von `tools/lead-webhook.gs`
+(ca. 10 Minuten). Kurzfassung: Google Sheet anlegen → *Erweiterungen ▸ Apps Script* →
+Code einfügen → *Bereitstellen ▸ Web-App* (Zugriff: Jeder) → Funktion `einrichten()`
+einmal ausführen → mit `testLead()` einen Probelauf machen.
+
+Damit die Bestätigung von `info@swisspremia.ch` kommt und nicht von Ihrer Gmail-Adresse,
+die Adresse in Gmail unter *Einstellungen ▸ Konten ▸ Senden als* freischalten.
+
+### 3. Zentrale Konfiguration
 
 Alles Wichtige steht oben in `js/lead-core.js` im Block `CONFIG`:
 
 ```js
-LEAD_EMAIL:      "drbrius@gmail.com"  // wohin die Lead-Benachrichtigung geht
-WEBHOOK_URL:     ""                   // Apps-Script-URL (…/exec), siehe unten
-BERATER_NAME:    "…"                  // Absender der automatischen Bestätigung
-BERATER_TELEFON: ""                   // erscheint auf der Danke-Seite
-WHATSAPP_NUMMER: ""                   // z. B. "41791234567"
-TERMIN_URL:      ""                   // Calendly / Cal.com für Selbstbuchung
+LEAD_EMAIL:       "info@swisspremia.ch"  // Empfänger der Lead-Anfrage
+WEBHOOK_URL:      ""                     // >>> Apps-Script-URL (…/exec) eintragen <<<
+FORMSUBMIT_AKTIV: false                  // Reserve-Kanal, standardmässig aus
+BERATER_NAME:     "…"                    // Absender der Bestätigung
+BERATER_TELEFON:  ""                     // erscheint auf der Danke-Seite
+WHATSAPP_NUMMER:  ""                     // z. B. "41791234567"
+TERMIN_URL:       ""                     // Calendly / Cal.com für Selbstbuchung
 ```
+
+**Solange `WEBHOOK_URL` leer ist, kann keine Anfrage zugestellt werden.** Die Seite
+schreibt in diesem Fall beim Laden eine Fehlermeldung in die Browser-Konsole.
 
 Leere Felder werden auf der Danke-Seite automatisch ausgeblendet.
 
-### 2. Leads per E-Mail empfangen (Pflicht)
-
-Das Formular sendet über den Gratisdienst [formsubmit.co](https://formsubmit.co).
-Beim **allerersten** abgeschickten Formular kommt eine Aktivierungs-E-Mail –
-einmal auf «Activate Form» klicken, danach landet jeder Lead im Posteingang.
-Kein Konto, keine Kosten.
-
-**Machen Sie das vor der ersten Kampagne**, sonst geht der erste echte Lead verloren.
-
-### 3. Sheet-CRM und Handy-Push (empfohlen)
-
-`tools/lead-webhook.gs` schreibt jeden Lead in ein Google Sheet, schickt Ihnen sofort
-eine Telegram-Nachricht und erinnert Sie, wenn ein Lead nach 30 Minuten noch offen ist.
-Die vollständige Anleitung steht als Kommentar am Anfang der Datei (ca. 10 Minuten Aufwand).
-
 ### 4. Sicherungsnetze
 
-Jeder Lead wird zusätzlich im Browser des Besuchers gespeichert (localStorage, Schlüssel
-`leads`). Schlägt der Versand fehl, öffnet sich automatisch das E-Mail-Programm mit
-vorausgefüllter Nachricht. Es geht also nichts verloren.
+Jeder Lead wird zusätzlich im Browser des Besuchers gespeichert (localStorage,
+Schlüssel `leads`). Schlägt der Versand fehl, bleibt das Formular stehen und der
+Besucher sieht eine verständliche Meldung mit «Erneut senden» sowie einem
+anklickbaren E-Mail-Link – es öffnet sich **nichts** von selbst.
+
+> **Warum nicht formsubmit.co?** Der Dienst war die ursprüngliche Lösung, fiel am
+> 14.08.2026 über Stunden komplett aus (keine Verbindung, HTTP 000) und verschluckte
+> dabei Anfragen. Er ist deshalb standardmässig abgeschaltet.
 
 ## Kampagnen-Links
 

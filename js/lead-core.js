@@ -27,9 +27,11 @@
        und der Dienst hat sich als unzuverlässig erwiesen. Bitte eintragen. */
     WEBHOOK_URL: "",
 
-    /* Zweitkanal. Nur aktiv, wenn die Adresse einmalig bei formsubmit.co
-       bestätigt wurde. false = ausschliesslich der Webhook oben wird genutzt. */
-    FORMSUBMIT_AKTIV: true,
+    /* Zweitkanal formsubmit.co – standardmässig AUS.
+       Der Dienst war am 14.08.2026 über Stunden nicht erreichbar (HTTP 000)
+       und hat dabei Leads verschluckt. Nur einschalten, wenn du ihn bewusst
+       als Reserve willst und info@swisspremia.ch dort bestätigt hast. */
+    FORMSUBMIT_AKTIV: false,
 
     /* Name, der in der automatischen Antwort an den Interessenten steht. */
     BERATER_NAME: "Ihr SwissPremia-Berater",
@@ -148,9 +150,13 @@
   function zusammenfassung(lead) {
     return Object.keys(lead)
       .filter(function (k) {
-        return k.charAt(0) !== "_" &&
-               NICHT_ANZEIGEN.indexOf(k) < 0 &&
-               String(lead[k] == null ? "" : lead[k]).trim() !== "";
+        if (k.charAt(0) === "_" || NICHT_ANZEIGEN.indexOf(k) >= 0) return false;
+        var wert = String(lead[k] == null ? "" : lead[k]).trim();
+        /* Platzhalter für leere Felder gehören nicht in die Kundenmail */
+        return wert !== "" &&
+               wert !== "Keine Angabe" &&
+               wert !== "Weiss ich nicht" &&
+               wert !== "Keine Berechnung durchgeführt";
       })
       .map(function (k) { return "  " + k + ": " + lead[k]; })
       .join("\n");
@@ -328,5 +334,15 @@
     document.addEventListener("DOMContentLoaded", kassenlisteEinbauen);
   } else {
     kassenlisteEinbauen();
+  }
+
+  /* Frühwarnung: Ohne konfigurierten Kanal geht jede Anfrage verloren.
+     Lieber beim Öffnen der Seite laut in der Konsole als still im Betrieb. */
+  if (!CONFIG.WEBHOOK_URL && !CONFIG.FORMSUBMIT_AKTIV) {
+    console.error(
+      "[SwissPremia] Kein Versandkanal konfiguriert – Formulare können keine " +
+      "Anfragen zustellen. Bitte WEBHOOK_URL in js/lead-core.js eintragen " +
+      "(Anleitung: tools/lead-webhook.gs)."
+    );
   }
 })(window);

@@ -235,7 +235,7 @@ Das Merkblatt ist schnell gemacht: die vier Punkte aus Abschnitt 5, ein QR-Code 
 **Regel: Rückruf innert 5 Minuten.** Nicht «heute noch». Wer nach einer Stunde anruft, erreicht deutlich weniger Leute und trifft auf jemanden, der inzwischen woanders angefragt hat.
 
 Im Projekt eingebaut:
-- **Telegram-Push aufs Handy**, sobald ein Formular abgeschickt wird (`tools/lead-webhook.gs`)
+- **Lead-Mail an info@swisspremia.ch**, sobald ein Formular abgeschickt wird (`tools/lead-webhook.gs`)
 - **Automatische Erinnerung nach 30 Minuten**, wenn der Lead im Sheet noch auf «Neu» steht
 - **Sofortige Eingangsbestätigung an den Interessenten** in seiner Sprache – hält ihn warm, bis du anrufst
 
@@ -319,7 +319,7 @@ Wer aussteigen will, wird sofort und kommentarlos gelöscht. Das ist Pflicht –
 
 | Tag | Was zwingend passieren muss |
 |---|---|
-| **Do 13.08.** (heute) | Facebook-Seite fertigstellen. **Werbekonto anlegen und Zahlungsmittel hinterlegen** – Prüfung dauert 24–48 h und ist der einzige Schritt, den du nicht beschleunigen kannst. Telegram-Bot einrichten, Apps Script veröffentlichen, `WEBHOOK_URL` in `js/lead-core.js` eintragen. Telefon, WhatsApp und Terminlink in derselben Datei ergänzen. Site deployen. Formular einmal selbst absenden und formsubmit aktivieren. |
+| **Do 13.08.** (heute) | Facebook-Seite fertigstellen. **Werbekonto anlegen und Zahlungsmittel hinterlegen** – Prüfung dauert 24–48 h und ist der einzige Schritt, den du nicht beschleunigen kannst. Postfach info@swisspremia.ch anlegen, Apps Script veröffentlichen, `WEBHOOK_URL` in `js/lead-core.js` eintragen. Telefon, WhatsApp und Terminlink in derselben Datei ergänzen. Site deployen. Formular einmal selbst absenden und prüfen, dass beide Mails ankommen. |
 | **Fr 14.08.** | Instant Form bauen, drei Anzeigen anlegen, Kampagne einreichen (CHF 25/Tag). Erste 10 Beiträge in Expat-Gruppen beantworten. Liste mit 20 Empfehlungspartnern erstellen. |
 | **Sa 15.08.** | **Kampagne läuft.** Wochenendabende sind für Expats die beste Zeit – sei erreichbar. Weitere Gruppenbeiträge, jetzt auch Elterngruppen. |
 | **So 16.08.** | Erste Leads erwarten. Sofort anrufen. Anzeigenleistung prüfen, noch nichts abschalten. |
