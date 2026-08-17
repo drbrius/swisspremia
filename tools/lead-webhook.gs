@@ -202,6 +202,63 @@ function rohSichern(inhalt) {
   blatt.appendRow([new Date(), inhalt]);
 }
 
+/* ======================== Absenderadresse ============================== */
+/**
+ * Liefert ABSENDER_EMAIL zurück, aber nur wenn die Adresse in Gmail unter
+ * "Senden als" freigeschaltet ist. Sonst null.
+ *
+ * Wichtig: MailApp.sendEmail() kennt die Option "from" gar nicht und
+ * ignoriert sie stillschweigend – der Versand läuft dann immer über die
+ * Standardadresse des Kontos. Nur GmailApp.sendEmail() kann den Absender
+ * ändern, und auch nur auf einen bestätigten Alias. Deshalb wird hier
+ * geprüft, bevor gesendet wird: ein unbekannter Absender führt sonst zu
+ * einem Laufzeitfehler und der Lead ginge verloren.
+ */
+function absenderAlias() {
+  if (!KONFIG.ABSENDER_EMAIL) return null;
+  try {
+    if (GmailApp.getAliases().indexOf(KONFIG.ABSENDER_EMAIL) >= 0) {
+      return KONFIG.ABSENDER_EMAIL;
+    }
+  } catch (e) { /* keine Gmail-Berechtigung – dann eben Standardabsender */ }
+  return null;
+}
+
+/* Verschickt über GmailApp, falls ein Alias gesetzt werden kann,
+   sonst über MailApp mit der Standardadresse. */
+function mailSenden(empfaenger, betreff, text, antwortAn) {
+  var alias = absenderAlias();
+  var optionen = {
+    name: KONFIG.ABSENDER_NAME,
+    replyTo: antwortAn || KONFIG.ABSENDER_EMAIL || undefined
+  };
+
+  if (alias) {
+    optionen.from = alias;
+    GmailApp.sendEmail(empfaenger, betreff, text, optionen);
+    return;
+  }
+
+  optionen.to = empfaenger;
+  optionen.subject = betreff;
+  optionen.body = text;
+  MailApp.sendEmail(optionen);
+}
+
+/**
+ * Diagnose: zeigt, welche Absenderadressen zur Verfügung stehen.
+ * Im Editor ausführen und ins Ausführungsprotokoll schauen.
+ */
+function aliasePruefen() {
+  var aliase = GmailApp.getAliases();
+  Logger.log('Freigeschaltete Absenderadressen: ' +
+    (aliase.length ? aliase.join(', ') : '(keine)'));
+  Logger.log('Gewuenschter Absender: ' + KONFIG.ABSENDER_EMAIL);
+  Logger.log(absenderAlias()
+    ? '=> wird verwendet'
+    : '=> NICHT verfuegbar, Mails gehen von der Standardadresse des Kontos raus');
+}
+
 /* ======================== E-Mail an dich =============================== */
 
 /**
@@ -246,14 +303,13 @@ function leadMelden(daten, zeile) {
     '➡️ Jetzt anrufen – nicht später. Wer sofort zurückruft, erreicht deutlich mehr Leute.' +
     (zeile ? '\n\nDer Lead steht als Zeile ' + zeile + ' im Google Sheet.' : '');
 
-  MailApp.sendEmail({
-    to: KONFIG.BENACHRICHTIGUNG_EMAIL,
-    subject: '🔥 Neuer Lead: ' + name + ' – ' + telefon,
-    body: text,
-    name: KONFIG.ABSENDER_NAME,
-    // Antworten gehen direkt an den Interessenten
-    replyTo: daten['E-Mail'] || KONFIG.BENACHRICHTIGUNG_EMAIL
-  });
+  // Antworten gehen direkt an den Interessenten
+  mailSenden(
+    KONFIG.BENACHRICHTIGUNG_EMAIL,
+    '🔥 Neuer Lead: ' + name + ' – ' + telefon,
+    text,
+    daten['E-Mail'] || KONFIG.BENACHRICHTIGUNG_EMAIL
+  );
 }
 
 /* ======================== Bestätigung an den Kunden ==================== */
@@ -285,18 +341,7 @@ function bestaetigungSenden(daten) {
       'Die Beratung ist für Sie kostenlos und unverbindlich.\n\n' +
       'Freundliche Grüsse\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '');
 
-  var optionen = {
-    to: daten['E-Mail'],
-    subject: betreff,
-    body: text,
-    name: KONFIG.ABSENDER_NAME
-  };
-  if (KONFIG.ABSENDER_EMAIL) {
-    optionen.from = KONFIG.ABSENDER_EMAIL;
-    optionen.replyTo = KONFIG.ABSENDER_EMAIL;
-  }
-
-  MailApp.sendEmail(optionen);
+  mailSenden(daten['E-Mail'], betreff, text);
 }
 
 /* ======================== Nachfass-Erinnerung =========================== */
@@ -338,13 +383,12 @@ function erinnerungPruefen() {
 
   if (!offen.length) return;
 
-  MailApp.sendEmail({
-    to: KONFIG.BENACHRICHTIGUNG_EMAIL,
-    subject: '⏰ ' + offen.length + ' unbearbeitete Lead(s)',
-    body: 'Diese Anfragen stehen noch auf "Neu":\n\n' + offen.join('\n') +
-          '\n\nSetz den Status im Sheet auf "Kontaktiert", sobald erledigt.',
-    name: KONFIG.ABSENDER_NAME
-  });
+  mailSenden(
+    KONFIG.BENACHRICHTIGUNG_EMAIL,
+    '⏰ ' + offen.length + ' unbearbeitete Lead(s)',
+    'Diese Anfragen stehen noch auf "Neu":\n\n' + offen.join('\n') +
+      '\n\nSetz den Status im Sheet auf "Kontaktiert", sobald erledigt.'
+  );
 }
 
 /* ======================== Einmalige Einrichtung ========================= */
