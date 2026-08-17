@@ -53,10 +53,18 @@ var KONFIG = {
   BENACHRICHTIGUNG_EMAIL: 'info@swisspremia.ch',
 
   // Absender der Bestätigung an den Interessenten.
-  // Muss in Gmail unter "Senden als" freigeschaltet sein (Schritt B oben).
-  // Leer lassen = Standardadresse deines Google-Kontos.
+  // Funktioniert NUR, wenn die Adresse in Gmail unter "Senden als"
+  // freigeschaltet ist – prüfbar mit der Funktion aliasePruefen().
+  // Klappt die Freischaltung nicht (z. B. weil der Hoster keinen
+  // SMTP-Versand erlaubt), hier '' eintragen: Dann verschickt Google
+  // von deiner Kontoadresse, der Empfänger sieht aber weiterhin
+  // "SwissPremia" als Namen, und Antworten gehen an ANTWORT_EMAIL.
   ABSENDER_EMAIL: 'info@swisspremia.ch',
   ABSENDER_NAME: 'SwissPremia',
+
+  // Wohin Antworten des Interessenten gehen sollen.
+  // Unabhängig vom Absender – funktioniert immer, ohne Freischaltung.
+  ANTWORT_EMAIL: 'info@swisspremia.ch',
 
   // Bestätigung an den Interessenten verschicken?
   AUTO_ANTWORT: true,
@@ -231,7 +239,10 @@ function mailSenden(empfaenger, betreff, text, antwortAn, html) {
   var alias = absenderAlias();
   var optionen = {
     name: KONFIG.ABSENDER_NAME,
-    replyTo: antwortAn || KONFIG.ABSENDER_EMAIL || undefined
+    /* Die Antwortadresse braucht keine Freischaltung. Auch wenn der
+       Absender die Gmail-Adresse bleibt, landen Antworten dadurch
+       zuverlässig im Geschäftspostfach. */
+    replyTo: antwortAn || KONFIG.ANTWORT_EMAIL || KONFIG.ABSENDER_EMAIL || undefined
   };
   if (html) optionen.htmlBody = html;
 
