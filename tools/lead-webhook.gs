@@ -225,13 +225,15 @@ function absenderAlias() {
 }
 
 /* Verschickt über GmailApp, falls ein Alias gesetzt werden kann,
-   sonst über MailApp mit der Standardadresse. */
-function mailSenden(empfaenger, betreff, text, antwortAn) {
+   sonst über MailApp mit der Standardadresse.
+   Der Klartext bleibt immer dabei – manche Programme zeigen kein HTML. */
+function mailSenden(empfaenger, betreff, text, antwortAn, html) {
   var alias = absenderAlias();
   var optionen = {
     name: KONFIG.ABSENDER_NAME,
     replyTo: antwortAn || KONFIG.ABSENDER_EMAIL || undefined
   };
+  if (html) optionen.htmlBody = html;
 
   if (alias) {
     optionen.from = alias;
@@ -243,6 +245,111 @@ function mailSenden(empfaenger, betreff, text, antwortAn) {
   optionen.subject = betreff;
   optionen.body = text;
   MailApp.sendEmail(optionen);
+}
+
+/* ======================== HTML-Gestaltung ============================== */
+/**
+ * E-Mail-HTML folgt anderen Regeln als eine Website: keine externen
+ * Stylesheets, kein Flexbox oder Grid, alle Angaben direkt am Element.
+ * Deshalb Tabellen und inline-Stile – das stellen Gmail, Outlook und
+ * Apple Mail zuverlässig dar.
+ */
+var FARBE = {
+  petrol: '#005786',
+  slate: '#212d39',
+  gold: '#ccba89',
+  creme: '#f4eee4',
+  linie: '#dcdee2',
+  text: '#3d4852',
+  grau: '#7b8794'
+};
+
+function htmlSchuetzen(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* Kopfband mit Wortmarke – bewusst ohne Bild, damit nichts blockiert wird
+   oder als roter Platzhalter erscheint. */
+function bannerHtml(unterzeile) {
+  return '' +
+  '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:' + FARBE.petrol + ';">' +
+    '<tr><td style="padding:28px 32px 24px 32px;">' +
+      '<div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:23px;line-height:1.2;color:#ffffff;letter-spacing:.3px;">' +
+        'Swiss<strong style="font-weight:700;">Premia</strong>' +
+      '</div>' +
+      '<div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:' + FARBE.gold + ';padding-top:7px;">' +
+        htmlSchuetzen(unterzeile) +
+      '</div>' +
+    '</td></tr>' +
+    '<tr><td style="background-color:' + FARBE.gold + ';font-size:0;line-height:0;height:4px;">&nbsp;</td></tr>' +
+  '</table>';
+}
+
+/* Rahmen um den Inhalt: grauer Hintergrund, weisse Karte, Fusszeile. */
+function htmlRahmen(unterzeile, inhalt, fusszeile) {
+  return '' +
+  '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+  '<meta name="viewport" content="width=device-width,initial-scale=1"></head>' +
+  '<body style="margin:0;padding:0;background-color:#eef1f4;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eef1f4;">' +
+      '<tr><td align="center" style="padding:24px 12px;">' +
+        '<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#ffffff;border-radius:10px;overflow:hidden;">' +
+          '<tr><td>' + bannerHtml(unterzeile) + '</td></tr>' +
+          '<tr><td style="padding:32px;font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:' + FARBE.text + ';">' +
+            inhalt +
+          '</td></tr>' +
+          '<tr><td style="background-color:' + FARBE.slate + ';padding:20px 32px;font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#9fb0c0;">' +
+            fusszeile +
+          '</td></tr>' +
+        '</table>' +
+      '</td></tr>' +
+    '</table>' +
+  '</body></html>';
+}
+
+/* Überschrift innerhalb der Karte */
+function abschnittHtml(titel) {
+  return '<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:' + FARBE.petrol +
+         ';font-weight:600;padding:26px 0 10px 0;">' + htmlSchuetzen(titel) + '</div>';
+}
+
+/* Die Angaben als zweispaltige Tabelle statt als Textliste */
+function angabenTabelleHtml(daten, mitVerwaltung) {
+  var zeilen = '';
+  Object.keys(daten).forEach(function (schluessel) {
+    if (schluessel.charAt(0) === '_') return;
+    if (schluessel === 'email') return;
+    if (!mitVerwaltung && NICHT_ANZEIGEN_KERN.indexOf(schluesselKern(schluessel)) >= 0) return;
+    var wert = String(daten[schluessel] == null ? '' : daten[schluessel]).trim();
+    if (wert === '') return;
+    if (!mitVerwaltung &&
+        (wert === 'Keine Angabe' || wert === 'Weiss ich nicht' ||
+         wert === 'Keine Berechnung durchgeführt')) return;
+
+    zeilen +=
+      '<tr>' +
+        '<td style="padding:9px 14px;border-bottom:1px solid ' + FARBE.linie + ';color:' + FARBE.grau +
+          ';font-size:13px;white-space:nowrap;vertical-align:top;width:38%;">' + htmlSchuetzen(schluessel) + '</td>' +
+        '<td style="padding:9px 14px;border-bottom:1px solid ' + FARBE.linie + ';color:' + FARBE.slate +
+          ';font-size:14px;font-weight:600;vertical-align:top;">' + htmlSchuetzen(wert) + '</td>' +
+      '</tr>';
+  });
+
+  if (!zeilen) return '';
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" ' +
+         'style="border:1px solid ' + FARBE.linie + ';border-radius:8px;overflow:hidden;">' +
+         zeilen + '</table>';
+}
+
+/* Hervorgehobener Kasten (cremefarben, goldene Kante) */
+function kastenHtml(inhalt) {
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;">' +
+    '<tr><td style="background-color:' + FARBE.creme + ';border-left:3px solid ' + FARBE.gold +
+      ';border-radius:0 8px 8px 0;padding:16px 20px;font-size:14px;line-height:1.6;color:' + FARBE.slate + ';">' +
+      inhalt +
+    '</td></tr></table>';
 }
 
 /**
@@ -303,12 +410,33 @@ function leadMelden(daten, zeile) {
     '➡️ Jetzt anrufen – nicht später. Wer sofort zurückruft, erreicht deutlich mehr Leute.' +
     (zeile ? '\n\nDer Lead steht als Zeile ' + zeile + ' im Google Sheet.' : '');
 
+  var telLink = String(telefon).replace(/[^0-9+]/g, '');
+  var inhalt =
+    '<p style="margin:0 0 4px 0;font-size:20px;color:' + FARBE.slate + ';font-weight:600;">' +
+      htmlSchuetzen(name) + '</p>' +
+    '<p style="margin:0;font-size:15px;color:' + FARBE.grau + ';">Neue Anfrage über swisspremia.ch</p>' +
+    (telLink
+      ? '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 0 0;">' +
+        '<tr><td style="background-color:' + FARBE.petrol + ';border-radius:999px;">' +
+        '<a href="tel:' + htmlSchuetzen(telLink) + '" style="display:inline-block;padding:13px 30px;' +
+        'font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:.6px;' +
+        'color:#ffffff;text-decoration:none;">📞 ' + htmlSchuetzen(telefon) + ' anrufen</a>' +
+        '</td></tr></table>'
+      : '') +
+    abschnittHtml('Angaben') + angabenTabelleHtml(daten, true) +
+    kastenHtml('<strong>Jetzt anrufen, nicht später.</strong> Wer sofort zurückruft, erreicht deutlich mehr Leute.' +
+      (zeile ? ' Der Lead steht als Zeile ' + zeile + ' im Google Sheet.' : ''));
+
+  var html = htmlRahmen('Neuer Lead', inhalt,
+    'Eine Antwort auf diese E-Mail geht direkt an den Interessenten.');
+
   // Antworten gehen direkt an den Interessenten
   mailSenden(
     KONFIG.BENACHRICHTIGUNG_EMAIL,
     '🔥 Neuer Lead: ' + name + ' – ' + telefon,
     text,
-    daten['E-Mail'] || KONFIG.BENACHRICHTIGUNG_EMAIL
+    daten['E-Mail'] || KONFIG.BENACHRICHTIGUNG_EMAIL,
+    html
   );
 }
 
@@ -341,7 +469,42 @@ function bestaetigungSenden(daten) {
       'Die Beratung ist für Sie kostenlos und unverbindlich.\n\n' +
       'Freundliche Grüsse\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '');
 
-  mailSenden(daten['E-Mail'], betreff, text);
+  /* HTML-Fassung mit Kopfband. Der Klartext oben bleibt als Rückfall. */
+  var tabelle = angabenTabelleHtml(daten, false);
+  var inhalt = englisch
+    ? '<p style="margin:0 0 14px 0;font-size:17px;color:' + FARBE.slate + ';">Hello ' +
+        htmlSchuetzen(daten.Vorname || '') + ',</p>' +
+      '<p style="margin:0;">Thank you for your request to SwissPremia – we have received it.</p>' +
+      abschnittHtml('Your details') + tabelle +
+      kastenHtml('<strong>Something wrong or missing?</strong> Simply reply to this email – it reaches us directly.') +
+      abschnittHtml('What happens next') +
+      '<p style="margin:0;">We prepare your personal comparison based on the official federal premium data ' +
+      'and call you shortly. The consultation is free and without obligation.</p>'
+    : '<p style="margin:0 0 14px 0;font-size:17px;color:' + FARBE.slate + ';">Guten Tag ' +
+        htmlSchuetzen(daten.Vorname || '') + '</p>' +
+      '<p style="margin:0;">Vielen Dank für Ihre Anfrage – sie ist bei uns eingegangen.</p>' +
+      abschnittHtml('Ihre Angaben') + tabelle +
+      kastenHtml('<strong>Stimmt etwas nicht oder fehlt eine Angabe?</strong> Antworten Sie einfach auf diese E-Mail – sie erreicht uns direkt.') +
+      abschnittHtml('Was jetzt passiert') +
+      '<p style="margin:0;">Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
+      'des Bundes zusammen und melden uns in Kürze telefonisch bei Ihnen. ' +
+      'Die Beratung ist für Sie kostenlos und unverbindlich.</p>';
+
+  var fuss = englisch
+    ? 'SwissPremia · Swiss health insurance comparison<br>' +
+      'Premium data: Federal Office of Public Health (FOPH), priminfo.admin.ch<br>' +
+      'You are receiving this email because you submitted a request on swisspremia.ch.'
+    : 'SwissPremia · Krankenkassen-Vergleich Schweiz<br>' +
+      'Prämiendaten: Bundesamt für Gesundheit (BAG), priminfo.admin.ch<br>' +
+      'Sie erhalten diese E-Mail, weil Sie auf swisspremia.ch eine Anfrage gestellt haben.';
+
+  var html = htmlRahmen(
+    englisch ? 'Health insurance comparison' : 'Krankenkassen-Vergleich',
+    inhalt,
+    fuss
+  );
+
+  mailSenden(daten['E-Mail'], betreff, text, null, html);
 }
 
 /* ======================== Nachfass-Erinnerung =========================== */
