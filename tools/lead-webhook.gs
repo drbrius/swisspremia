@@ -600,7 +600,7 @@ function bestaetigungSenden(daten) {
       'Something wrong or missing? Simply reply to this email.\n\n' +
       'WHAT HAPPENS NEXT\n' +
       'We prepare your personal comparison based on the official federal premium ' +
-      'data and call you shortly. The consultation is free and without obligation.\n\n' +
+      'data and pass your request to a licensed insurance broker, who will contact you shortly. The consultation is free and without obligation.\n\n' +
       'Kind regards\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '')
     : 'Guten Tag ' + (daten.Vorname || '') + '\n\n' +
       'Vielen Dank für Ihre Anfrage bei SwissPremia – sie ist bei uns eingegangen.\n\n' +
@@ -608,7 +608,7 @@ function bestaetigungSenden(daten) {
       'Stimmt etwas nicht oder fehlt eine Angabe? Antworten Sie einfach auf diese E-Mail.\n\n' +
       'WAS JETZT PASSIERT\n' +
       'Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
-      'des Bundes zusammen und melden uns in Kürze telefonisch bei Ihnen. ' +
+      'des Bundes zusammen und leiten Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich in Kürze bei Ihnen meldet. ' +
       'Die Beratung ist für Sie kostenlos und unverbindlich.\n\n' +
       'Freundliche Grüsse\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '');
 
@@ -622,7 +622,7 @@ function bestaetigungSenden(daten) {
       kastenHtml('<strong>Something wrong or missing?</strong> Simply reply to this email – it reaches us directly.') +
       abschnittHtml('What happens next') +
       '<p style="margin:0;">We prepare your personal comparison based on the official federal premium data ' +
-      'and call you shortly. The consultation is free and without obligation.</p>'
+      'and pass your request to a licensed insurance broker, who will contact you shortly. The consultation is free and without obligation.</p>'
     : '<p style="margin:0 0 14px 0;font-size:17px;color:' + FARBE.slate + ';">Guten Tag ' +
         htmlSchuetzen(daten.Vorname || '') + '</p>' +
       '<p style="margin:0;">Vielen Dank für Ihre Anfrage – sie ist bei uns eingegangen.</p>' +
@@ -630,7 +630,7 @@ function bestaetigungSenden(daten) {
       kastenHtml('<strong>Stimmt etwas nicht oder fehlt eine Angabe?</strong> Antworten Sie einfach auf diese E-Mail – sie erreicht uns direkt.') +
       abschnittHtml('Was jetzt passiert') +
       '<p style="margin:0;">Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
-      'des Bundes zusammen und melden uns in Kürze telefonisch bei Ihnen. ' +
+      'des Bundes zusammen und leiten Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich in Kürze bei Ihnen meldet. ' +
       'Die Beratung ist für Sie kostenlos und unverbindlich.</p>';
 
   var fuss = englisch

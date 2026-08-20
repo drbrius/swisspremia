@@ -34,7 +34,7 @@
     FORMSUBMIT_AKTIV: false,
 
     /* Name, der in der automatischen Antwort an den Interessenten steht. */
-    BERATER_NAME: "Ihr SwissPremia-Berater",
+    BERATER_NAME: "Ihr SwissPremia-Team",
 
     /* Rückrufversprechen – muss zu deinem Follow-up-Prozess passen. */
     RUECKRUF_VERSPRECHEN: "innert 24 Stunden (werktags meist innert 1 Stunde)",
@@ -181,7 +181,7 @@
         "Something wrong or missing? Simply reply to this email.\n\n" +
         "WHAT HAPPENS NEXT\n" +
         "1. We review your details and put together the offers that fit you.\n" +
-        "2. " + CONFIG.BERATER_NAME + " will get in touch " + CONFIG.RUECKRUF_VERSPRECHEN_EN + ".\n" +
+        "2. " + CONFIG.BERATER_NAME + " passes your request to a licensed insurance broker, who will contact you " + CONFIG.RUECKRUF_VERSPRECHEN_EN + ".\n" +
         "3. You receive a non-binding overview – and decide in your own time.\n\n" +
         "The consultation is free of charge and without obligation.\n\n" +
         "Kind regards\n" + CONFIG.BERATER_NAME + "\nSwissPremia\n" + CONFIG.LEAD_EMAIL;
@@ -193,7 +193,7 @@
       "Stimmt etwas nicht oder fehlt eine Angabe? Antworten Sie einfach auf diese E-Mail.\n\n" +
       "WAS JETZT PASSIERT\n" +
       "1. Wir prüfen Ihre Angaben und suchen die passenden Angebote heraus.\n" +
-      "2. " + CONFIG.BERATER_NAME + " meldet sich " + CONFIG.RUECKRUF_VERSPRECHEN + " bei Ihnen.\n" +
+      "2. " + CONFIG.BERATER_NAME + " leitet Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich " + CONFIG.RUECKRUF_VERSPRECHEN + " bei Ihnen meldet.\n" +
       "3. Sie erhalten eine unverbindliche Übersicht – Sie entscheiden in Ruhe.\n\n" +
       "Die Beratung ist für Sie kostenlos und unverbindlich.\n\n" +
       "Freundliche Grüsse\n" + CONFIG.BERATER_NAME + "\nSwissPremia\n" + CONFIG.LEAD_EMAIL;

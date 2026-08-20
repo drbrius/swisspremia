@@ -189,3 +189,48 @@
 /* Button-Reihe auf der Danke-Seite (nicht mit .btn-row aus style.css verwechseln –
    das ist der Button in der Resultattabelle) */
 .lp-aktionen { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+/* ===== Rechtstexte (Impressum, Datenschutz) ===== */
+.rechtstext { max-width: 720px; }
+.rechtstext h2 {
+  font-size: 1.25rem; color: var(--slate-tief); font-weight: 600;
+  margin: 42px 0 12px; padding-top: 22px; border-top: 1px solid var(--line);
+}
+.rechtstext h3 { font-size: 1rem; margin: 24px 0 8px; }
+.rechtstext p { margin-bottom: 14px; }
+.rechtstext ul { margin: 0 0 16px 22px; }
+.rechtstext li { margin-bottom: 7px; }
+.rechtstext .lead-text { font-size: 1.08rem; color: var(--slate); margin-bottom: 26px; }
+
+/* Kernaussage, die der Leser nicht überblättern soll */
+.kernaussage {
+  background: var(--creme); border-left: 3px solid var(--gold);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 22px 0;
+  font-size: .97rem; line-height: 1.65; color: var(--slate-tief);
+}
+
+/* Auffälliger Platzhalter – darf nicht versehentlich online bleiben */
+.ausfuellen {
+  background: #fff4e5; border: 1px dashed #d08700; border-radius: 8px;
+  padding: 14px 18px; font-size: .9rem; color: #8a5a00; margin-bottom: 16px;
+}
+
+.rechts-tabelle {
+  width: 100%; border-collapse: collapse; margin: 16px 0 20px;
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+}
+.rechts-tabelle th {
+  text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--text-soft); padding: 12px 14px; background: #fbfbfc;
+  border-bottom: 1px solid var(--line);
+}
+.rechts-tabelle td {
+  padding: 12px 14px; border-bottom: 1px solid var(--line);
+  font-size: .92rem; vertical-align: top;
+}
+.rechts-tabelle tr:last-child td { border-bottom: none; }
+
+@media (max-width: 700px) {
+  .rechtstext h2 { font-size: 1.12rem; margin-top: 32px; }
+  .rechts-tabelle th, .rechts-tabelle td { padding: 10px 9px; font-size: .84rem; }
+}
