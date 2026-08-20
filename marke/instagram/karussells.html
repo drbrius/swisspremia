@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<title>SwissPremia – Instagram-Karussells</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#eef1f4; font-family:"Segoe UI",Helvetica,Arial,sans-serif; color:#212d39; padding:26px 20px 60px; }
+  .kopf { max-width:1180px; margin:0 auto 30px; }
+  .kopf h1 { font-size:1.7rem; font-weight:500; margin:0 0 8px; }
+  .kopf p { color:#5b6b7b; margin:0 0 16px; line-height:1.6; max-width:60em; }
+  .knopf {
+    background:#005786; color:#fff; border:0; border-radius:999px;
+    padding:13px 26px; font:inherit; font-size:.86rem; font-weight:600;
+    letter-spacing:.06em; cursor:pointer;
+  }
+  .knopf:hover { background:#00446a; }
+  .knopf.klein { padding:9px 18px; font-size:.76rem; background:#fff; color:#005786; border:1.5px solid #dcdee2; }
+  .knopf.klein:hover { border-color:#005786; background:#fff; }
+  .karussell { max-width:1180px; margin:0 auto 46px; }
+  .karussell h2 { font-size:1.15rem; font-weight:600; margin:0 0 4px; }
+  .karussell .meta { color:#7b8794; font-size:.85rem; margin:0 0 14px; }
+  .reihe { display:flex; gap:14px; overflow-x:auto; padding-bottom:10px; }
+  .folie-box { flex:none; }
+  .folie-box .nr { font-size:.72rem; color:#7b8794; margin:6px 0 0; text-align:center; }
+  canvas { width:270px; height:270px; border-radius:10px; box-shadow:0 4px 18px rgba(33,45,57,.14); display:block; background:#fff; }
+  .hinweis { background:#fff4e5; border:1px dashed #d08700; border-radius:8px; padding:14px 18px; color:#8a5a00; font-size:.88rem; max-width:1180px; margin:0 auto 26px; line-height:1.6; }
+  .status { font-size:.85rem; color:#5b6b7b; margin-left:14px; }
+</style>
+</head>
+<body>
+
+<div class="kopf">
+  <h1>SwissPremia – Instagram-Karussells</h1>
+  <p>Drei Karussells zu je fünf Folien, jeweils 1080×1080 Pixel. Die Bilder werden hier im
+     Browser erzeugt – nichts wird hochgeladen. Klicken Sie auf den Knopf, dann landen alle
+     Folien einzeln im Download-Ordner, benannt nach Karussell und Reihenfolge.</p>
+  <button class="knopf" id="allesLaden">Alle 15 Folien herunterladen</button>
+  <span class="status" id="status"></span>
+</div>
+
+<div class="hinweis">
+  <strong>Beim Hochladen die Reihenfolge einhalten</strong> – Instagram sortiert nicht selbst.
+  Die Dateinamen sind durchnummeriert (…-1.png bis …-5.png). Die Bildtexte stehen unten in
+  dieser Datei zum Kopieren.
+</div>
+
+<div id="ausgabe"></div>
+
+<script>
+const F = { petrol:'#005786', slate:'#212d39', gold:'#ccba89', creme:'#f4eee4', weiss:'#ffffff' };
+const U = 'https://images.unsplash.com/';
+const foto = (id,w,q) => U+id+'?auto=format&fit=crop&crop=entropy&w='+w+'&h='+w+'&q='+(q||72);
+
+const karussells = [
+ { id:'gleiche-leistung', name:'Gleiche Leistung, anderer Preis', folien:[
+   { typ:'titel', foto:foto('photo-1527095655060-4026c4af2b25',1080), oben:'Krankenkasse Schweiz',
+     kopf:'Gleiche Leistung.\nAnderer Preis.', unten:'Was kaum jemand weiss' },
+   { typ:'text', kopf:'Der Leistungskatalog steht im Gesetz.',
+     rumpf:'Er ist bei jeder Kasse identisch. Nicht ähnlich – identisch.' },
+   { typ:'zahl', zahl:'2000+', einheit:'Franken pro Jahr',
+     rumpf:'Unterschied zwischen der günstigsten und der teuersten Kasse. Bei exakt denselben Leistungen.' },
+   { typ:'liste', kopf:'Wer mehr zahlt, bekommt:',
+     punkte:['dieselben Medikamente','dieselben Behandlungen','dieselben Spitäler','dieselben Ärzte'] },
+   { typ:'cta', kopf:'Was zahlen Sie?',
+     rumpf:'PLZ eingeben, alle Kassen sehen. Offizielle Daten des Bundes, ohne Anmeldung.' }
+ ]},
+ { id:'neu-in-der-schweiz', name:'Neu in der Schweiz', folien:[
+   { typ:'titel', foto:foto('photo-1638501478003-4e9761dcfe22',1080), oben:'Neu in der Schweiz',
+     kopf:'Sie haben\n3 Monate Zeit.', unten:'Für die Krankenversicherung' },
+   { typ:'zahl', zahl:'3', einheit:'Monate',
+     rumpf:'ab Wohnsitznahme, nicht ab Vertragsbeginn. Die Grundversicherung ist gesetzlich Pflicht.' },
+   { typ:'text', kopf:'Rechtzeitig angemeldet?',
+     rumpf:'Dann gilt die Deckung rückwirkend ab Ihrem ersten Tag in der Schweiz.' },
+   { typ:'text', hintergrund:F.slate, kopf:'Frist verpasst?',
+     rumpf:'Die Versicherung beginnt erst mit der Anmeldung – und der Kanton kann einen Prämienzuschlag erheben.' },
+   { typ:'cta', kopf:'Vergleich anfordern',
+     rumpf:'Alle Kassen Ihrer Region, kostenlos und unverbindlich. Beratung auf Deutsch oder Englisch.' }
+ ]},
+ { id:'zwei-wechseltermine', name:'Die zwei Wechseltermine', folien:[
+   { typ:'titel', foto:foto('photo-1506785017561-cd70a3c8d1c2',1080), oben:'Kassenwechsel',
+     kopf:'Es gibt zwei\nTermine.', unten:'Den zweiten kennt fast niemand' },
+   { typ:'text', kopf:'Termin 1:\n30. November',
+     rumpf:'Kündigung bis dahin, Wechsel auf den 1. Januar. Das kennen die meisten.' },
+   { typ:'text', hintergrund:F.slate, kopf:'Termin 2:\nEnde Juni',
+     rumpf:'Kündigung bis Ende März. Nur mit tiefster Franchise und Standardmodell mit freier Arztwahl.' },
+   { typ:'liste', kopf:'Bei der Kündigung gilt:',
+     punkte:['Sie muss ankommen, nicht abgeschickt sein','Erst kündigen, wenn die neue Kasse zusagt','Keine offenen Prämien aus dem laufenden Jahr'] },
+   { typ:'cta', kopf:'Lohnt sich ein Wechsel?',
+     rumpf:'In einer Minute wissen Sie es. PLZ eingeben, alle Kassen vergleichen.' }
+ ]}
+];
+
+const G = 1080;
+
+/* Text umbrechen und zeilenweise zeichnen. Gibt die Unterkante zurück. */
+function textBlock(ctx, txt, x, y, maxB, zh, ausrichtung) {
+  ctx.textAlign = ausrichtung || 'left';
+  let zeilen = [];
+  txt.split('\n').forEach(absatz => {
+    let zeile = '';
+    absatz.split(' ').forEach(w => {
+      const test = zeile ? zeile + ' ' + w : w;
+      if (ctx.measureText(test).width > maxB && zeile) { zeilen.push(zeile); zeile = w; }
+      else zeile = test;
+    });
+    zeilen.push(zeile);
+  });
+  zeilen.forEach((z, i) => ctx.fillText(z, x, y + i * zh));
+  return y + zeilen.length * zh;
+}
+
+/* Bildmarke: weisses abgerundetes Quadrat mit petrolfarbenem Kreuz */
+function marke(ctx, x, y, s, farbe) {
+  ctx.fillStyle = farbe || F.weiss;
+  const r = s * 0.22;
+  ctx.beginPath(); ctx.roundRect(x, y, s, s, r); ctx.fill();
+  ctx.fillStyle = F.petrol;
+  ctx.fillRect(x + s * 0.40, y + s * 0.19, s * 0.16, s * 0.58);
+  ctx.fillRect(x + s * 0.19, y + s * 0.40, s * 0.58, s * 0.16);
+}
+
+function fusszeile(ctx, hell) {
+  marke(ctx, 72, G - 132, 54, hell ? F.weiss : F.petrol);
+  ctx.fillStyle = hell ? 'rgba(255,255,255,.92)' : F.slate;
+  ctx.font = '600 30px "Segoe UI", Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('SwissPremia', 142, G - 92);
+  ctx.fillStyle = hell ? F.gold : '#7d6839';
+  ctx.font = '600 17px "Segoe UI", Arial';
+  ctx.letterSpacing = '2.4px';
+  ctx.fillText('SWISSPREMIA.CH', 142, G - 64);
+  ctx.letterSpacing = '0px';
+}
+
+function nummer(ctx, i, gesamt, hell) {
+  ctx.fillStyle = hell ? 'rgba(255,255,255,.55)' : 'rgba(33,45,57,.4)';
+  ctx.font = '600 24px "Segoe UI", Arial';
+  ctx.textAlign = 'right';
+  ctx.fillText(i + ' / ' + gesamt, G - 72, G - 72);
+}
+
+async function zeichne(ctx, f, idx, gesamt) {
+  ctx.clearRect(0, 0, G, G);
+  ctx.letterSpacing = '0px';
+
+  if (f.typ === 'titel') {
+    const img = new Image(); img.crossOrigin = 'anonymous';
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = f.foto; });
+    ctx.drawImage(img, 0, 0, G, G);
+    const v = ctx.createLinearGradient(0, 0, 0, G);
+    v.addColorStop(0, 'rgba(33,45,57,.55)');
+    v.addColorStop(.45, 'rgba(0,68,106,.82)');
+    v.addColorStop(1, 'rgba(0,68,106,.96)');
+    ctx.fillStyle = v; ctx.fillRect(0, 0, G, G);
+
+    ctx.fillStyle = F.gold;
+    ctx.font = '600 24px "Segoe UI", Arial'; ctx.letterSpacing = '4px'; ctx.textAlign = 'left';
+    ctx.fillText(f.oben.toUpperCase(), 72, 250); ctx.letterSpacing = '0px';
+
+    ctx.fillStyle = F.weiss; ctx.font = '400 88px "Segoe UI", Arial';
+    textBlock(ctx, f.kopf, 72, 372, 900, 104);
+
+    ctx.fillStyle = 'rgba(255,255,255,.86)'; ctx.font = '400 34px "Segoe UI", Arial';
+    ctx.fillText(f.unten + '  →', 72, 700);
+    fusszeile(ctx, true); nummer(ctx, idx, gesamt, true);
+
+  } else if (f.typ === 'zahl') {
+    ctx.fillStyle = F.petrol; ctx.fillRect(0, 0, G, G);
+    ctx.fillStyle = F.gold; ctx.fillRect(0, G - 14, G, 14);
+
+    ctx.fillStyle = F.weiss; ctx.font = '300 250px "Segoe UI", Arial'; ctx.textAlign = 'center';
+    ctx.fillText(f.zahl, G / 2, 430);
+    ctx.fillStyle = F.gold; ctx.font = '600 30px "Segoe UI", Arial'; ctx.letterSpacing = '3px';
+    ctx.fillText(f.einheit.toUpperCase(), G / 2, 490); ctx.letterSpacing = '0px';
+
+    ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = '400 40px "Segoe UI", Arial';
+    textBlock(ctx, f.rumpf, G / 2, 600, 820, 56, 'center');
+    fusszeile(ctx, true); nummer(ctx, idx, gesamt, true);
+
+  } else if (f.typ === 'liste') {
+    ctx.fillStyle = F.creme; ctx.fillRect(0, 0, G, G);
+    ctx.fillStyle = F.gold; ctx.fillRect(0, 0, G, 14);
+
+    ctx.fillStyle = F.slate; ctx.font = '600 56px "Segoe UI", Arial';
+    let y = textBlock(ctx, f.kopf, 72, 250, 880, 68) + 60;
+
+    f.punkte.forEach(p => {
+      ctx.strokeStyle = F.petrol; ctx.lineWidth = 7; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(80, y - 16); ctx.lineTo(98, y + 2); ctx.lineTo(128, y - 34); ctx.stroke();
+      ctx.fillStyle = F.slate; ctx.font = '400 40px "Segoe UI", Arial';
+      y = textBlock(ctx, p, 156, y, 780, 52) + 42;
+    });
+    fusszeile(ctx, false); nummer(ctx, idx, gesamt, false);
+
+  } else if (f.typ === 'cta') {
+    ctx.fillStyle = F.slate; ctx.fillRect(0, 0, G, G);
+    ctx.fillStyle = F.gold; ctx.fillRect(0, G - 14, G, 14);
+
+    ctx.fillStyle = F.weiss; ctx.font = '400 72px "Segoe UI", Arial'; ctx.textAlign = 'center';
+    let y = textBlock(ctx, f.kopf, G / 2, 360, 880, 86, 'center') + 40;
+    ctx.fillStyle = 'rgba(255,255,255,.82)'; ctx.font = '400 38px "Segoe UI", Arial';
+    y = textBlock(ctx, f.rumpf, G / 2, y, 800, 54, 'center');
+
+    ctx.fillStyle = F.gold;
+    ctx.beginPath(); ctx.roundRect(G / 2 - 250, y + 60, 500, 96, 48); ctx.fill();
+    ctx.fillStyle = F.slate; ctx.font = '600 34px "Segoe UI", Arial'; ctx.letterSpacing = '1.5px';
+    ctx.fillText('SWISSPREMIA.CH', G / 2, y + 120); ctx.letterSpacing = '0px';
+    nummer(ctx, idx, gesamt, true);
+
+  } else {
+    const dunkel = !!f.hintergrund;
+    ctx.fillStyle = f.hintergrund || F.weiss; ctx.fillRect(0, 0, G, G);
+    ctx.fillStyle = F.gold; ctx.fillRect(72, 200, 96, 8);
+
+    ctx.fillStyle = dunkel ? F.weiss : F.slate; ctx.font = '600 68px "Segoe UI", Arial'; ctx.textAlign = 'left';
+    let y = textBlock(ctx, f.kopf, 72, 320, 900, 82) + 46;
+    ctx.fillStyle = dunkel ? 'rgba(255,255,255,.82)' : '#4d4d4d'; ctx.font = '400 42px "Segoe UI", Arial';
+    textBlock(ctx, f.rumpf, 72, y, 900, 58);
+    fusszeile(ctx, dunkel); nummer(ctx, idx, gesamt, dunkel);
+  }
+}
+
+function laden(cv, name) {
+  const a = document.createElement('a');
+  a.download = name; a.href = cv.toDataURL('image/png'); a.click();
+}
+
+const ausgabe = document.getElementById('ausgabe');
+const status = document.getElementById('status');
+const alleCanvas = [];
+
+karussells.forEach(k => {
+  const box = document.createElement('div'); box.className = 'karussell';
+  box.innerHTML = '<h2>' + k.name + '</h2><div class="meta">' + k.folien.length +
+    ' Folien · Dateiname ' + k.id + '-1.png bis -' + k.folien.length + '.png</div>';
+  const reihe = document.createElement('div'); reihe.className = 'reihe';
+
+  k.folien.forEach((f, i) => {
+    const wrap = document.createElement('div'); wrap.className = 'folie-box';
+    const cv = document.createElement('canvas'); cv.width = G; cv.height = G;
+    const name = k.id + '-' + (i + 1) + '.png';
+    wrap.appendChild(cv);
+    const p = document.createElement('p'); p.className = 'nr';
+    p.innerHTML = '<button class="knopf klein">Folie ' + (i + 1) + '</button>';
+    p.querySelector('button').onclick = () => laden(cv, name);
+    wrap.appendChild(p);
+    reihe.appendChild(wrap);
+    alleCanvas.push({ cv, name, f, i: i + 1, n: k.folien.length });
+  });
+
+  box.appendChild(reihe);
+  ausgabe.appendChild(box);
+});
+
+(async function () {
+  status.textContent = 'Folien werden erzeugt …';
+  for (const e of alleCanvas) {
+    try { await zeichne(e.cv.getContext('2d'), e.f, e.i, e.n); }
+    catch (err) { console.error(e.name, err); }
+  }
+  status.textContent = alleCanvas.length + ' Folien bereit.';
+})();
+
+document.getElementById('allesLaden').onclick = async () => {
+  for (let i = 0; i < alleCanvas.length; i++) {
+    laden(alleCanvas[i].cv, alleCanvas[i].name);
+    await new Promise(r => setTimeout(r, 320));
+  }
+};
+</script>
+
+</body>
+</html>
