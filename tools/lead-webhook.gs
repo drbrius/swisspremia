@@ -40,6 +40,20 @@
  *     4. Mit  testLead()  einen Probelauf machen – danach solltest du eine
  *        E-Mail haben und eine Zeile im Sheet sehen.
  *
+ *  D) Optional: Versand ueber Brevo statt ueber Gmail
+ *     Nur damit ist die Absenderadresse wirklich frei waehlbar - Google
+ *     erlaubt einen abweichenden Absender nur bei bestaetigtem Alias.
+ *     1. Konto auf brevo.com anlegen (gratis bis 300 Mails pro Tag, EU-Hosting).
+ *     2. Senders, Domains & Dedicated IPs ▸ Domains ▸ Domain hinzufuegen
+ *        ▸ swisspremia.ch ▸ die angezeigten DNS-Eintraege bei Swizzonic
+ *        setzen (Verifizierungs-TXT, DKIM, DMARC). Ein paar Stunden warten,
+ *        bis Brevo die Domain als verifiziert anzeigt.
+ *     3. Settings ▸ SMTP & API ▸ API Keys ▸ Schluessel erzeugen
+ *        und unten bei BREVO_API_SCHLUESSEL eintragen.
+ *     4. Funktion brevoTesten() ausfuehren und das Protokoll pruefen.
+ *     Faellt Brevo einmal aus, verschickt das Skript automatisch wieder
+ *     ueber Gmail - eine Anfrage geht dadurch nie verloren.
+ *
  *  Wichtig: Nach jeder Änderung am Code musst du unter "Bereitstellen"
  *  eine NEUE VERSION veröffentlichen, sonst läuft weiter die alte.
  * =========================================================================
@@ -61,6 +75,14 @@ var KONFIG = {
   // "SwissPremia" als Namen, und Antworten gehen an ANTWORT_EMAIL.
   ABSENDER_EMAIL: 'info@swisspremia.ch',
   ABSENDER_NAME: 'SwissPremia',
+
+  // ---- Versand ueber Brevo (optional, aber empfohlen) ----------------
+  // Traegst du hier einen API-Schluessel ein, verschickt das Skript ueber
+  // Brevo statt ueber Gmail. Erst dann ist ABSENDER_EMAIL wirklich der
+  // sichtbare Absender - Google laesst das ohne bestaetigten Alias nicht zu.
+  // Schluessel holen: app.brevo.com ▸ Settings ▸ SMTP & API ▸ API Keys.
+  // Er beginnt mit "xkeysib-". Leer lassen = Versand wie bisher ueber Gmail.
+  BREVO_API_SCHLUESSEL: '',
 
   // Wohin Antworten des Interessenten gehen sollen.
   // Unabhängig vom Absender – funktioniert immer, ohne Freischaltung.
@@ -236,12 +258,24 @@ function absenderAlias() {
    sonst über MailApp mit der Standardadresse.
    Der Klartext bleibt immer dabei – manche Programme zeigen kein HTML. */
 function mailSenden(empfaenger, betreff, text, antwortAn, html) {
+  /* Erste Wahl: Brevo. Nur damit ist die Absenderadresse frei waehlbar.
+     Scheitert der Versand, wird still auf Google zurueckgefallen - eine
+     Anfrage darf nie an einem Dienstausfall verloren gehen. */
+  if (KONFIG.BREVO_API_SCHLUESSEL) {
+    try {
+      brevoSenden(empfaenger, betreff, text, antwortAn, html);
+      return;
+    } catch (fehler) {
+      try { rohSichern('Brevo fehlgeschlagen, Rueckfall auf Gmail: ' + fehler); } catch (e) {}
+    }
+  }
+
   var alias = absenderAlias();
   var optionen = {
     name: KONFIG.ABSENDER_NAME,
     /* Die Antwortadresse braucht keine Freischaltung. Auch wenn der
        Absender die Gmail-Adresse bleibt, landen Antworten dadurch
-       zuverlässig im Geschäftspostfach. */
+       zuverlaessig im Geschaeftspostfach. */
     replyTo: antwortAn || KONFIG.ANTWORT_EMAIL || KONFIG.ABSENDER_EMAIL || undefined
   };
   if (html) optionen.htmlBody = html;
@@ -256,6 +290,68 @@ function mailSenden(empfaenger, betreff, text, antwortAn, html) {
   optionen.subject = betreff;
   optionen.body = text;
   MailApp.sendEmail(optionen);
+}
+
+/**
+ * Versand ueber die Brevo-Schnittstelle.
+ * Erfolg meldet Brevo mit 201 (sofort) oder 202 (geplant).
+ */
+function brevoSenden(empfaenger, betreff, text, antwortAn, html) {
+  var nutzlast = {
+    sender: {
+      name: KONFIG.ABSENDER_NAME,
+      email: KONFIG.ABSENDER_EMAIL || KONFIG.ANTWORT_EMAIL
+    },
+    to: [{ email: empfaenger }],
+    subject: betreff,
+    // htmlContent ist bei Brevo Pflicht - notfalls aus dem Klartext bauen
+    htmlContent: html || ('<pre style="font-family:sans-serif;white-space:pre-wrap;">' +
+                          htmlSchuetzen(text) + '</pre>'),
+    textContent: text,
+    replyTo: { email: antwortAn || KONFIG.ANTWORT_EMAIL || KONFIG.ABSENDER_EMAIL }
+  };
+
+  var antwort = UrlFetchApp.fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { 'api-key': KONFIG.BREVO_API_SCHLUESSEL, 'accept': 'application/json' },
+    payload: JSON.stringify(nutzlast),
+    muteHttpExceptions: true
+  });
+
+  var code = antwort.getResponseCode();
+  if (code !== 201 && code !== 202) {
+    throw new Error('HTTP ' + code + ' – ' + antwort.getContentText().slice(0, 300));
+  }
+}
+
+/**
+ * Diagnose: schickt eine Probemail ueber Brevo und zeigt die Antwort.
+ * Im Editor ausfuehren und ins Ausfuehrungsprotokoll schauen.
+ */
+function brevoTesten() {
+  if (!KONFIG.BREVO_API_SCHLUESSEL) {
+    Logger.log('Kein API-Schluessel hinterlegt – es wird weiter ueber Gmail verschickt.');
+    return;
+  }
+  try {
+    brevoSenden(
+      KONFIG.BENACHRICHTIGUNG_EMAIL,
+      'Brevo-Probelauf – SwissPremia',
+      'Wenn diese Nachricht ankommt und als Absender ' + KONFIG.ABSENDER_EMAIL +
+      ' zeigt, ist der Versand richtig eingerichtet.',
+      null,
+      htmlRahmen('Probelauf',
+        '<p style="margin:0;">Wenn diese Nachricht ankommt und als Absender <strong>' +
+        htmlSchuetzen(KONFIG.ABSENDER_EMAIL) + '</strong> zeigt, ist der Versand richtig eingerichtet.</p>',
+        'SwissPremia · technischer Probelauf')
+    );
+    Logger.log('Erfolgreich an Brevo uebergeben. Posteingang von ' +
+               KONFIG.BENACHRICHTIGUNG_EMAIL + ' pruefen.');
+  } catch (fehler) {
+    Logger.log('FEHLGESCHLAGEN: ' + fehler);
+    Logger.log('401 = falscher Schluessel · 400 mit "sender" = Domain noch nicht verifiziert');
+  }
 }
 
 /* ======================== HTML-Gestaltung ============================== */
