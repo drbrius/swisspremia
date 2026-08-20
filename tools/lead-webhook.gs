@@ -297,6 +297,16 @@ function mailSenden(empfaenger, betreff, text, antwortAn, html) {
  * Erfolg meldet Brevo mit 201 (sofort) oder 202 (geplant).
  */
 function brevoSenden(empfaenger, betreff, text, antwortAn, html) {
+  /* Frueh und deutlich scheitern statt mit einem raetselhaften 401 von Brevo.
+     "authentication not found in headers" bedeutet naemlich: leerer Schluessel. */
+  if (!KONFIG.BREVO_API_SCHLUESSEL) {
+    throw new Error('Kein API-Schluessel in KONFIG.BREVO_API_SCHLUESSEL hinterlegt.');
+  }
+  if (!empfaenger) {
+    throw new Error('Kein Empfaenger uebergeben - diese Funktion nicht direkt aufrufen, ' +
+                    'sondern brevoTesten() im Auswahlfeld waehlen.');
+  }
+
   var nutzlast = {
     sender: {
       name: KONFIG.ABSENDER_NAME,
