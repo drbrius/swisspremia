@@ -284,15 +284,41 @@ function htmlSchuetzen(s) {
 /* Kopfband mit Wortmarke – bewusst ohne Bild, damit nichts blockiert wird
    oder als roter Platzhalter erscheint. */
 function bannerHtml(unterzeile) {
+  /* Die Bildmarke wird aus Tabellenzellen gezeichnet statt als Bild geladen.
+     Mailprogramme blockieren externe Bilder standardmässig – so ist das
+     Zeichen immer da, ohne dass der Empfänger etwas freigeben muss. */
+  var marke =
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="38" ' +
+      'style="width:38px;height:38px;background-color:#ffffff;border-radius:9px;">' +
+      '<tr>' +
+        '<td width="13" style="width:13px;">&nbsp;</td>' +
+        '<td width="12" style="width:12px;height:11px;background-color:' + FARBE.petrol + ';font-size:0;line-height:0;">&nbsp;</td>' +
+        '<td width="13" style="width:13px;">&nbsp;</td>' +
+      '</tr>' +
+      '<tr>' +
+        '<td colspan="3" style="height:16px;background-color:' + FARBE.petrol + ';font-size:0;line-height:0;">&nbsp;</td>' +
+      '</tr>' +
+      '<tr>' +
+        '<td style="width:13px;">&nbsp;</td>' +
+        '<td style="width:12px;height:11px;background-color:' + FARBE.petrol + ';font-size:0;line-height:0;">&nbsp;</td>' +
+        '<td style="width:13px;">&nbsp;</td>' +
+      '</tr>' +
+    '</table>';
+
   return '' +
   '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:' + FARBE.petrol + ';">' +
-    '<tr><td style="padding:28px 32px 24px 32px;">' +
-      '<div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:23px;line-height:1.2;color:#ffffff;letter-spacing:.3px;">' +
-        'Swiss<strong style="font-weight:700;">Premia</strong>' +
-      '</div>' +
-      '<div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:' + FARBE.gold + ';padding-top:7px;">' +
-        htmlSchuetzen(unterzeile) +
-      '</div>' +
+    '<tr><td style="padding:26px 32px 24px 32px;">' +
+      '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>' +
+        '<td valign="middle" style="padding-right:13px;">' + marke + '</td>' +
+        '<td valign="middle">' +
+          '<div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:22px;line-height:1.15;color:#ffffff;letter-spacing:.3px;">' +
+            'Swiss<strong style="font-weight:700;">Premia</strong>' +
+          '</div>' +
+          '<div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:2.2px;text-transform:uppercase;color:' + FARBE.gold + ';padding-top:5px;">' +
+            htmlSchuetzen(unterzeile) +
+          '</div>' +
+        '</td>' +
+      '</tr></table>' +
     '</td></tr>' +
     '<tr><td style="background-color:' + FARBE.gold + ';font-size:0;line-height:0;height:4px;">&nbsp;</td></tr>' +
   '</table>';
