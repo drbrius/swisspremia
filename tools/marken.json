@@ -2,6 +2,7 @@
   {
     "id": "kassenklar",
     "name": "Kassenklar",
+    "logoHtml": "Kassen<strong>klar</strong>",
     "domain": "kassenklar.ch",
     "email": "info@kassenklar.ch",
     "themeFarbe": "#12b76a",

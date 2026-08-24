@@ -55,6 +55,11 @@ function istText(datei) {
 
 function umschreiben(inhalt, marke) {
   return inhalt
+    /* Im Logo ist der Name auf zwei Elemente verteilt: Swiss<strong>Premia
+       </strong>. Eine Ersetzung von "SwissPremia" greift dort nicht – ohne
+       diesen Fall stuende in Kopf- und Fusszeile weiter die alte Marke. */
+    .split("Swiss<strong>Premia</strong>")
+    .join(marke.logoHtml || marke.name)
     /* Domain zuerst: sonst wuerde "SwissPremia" in swisspremia.ch mitgehen. */
     .split("www.swisspremia.ch").join("www." + marke.domain)
     .split("swisspremia.ch").join(marke.domain)

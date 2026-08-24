@@ -101,24 +101,46 @@ h3 { font-weight: 600; letter-spacing: -.01em; }
 .btn-ghost { color: var(--slate-tief) !important; }
 .btn-ghost:hover { border-color: var(--slate-tief); }
 
-/* ===== Hero: kein Foto, sondern Raster auf Tinte ===== */
+/* ===== Hero =====
+   Die Vorlage legt einen blau-petrolfarbenen Verlauf ueber das Foto. Hier
+   liegt Tinte darueber, die nach rechts in Gruen ausblendet – dasselbe
+   Bauprinzip, ein anderes Ergebnis. Die Fotos sind eigene, siehe unten. */
 .hero, .lp-hero {
-  background: var(--slate-tief) !important;
+  background:
+    linear-gradient(100deg,
+      rgba(14, 17, 22, .94) 0%,
+      rgba(14, 17, 22, .86) 40%,
+      rgba(5, 96, 58, .55) 100%),
+    var(--hero-bild),
+    linear-gradient(150deg, var(--slate-tief) 0%, #05341f 100%);
+  background-size: cover;
+  background-position: center;
   color: #fff;
 }
-/* Das feine Raster ersetzt das Unsplash-Bild. Es kostet keinen Ladevorgang
-   und bleibt auf jedem Bildschirm gleich scharf. */
+
+/* Signatur der Marke: ein feines Raster ueber dem Foto. Wo die Vorlage
+   einen weichen Goldschimmer setzt, liegt hier Millimeterpapier – das
+   passt zu einer Seite, die mit Zahlen argumentiert. */
 .hero::before, .lp-hero::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px);
   background-size: 44px 44px;
-  mask-image: radial-gradient(75% 75% at 30% 40%, #000 0%, transparent 100%);
-  -webkit-mask-image: radial-gradient(75% 75% at 30% 40%, #000 0%, transparent 100%);
+  mask-image: radial-gradient(72% 72% at 26% 42%, #000 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(72% 72% at 26% 42%, #000 0%, transparent 100%);
+}
+
+/* Auf der Startseite steht die Karte links, der Text rechts – umgekehrt
+   zur Vorlage. Nur ab Tablet: darunter ist das Raster einspaltig, und
+   dort gehoert die Botschaft nach oben. */
+@media (min-width: 981px) {
+  .hero .hero-inner { grid-template-columns: .85fr 1.15fr; }
+  .hero .hero-inner > *:first-child { order: 2; }
+  .hero .hero-inner > *:last-child { order: 1; }
 }
 
 .hero h1, .lp-hero h1 { font-weight: 700; letter-spacing: -.03em; }
@@ -151,3 +173,83 @@ h3 { font-weight: 600; letter-spacing: -.01em; }
 /* ===== Kopfzeile ===== */
 .topbar { border-bottom: 1px solid var(--line); }
 .nav a { letter-spacing: -.01em; }
+
+/* ===== Bildmarke =====
+   Die Vorlage traegt ein Schweizerkreuz. Das passt zu jeder zweiten
+   Versicherungsseite und waere hier eine Dublette. Kassenklar bekommt
+   einen Haken – dasselbe Zeichen wie im Favicon. Gebaut aus zwei
+   Rahmenlinien eines gedrehten Kastens, das traegt bis 16 Pixel. */
+.logo-cross {
+  border-radius: var(--radius);
+  background: var(--petrol);
+}
+.logo-cross::after { display: none; }
+.logo-cross::before {
+  left: 9px;
+  top: 5px;
+  width: 8px;
+  height: 14px;
+  background: none;
+  border-right: 3.5px solid #fff;
+  border-bottom: 3.5px solid #fff;
+  transform: rotate(45deg);
+}
+
+/* In der Fusszeile steht die Marke auf dunklem Grund. */
+.footer .logo-cross { background: var(--petrol); }
+.footer .logo-cross::before {
+  background: none;
+  border-right-color: var(--slate-tief);
+  border-bottom-color: var(--slate-tief);
+}
+
+/* =========================================================================
+   Hero-Bilder
+
+   Eigene Auswahl, keine Ueberschneidung mit der Vorlage. Jedes Bild wurde
+   vor der Aufnahme angesehen, nicht nur auf HTTP 200 geprueft – eine
+   gueltige Adresse sagt nichts darueber, was auf dem Foto zu sehen ist.
+
+   Quelle: Unsplash (unsplash.com/license – kostenlos, auch kommerziell,
+   keine Namensnennung noetig).
+   ========================================================================= */
+.hero--start {
+  /* Zwei Personen rechnen etwas auf Papier durch – Vergleichen statt
+     Bergpanorama. Das ist das Versprechen der Marke. */
+  --hero-bild: url("https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+}
+.lp-hero--neuzuzueger {
+  /* Beleuchteter Hauseingang in der Daemmerung – ankommen. */
+  --hero-bild: url("https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+}
+.lp-hero--familie {
+  /* Babyfuesse in einem weissen Tuch. */
+  --hero-bild: url("https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+}
+.lp-hero--jung {
+  /* Junge Erwachsene ueber einem Laptop. */
+  --hero-bild: url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+}
+.lp-hero--praemien {
+  /* Kalender, aufgeschlagen im November – dem Monat der Kuendigungsfrist. */
+  --hero-bild: url("https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+}
+
+/* Auf dem Handy hochkant und kleiner geladen. */
+@media (max-width: 700px) {
+  .hero--start {
+    --hero-bild: url("https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+  }
+  .lp-hero--neuzuzueger {
+    --hero-bild: url("https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+  }
+  .lp-hero--familie {
+    --hero-bild: url("https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+  }
+  .lp-hero--jung {
+    --hero-bild: url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+  }
+  .lp-hero--praemien {
+    --hero-bild: url("https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+  }
+}
