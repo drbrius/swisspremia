@@ -42,7 +42,11 @@
   --creme: #efece6;
 
   --text: #5b5b5a;
-  --text-soft: #8a8a87;
+  --text-soft: #6b6964;   /* 4,7:1 auf dem hellen Band #efece6, dem
+                             dunkelsten Grund, auf dem dieser Ton steht.
+                             #8a8a87 kam auf 3,5:1, #75736e auf 4,35:1
+                             – gerechnet werden muss gegen den dunkelsten
+                             Hintergrund, nicht gegen Weiss. */
   --bg: #f7f5f1;
   --bg-alt: #efece6;
   --card: #ffffff;
@@ -237,12 +241,54 @@ h3 { font-weight: 500; }
 .hero-card { border-color: rgba(176, 146, 111, .38); background: rgba(247, 245, 241, .04); }
 .hero-card, .hero-card .stat-label, .hero-card .hero-note { color: rgba(247, 245, 241, .66); }
 .hero-card .stat-num { color: var(--gold); font-family: "Cormorant Garamond", Georgia, serif; font-weight: 400; }
-.product-chip { border-color: rgba(247, 245, 241, .2); color: rgba(247, 245, 241, .84) !important; }
+/* Die Vorlage gibt den Chips eine weisse Flaeche. Ohne diese Zeile stuende
+   helle Schrift auf Weiss – 1,1:1, also unsichtbar. */
+.product-chip {
+  background: transparent;
+  border-color: rgba(247, 245, 241, .28);
+  color: rgba(247, 245, 241, .9) !important;
+}
 .product-chip:hover { border-color: var(--gold); color: var(--gold) !important; }
 
 .section { padding: 116px 0; }
 .section-alt { background: var(--bg-alt); }
 .section + .section { border-top: 1px solid var(--line); }
+
+/* ===== Zielgruppen-Karten mit Bild =====
+   Die Vorlage laesst diese vier Karten unbebildert. Ein Gesicht sagt hier
+   mehr als die Ueberschrift: Man erkennt in einer halben Sekunde, ob man
+   gemeint ist. Nur auf der Startseite – die Landingpages benutzen dieselbe
+   Klasse fuer reine Textkarten.
+
+   Das Bild sitzt am oberen Kartenrand und laeuft ueber die Innenabstaende
+   hinaus. "overflow: hidden" faengt ab, dass es an schmalen Breiten, wo die
+   Karte weniger Innenabstand hat, ueber den Rand steht. */
+#situation .lp-fact { padding-top: 0; overflow: hidden; }
+#situation .lp-fact::before {
+  content: "";
+  display: block;
+  height: 180px;
+  margin: 0 -32px 26px;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid var(--line);
+}
+#situation .lp-fact:nth-child(1)::before {
+  /* Beleuchtetes Haus in der Daemmerung – ankommen. */
+  background-image: url("https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&crop=entropy&w=760&h=440&q=68");
+}
+#situation .lp-fact:nth-child(2)::before {
+  /* Eltern mit Neugeborenem. */
+  background-image: url("https://images.unsplash.com/photo-1543342384-1f1350e27861?auto=format&fit=crop&crop=entropy&w=760&h=440&q=68");
+}
+#situation .lp-fact:nth-child(3)::before {
+  /* Vier junge Erwachsene an einem Tisch. */
+  background-image: url("https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&crop=entropy&w=760&h=440&q=68");
+}
+#situation .lp-fact:nth-child(4)::before {
+  /* Zwei Personen rechnen Unterlagen durch. */
+  background-image: url("https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&crop=entropy&w=760&h=440&q=68");
+}
 
 .field input[type=text], .field input[type=number], .field input[type=tel],
 .field input[type=email], .field select, .field textarea {
