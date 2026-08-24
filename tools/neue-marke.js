@@ -103,6 +103,42 @@ function themeVerlinken(inhalt) {
   );
 }
 
+/* Ersetzt die CSS-Bildmarke der Vorlage durch ein gezeichnetes Logo aus
+   tools/logos/<id>.svg. Die Vorlage baut ihr Kreuz aus zwei Pseudo-
+   Elementen – das reicht fuer ein Quadrat mit Balken, aber nicht fuer
+   eine Form, die man als Logo bezeichnen wuerde. */
+function logoErsetzen(inhalt, logoSvg) {
+  if (!logoSvg) return inhalt;
+  return inhalt
+    .split('<span class="logo-cross" aria-hidden="true"></span>')
+    .join(logoSvg.trim());
+}
+
+/* Zaehlt, wie oft jedes Textpaar aus marken.json gegriffen hat. Wird je
+   Marke zurueckgesetzt und am Ende geprueft. */
+var textTreffer = {};
+
+/* Marken sollen sich nicht nur farblich unterscheiden, sondern auch in
+   dem, was sie sagen. Kurze woertliche Ersetzungen reichen dafuer –
+   ganze Seiten je Marke zu pflegen waere bei zwanzig Marken genau die
+   Arbeit, die dieser Generator vermeiden soll. */
+function texteErsetzen(inhalt, marke) {
+  if (!Array.isArray(marke.texte)) return inhalt;
+
+  marke.texte.forEach(function (paar) {
+    var suchen = paar[0];
+    var teile = inhalt.split(suchen);
+    if (teile.length > 1) {
+      textTreffer[suchen] = (textTreffer[suchen] || 0) + teile.length - 1;
+      inhalt = teile.join(paar[1]);
+    } else if (textTreffer[suchen] === undefined) {
+      textTreffer[suchen] = 0;
+    }
+  });
+
+  return inhalt;
+}
+
 /* Stellt die Abschnitte der Startseite in die Reihenfolge aus marken.json.
 
    Bewusst im Dokument und nicht per CSS-"order": Wer die Seite mit der
@@ -149,13 +185,13 @@ function abschnitteSortieren(inhalt, marke) {
 
 /* ------------------------------------------------------------- Kopieren */
 
-function kopieren(von, nach, marke) {
+function kopieren(von, nach, marke, logoSvg) {
   var status = fs.statSync(von);
 
   if (status.isDirectory()) {
     fs.mkdirSync(nach, { recursive: true });
     fs.readdirSync(von).forEach(function (eintrag) {
-      kopieren(pfad.join(von, eintrag), pfad.join(nach, eintrag), marke);
+      kopieren(pfad.join(von, eintrag), pfad.join(nach, eintrag), marke, logoSvg);
     });
     return;
   }
@@ -169,7 +205,11 @@ function kopieren(von, nach, marke) {
   inhalt = umschreiben(inhalt, marke);
 
   if (pfad.basename(von) === "lead-core.js") inhalt = leadCoreAnpassen(inhalt, marke);
-  if (pfad.extname(von) === ".html") inhalt = schriftDerVorlageEntfernen(themeVerlinken(inhalt));
+  if (pfad.extname(von) === ".html") {
+    inhalt = schriftDerVorlageEntfernen(themeVerlinken(inhalt));
+    inhalt = logoErsetzen(inhalt, logoSvg);
+    inhalt = texteErsetzen(inhalt, marke);
+  }
   if (pfad.basename(von) === "index.html") inhalt = abschnitteSortieren(inhalt, marke);
 
   fs.writeFileSync(nach, inhalt, "utf8");
@@ -190,14 +230,31 @@ function bauen(marke) {
     );
   }
 
+  var logoDatei = pfad.join(__dirname, "logos", marke.id + ".svg");
+  var logoSvg = fs.existsSync(logoDatei) ? fs.readFileSync(logoDatei, "utf8") : null;
+
+  textTreffer = {};
+
   fs.rmSync(ziel, { recursive: true, force: true });
   fs.mkdirSync(ziel, { recursive: true });
 
   UEBERNEHMEN.forEach(function (eintrag) {
     var von = pfad.join(STAMM, eintrag);
     if (!fs.existsSync(von)) return;
-    kopieren(von, pfad.join(ziel, eintrag), marke);
+    kopieren(von, pfad.join(ziel, eintrag), marke, logoSvg);
   });
+
+  /* Ein Textpaar, das nirgends greift, ist fast immer ein Tippfehler in
+     marken.json. Stillschweigend uebergangen wuerde die Marke einfach den
+     Text der Vorlage tragen – und das faellt niemandem auf. */
+  var ohneTreffer = Object.keys(textTreffer).filter(function (s) { return !textTreffer[s]; });
+  if (ohneTreffer.length) {
+    throw new Error(
+      'Textersetzungen von "' + marke.id + '" ohne Treffer:\n' +
+      ohneTreffer.map(function (s) { return "  " + JSON.stringify(s); }).join("\n") +
+      "\n  Steht der Text so wirklich in der Vorlage?"
+    );
+  }
 
   fs.copyFileSync(theme, pfad.join(ziel, "css", "theme.css"));
 

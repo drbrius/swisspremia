@@ -146,6 +146,8 @@ Der Generator nimmt die Website im Projektstamm als Vorlage und schreibt
 | `tools/marken.json` | Name, Domain, E-Mail, Farben, Icon-Zeichen |
 | `tools/themes/<id>.css` | das Design – **von Hand geschrieben** |
 | `abschnitte` in `marken.json` | Reihenfolge der Abschnitte auf der Startseite |
+| `texte` in `marken.json` | woertliche Textersetzungen |
+| `tools/logos/<id>.svg` | gezeichnetes Logo, ersetzt die CSS-Bildmarke |
 | `sites/<id>/` | Ergebnis, wird bei jedem Lauf überschrieben |
 
 **Nie in `sites/` arbeiten.** Alles dort ist Ergebnis. Änderungen gehören in die

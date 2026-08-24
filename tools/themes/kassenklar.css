@@ -1,228 +1,275 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&display=swap');
 
 /* =========================================================================
-   Kassenklar – Theme "Papier"
+   Kassenklar – Theme "Bronze"
 
    Liegt ueber css/style.css und css/lp.css.
 
-   Die Vorlage ist eine Versicherungsseite: dunkler Fotohintergrund, Grotesk,
-   Pillen in Versalien. Kassenklar geht in die andere Richtung und sieht aus
-   wie eine gedruckte Verbraucherzeitschrift – hell, gesetzt, mit Kanten.
+   Vorbild sind wsrpartner.ch und hyrock.ch. Beide arbeiten mit sehr
+   wenigen Mitteln: zwei Grundfarben, ein einziger warmer Akzent, grosse
+   Typografie, viel Weissraum. Genau daran haelt sich dieses Theme.
 
      SwissPremia              Kassenklar
-     -------------------------------------------------------
-     Petrolblau + Gold        Papier + Terrakotta
-     Figtree, leicht          Fraunces, Serife
-     dunkler Hero             heller Hero, Foto blasst aus
-     Pillen in Versalien      rechteckig, mit hartem Schatten
-     weiche Schatten          versetzter Block, keine Weichzeichnung
+     ---------------------------------------------------------
+     Petrolblau + Gold        Nachtschwarz + Bronze
+     Figtree, leicht          Cormorant Garamond, Serife
+     Kopfzeile quer oben      feste Seitenleiste links
+     Pillen in Versalien      Bronzeflaeche, weit gesperrt
+     weiche Schatten          Haarlinien, keine Schatten
      Radien 10 / 20 px        keine Radien
-     Kreuz als Bildmarke      zwei Balken: teuer gegen guenstig
+     Kreuz als Bildmarke      gezeichnetes K mit Bronzearm
 
-   Wer eine weitere Marke anlegt, kopiert diese Datei und aendert den :root.
+   Farbwerte und Kontrast
+     Bronze #b0926f auf Nachtschwarz    6,7:1   ok
+     Bronze auf Papier                  2,7:1   NUR fuer Flaechen und
+                                                Linien, nie fuer Schrift
+     Dunkles Bronze #7a5f3e auf Papier  5,5:1   ok, dafuer --gold-text
+     Nachtschwarz auf Papier           18,1:1   ok
    ========================================================================= */
 
 :root {
   /* Die Vorlage denkt in "petrol" und "gold". Die Namen bleiben, damit
      jede Regel der Vorlage weiter greift – gefuellt sind sie neu. */
-  --petrol: #b4462a;          /* Terrakotta, die Handlungsfarbe */
-  --petrol-dunkel: #8f3620;
-  --petrol-hell: #d4643f;
-  --slate: #4a423a;
-  --slate-tief: #16130f;      /* Tinte */
+  --petrol: #0b0b0b;
+  --petrol-dunkel: #000000;
+  --petrol-hell: #3a3a38;
+  --slate: #5b5b5a;
+  --slate-tief: #0b0b0b;
 
-  --gold: #6f7f6a;            /* Salbei als ruhige Zweitfarbe */
-  --gold-dunkel: #5a6a56;
-  --gold-text: #4a5747;
-  --creme: #f2ece1;
+  --gold: #b0926f;            /* Bronze, der einzige Akzent */
+  --gold-dunkel: #96795a;
+  --gold-text: #7a5f3e;       /* dunkler, fuer kleine Schrift auf hell */
+  --creme: #efece6;
 
-  --text: #4a423a;
-  --text-soft: #7a7168;
-  --bg: #fbf8f3;              /* Papier */
-  --bg-alt: #f2ece1;
-  --card: #fffdfa;
-  --line: #d9cdbb;
-  --gruen: #4d6b4a;
+  --text: #5b5b5a;
+  --text-soft: #8a8a87;
+  --bg: #f7f5f1;
+  --bg-alt: #efece6;
+  --card: #ffffff;
+  --line: #ddd8ce;
+  --gruen: #5f6f52;
 
-  /* Keine Radien, kein Weichzeichner. Schatten sind versetzte Blocke,
-     wie ein zweiter Druckgang, der leicht daneben sitzt. */
   --radius: 0px;
   --radius-gross: 0px;
-  --shadow: 5px 5px 0 rgba(22, 19, 15, .09);
-  --shadow-stark: 9px 9px 0 rgba(22, 19, 15, .13);
+  --shadow: none;
+  --shadow-stark: none;
+
+  --leiste: 280px;            /* Breite der Seitenleiste */
 }
 
 /* ===== Schrift ===== */
 body {
-  font-family: Inter, "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-family: Jost, "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
   background: var(--bg);
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4 {
-  font-family: Fraunces, Georgia, "Times New Roman", serif;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   color: var(--slate-tief);
+  font-weight: 400;
 }
-h1 { font-weight: 600; letter-spacing: -.02em; line-height: 1.06; }
-h2 { font-weight: 600; letter-spacing: -.015em; }
-h3 { font-weight: 600; letter-spacing: -.01em; }
+h1 { font-size: clamp(2.6rem, 5.4vw, 4.6rem); line-height: 1.04; letter-spacing: 0; }
+h2 { font-size: clamp(1.9rem, 3.2vw, 2.9rem); line-height: 1.12; }
+h3 { font-weight: 500; }
 
-/* Die Auszeichnungszeile bleibt in Versalien – das ist der einzige Ort,
-   an dem die Vorlage und dieses Theme sich einig sind. */
+/* Auszeichnungszeilen und Schaltflaechen sind weit gesperrt – das ist
+   das Mittel, mit dem beide Vorbilder Ruhe erzeugen. */
 .eyebrow {
-  color: var(--petrol);
-  font-weight: 600;
-  letter-spacing: .16em;
-  font-size: .7rem;
+  color: var(--gold-text);
+  font-family: Jost, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: .28em;
+  font-size: .68rem;
 }
+
+.lead { font-size: 1.12rem; line-height: 1.75; font-weight: 300; }
 
 /* ===== Schaltflaechen =====
-   Rechteckig, mit Kontur und versetztem Schatten. Beim Druecken wandert
-   die Flaeche auf den Schatten – die Bewegung ersetzt jeden Farbwechsel. */
+   Keine Pillen, keine Schatten. Bronze traegt die Hauptaktion, und die
+   Schrift darauf ist schwarz – weisse Schrift auf Bronze kaeme nur auf
+   2,9:1 und waere nicht lesbar genug. */
 .btn {
   border-radius: 0;
-  text-transform: none;
-  letter-spacing: -.01em;
-  font-weight: 600;
-  font-size: .95rem;
-  padding: 13px 26px;
-  border: 1.5px solid var(--slate-tief);
-  box-shadow: 3px 3px 0 var(--slate-tief);
-  transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  font-family: Jost, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: .72rem;
+  padding: 17px 34px;
+  border: 1px solid transparent;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
 }
-.btn:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--slate-tief);
-}
-.btn:active {
-  transform: translate(3px, 3px);
-  box-shadow: 0 0 0 var(--slate-tief);
-}
-.btn-big { padding: 15px 32px; font-size: 1rem; }
-.btn-small { padding: 9px 17px; font-size: .85rem; box-shadow: 2px 2px 0 var(--slate-tief); }
-.btn-row { padding: 7px 14px; font-size: .8rem; box-shadow: 2px 2px 0 var(--slate-tief); }
+.btn-big { padding: 20px 42px; font-size: .76rem; }
+.btn-small { padding: 12px 22px; font-size: .64rem; }
+.btn-row { padding: 9px 16px; font-size: .62rem; }
 
-.btn-primary { background: var(--petrol); color: #fff !important; }
-.btn-primary:hover { background: var(--petrol-dunkel); }
-.btn-gold { background: var(--slate-tief); color: var(--bg) !important; }
-.btn-gold:hover { background: #2a241d; }
-.btn-ghost { background: var(--card); color: var(--slate-tief) !important; }
-.btn-ghost:hover { background: var(--bg-alt); }
+.btn-primary { background: var(--gold); border-color: var(--gold); color: #0b0b0b !important; }
+.btn-primary:hover { background: var(--gold-dunkel); border-color: var(--gold-dunkel); }
+.btn-gold { background: var(--slate-tief); border-color: var(--slate-tief); color: var(--bg) !important; }
+.btn-gold:hover { background: #2a2a28; border-color: #2a2a28; }
+.btn-ghost { background: transparent; color: var(--slate-tief) !important; border-color: var(--slate-tief); }
+.btn-ghost:hover { background: var(--slate-tief); color: var(--bg) !important; }
 
-/* Der Hero ist hier hell. Die Regel der Vorlage fuer helle Schrift auf
-   dunklem Grund wuerde die Schaltflaeche unsichtbar machen. */
-.auf-dunkel .btn-ghost {
-  color: var(--slate-tief) !important;
-  border-color: var(--slate-tief);
+/* ===== Seitenleiste =====
+   Der auffaelligste Unterschied zur Vorlage. Ab 1100 px wandert die
+   Kopfzeile an den linken Rand und bleibt dort stehen; darunter bleibt
+   sie eine normale Leiste oben, weil eine Leiste seitlich auf dem Handy
+   nur Platz frisst. */
+.topbar {
+  background: var(--slate-tief);
+  border-bottom: 1px solid rgba(247, 245, 241, .14);
 }
-.auf-dunkel .btn-ghost:hover { background: var(--bg-alt); }
+.nav a { color: rgba(247, 245, 241, .74); letter-spacing: .1em; font-size: .8rem; }
+.nav a:hover { color: var(--gold); }
+.logo { color: var(--bg); }
+
+@media (min-width: 1100px) {
+  body { padding-left: var(--leiste); }
+
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--leiste);
+    border-bottom: none;
+    border-right: 1px solid rgba(247, 245, 241, .14);
+    z-index: 60;
+  }
+  .topbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: 100%;
+    padding: 46px 34px;
+    gap: 0;
+  }
+  .nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 22px;
+    margin: auto 0;
+  }
+  .nav a { font-size: .95rem; }
+  .nav .btn { text-align: center; }
+
+  /* Die Marke steht im Kopf der Leiste, Zeichen ueber Wortmarke. */
+  .logo { flex-direction: column; align-items: flex-start; gap: 18px; }
+}
+
+/* ===== Wortmarke =====
+   Das Logo ist mehr als das Zeichen: gesetzter Schriftzug in Versalien,
+   weit gesperrt, mit dem zweiten Wortteil in Bronze. Zeichen und
+   Schriftzug zusammen ergeben die Marke. */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+.logo > span:last-child {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .24em;
+  line-height: 1.3;
+}
+.logo strong { font-weight: 500; color: var(--gold); }
+.logo small {
+  display: block;
+  font-family: Jost, system-ui, sans-serif;
+  font-size: .54rem;
+  letter-spacing: .26em;
+  margin-top: 7px;
+  color: rgba(247, 245, 241, .5);
+}
+.logo-marke { flex: none; }
 
 /* ===== Hero =====
-   Der groesste Bruch: Die Vorlage legt eine dunkle Flaeche ueber das Foto
-   und setzt weisse Schrift darauf. Hier liegt Papier darueber, das nach
-   rechts durchlaessig wird – das Foto blasst aus, statt abzudunkeln. */
+   Nachtschwarz, das Foto nur als Andeutung dahinter. Kein Verlauf ueber
+   die halbe Flaeche wie in der Vorlage, sondern eine fast geschlossene
+   Decke – das Bild soll Stimmung geben, nicht Aufmerksamkeit ziehen. */
 .hero, .lp-hero {
   background:
-    linear-gradient(100deg,
-      rgba(251, 248, 243, .975) 0%,
-      rgba(251, 248, 243, .93) 46%,
-      rgba(251, 248, 243, .38) 100%),
+    linear-gradient(92deg,
+      rgba(11, 11, 11, .97) 0%,
+      rgba(11, 11, 11, .93) 52%,
+      rgba(11, 11, 11, .78) 100%),
     var(--hero-bild),
-    linear-gradient(150deg, var(--bg) 0%, var(--bg-alt) 100%);
+    #0b0b0b;
   background-size: cover;
   background-position: center;
-  color: var(--text);
-  border-bottom: 1.5px solid var(--slate-tief);
+  color: rgba(247, 245, 241, .8);
+  padding: 128px 0 136px;
 }
-
-/* Die Vorlage setzt hier einen Goldschimmer. Auf hellem Grund waere das
-   ein Schleier, deshalb ersatzlos weg. */
 .hero::before, .lp-hero::before { display: none; }
 
-.hero h1, .lp-hero h1 { color: var(--slate-tief); font-weight: 600; letter-spacing: -.02em; }
-.hero .accent, .lp-hero .accent { color: var(--petrol); }
-.hero .eyebrow, .lp-hero .eyebrow { color: var(--petrol); }
-.lead { color: var(--text); }
-.hero-benefits li { color: var(--text); }
+.hero h1, .lp-hero h1 { color: var(--bg); font-weight: 300; }
+.hero .accent, .lp-hero .accent { color: var(--gold); font-style: italic; }
+.hero .eyebrow, .lp-hero .eyebrow { color: var(--gold); }
+.lead { color: rgba(247, 245, 241, .72); }
+.hero-benefits li { color: rgba(247, 245, 241, .68); font-weight: 300; }
 .hero-benefits li::before {
-  border-left-color: var(--petrol);
-  border-bottom-color: var(--petrol);
+  border-left-color: var(--gold);
+  border-bottom-color: var(--gold);
 }
 
-/* Auf der Startseite steht die Karte links, der Text rechts – umgekehrt
-   zur Vorlage. Erst ab Tablet: darunter ist das Raster einspaltig, und
-   dort gehoert die Botschaft nach oben. */
+/* Eine Haarlinie zwischen Auszeichnungszeile und Titel – bei beiden
+   Vorbildern das wiederkehrende Gliederungsmittel. */
+.hero .eyebrow, .lp-hero .eyebrow { display: inline-block; padding-bottom: 18px; }
+.hero h1, .lp-hero h1 { border-top: 1px solid rgba(176, 146, 111, .4); padding-top: 30px; }
+
 @media (min-width: 981px) {
-  .hero .hero-inner { grid-template-columns: .82fr 1.18fr; }
-  .hero .hero-inner > *:first-child { order: 2; }
-  .hero .hero-inner > *:last-child { order: 1; }
+  .hero .hero-inner { grid-template-columns: 1.2fr .8fr; gap: 72px; }
 }
 
 /* ===== Flaechen =====
-   Kontur und versetzter Schatten statt weicher Kante. */
+   Haarlinien statt Schatten, keine Rundungen. */
 .hero-card, .calc-card, .lead-card, .lp-form-card {
-  border: 1.5px solid var(--slate-tief);
+  border: 1px solid var(--line);
   border-radius: 0;
   background: var(--card);
-  box-shadow: var(--shadow);
+  box-shadow: none;
 }
+.hero-card { border-color: rgba(176, 146, 111, .38); background: rgba(247, 245, 241, .04); }
+.hero-card, .hero-card .stat-label, .hero-card .hero-note { color: rgba(247, 245, 241, .66); }
+.hero-card .stat-num { color: var(--gold); font-family: "Cormorant Garamond", Georgia, serif; font-weight: 400; }
+.product-chip { border-color: rgba(247, 245, 241, .2); color: rgba(247, 245, 241, .84) !important; }
+.product-chip:hover { border-color: var(--gold); color: var(--gold) !important; }
 
+.section { padding: 116px 0; }
 .section-alt { background: var(--bg-alt); }
-
-/* Abschnitte bekommen eine Trennlinie – wie Spalten im Druck. */
 .section + .section { border-top: 1px solid var(--line); }
 
 .field input[type=text], .field input[type=number], .field input[type=tel],
 .field input[type=email], .field select, .field textarea {
   border-radius: 0;
-  border-color: var(--slate-tief);
-  background: var(--bg);
+  border-color: var(--line);
+  background: transparent;
+  font-family: Jost, system-ui, sans-serif;
+  font-weight: 300;
 }
 .field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--petrol);
-  box-shadow: 3px 3px 0 var(--petrol);
+  border-color: var(--gold);
+  box-shadow: none;
 }
 .field label {
-  text-transform: none;
-  letter-spacing: -.01em;
-  font-size: .875rem;
-  color: var(--slate-tief);
-  font-weight: 600;
+  font-family: Jost, system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  font-size: .62rem;
+  font-weight: 400;
+  color: var(--text-soft);
 }
-
-/* ===== Kopfzeile ===== */
-.topbar { background: var(--bg); border-bottom: 1.5px solid var(--slate-tief); }
-.nav a { letter-spacing: -.01em; color: var(--slate-tief); }
-.nav a:hover { color: var(--petrol); }
-.logo { color: var(--slate-tief); }
-
-/* ===== Bildmarke =====
-   Die Vorlage traegt ein Schweizerkreuz – das Zeichen jeder zweiten
-   Versicherungsseite. Kassenklar zeigt stattdessen, was die Seite tut:
-   zwei Balken, ein hoher und ein niedriger, gleiche Leistung zu
-   verschiedenen Preisen. Dasselbe Zeichen steckt im Favicon. */
-.logo-cross {
-  background: var(--petrol);
-  border-radius: 2px;
-  width: 30px;
-  height: 30px;
-}
-.logo-cross::before, .logo-cross::after {
-  background: var(--bg);
-  border-radius: 1px;
-  bottom: 7px;
-  top: auto;
-  width: 5px;
-}
-.logo-cross::before { left: 9px;  height: 8px; }
-.logo-cross::after  { left: 17px; height: 15px; }
 
 /* ===== Fusszeile ===== */
-.footer { background: var(--slate-tief); color: rgba(251, 248, 243, .66); }
-.footer a { color: var(--petrol-hell); }
-.footer .logo-cross { background: var(--petrol); }
-.footer .logo-cross::before, .footer .logo-cross::after { background: var(--bg); }
-.footer .logo small { color: rgba(251, 248, 243, .5); }
+.footer { background: var(--slate-tief); color: rgba(247, 245, 241, .55); }
+.footer a { color: var(--gold); }
+.footer h4 { letter-spacing: .22em; font-family: Jost, system-ui, sans-serif; }
+.footer .logo small { color: rgba(247, 245, 241, .42); }
 
 /* =========================================================================
    Hero-Bilder
@@ -235,8 +282,7 @@ h3 { font-weight: 600; letter-spacing: -.01em; }
    keine Namensnennung noetig).
    ========================================================================= */
 .hero--start {
-  /* Zwei Personen rechnen etwas auf Papier durch – Vergleichen statt
-     Bergpanorama. Das ist das Versprechen der Marke. */
+  /* Zwei Personen rechnen etwas auf Papier durch. */
   --hero-bild: url("https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
 }
 .lp-hero--neuzuzueger {
@@ -256,8 +302,10 @@ h3 { font-weight: 600; letter-spacing: -.01em; }
   --hero-bild: url("https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
 }
 
-/* Auf dem Handy hochkant und kleiner geladen. */
 @media (max-width: 700px) {
+  .hero, .lp-hero { padding: 76px 0 84px; }
+  .section { padding: 72px 0; }
+
   .hero--start {
     --hero-bild: url("https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
   }

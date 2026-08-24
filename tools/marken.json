@@ -5,12 +5,29 @@
     "logoHtml": "Kassen<strong>klar</strong>",
     "domain": "kassenklar.ch",
     "email": "info@kassenklar.ch",
-    "themeFarbe": "#b4462a",
-    "iconGrund": "#b4462a",
-    "iconZeichen": "#fbf8f3",
+    "themeFarbe": "#b0926f",
+    "iconGrund": "#0b0b0b",
+    "iconZeichen": "#b0926f",
     "iconMarke": "balken",
-    "iconRadius": 0.06,
+    "iconRadius": 0.04,
     "abschnitte": ["ablauf", "rechner", "situation", "beratung", "fragen", "warum"],
+    "texte": [
+      ["<span class=\"eyebrow\">Grundversicherung 2026 · Offizielle BAG-Daten</span>", "<span class=\"eyebrow\">Prämienvergleich Schweiz</span>"],
+      ["<h1>Krankenkassen-Prämien vergleichen – <span class=\"accent\">in 1 Minute</span></h1>", "<h1>Gleiche Leistung.<br><span class=\"accent\">Anderer Preis.</span></h1>"],
+      ["Alle 34 Versicherer, alle Prämienregionen, mit den offiziellen Daten des Bundes (BAG&nbsp;/&nbsp;priminfo.admin.ch). Die Leistungen der Grundversicherung sind gesetzlich überall identisch – nur der Preis nicht.", "Die Grundversicherung ist per Gesetz bei jeder Kasse dieselbe. Der Preis dafür ist es nicht – je nach Region und Modell liegen Tausende Franken im Jahr dazwischen. Wir zeigen Ihnen den Unterschied mit den offiziellen Zahlen des Bundes."],
+      ["<li>100&nbsp;% kostenlos &amp; unverbindlich</li>", "<li>Alle 34 Versicherer, alle Prämienregionen</li>"],
+      ["<li>Ohne Anmeldung – keine Registrierung nötig</li>", "<li>Offizielle BAG-Daten, keine Schätzungen</li>"],
+      ["<li>Offizielle Prämiendaten 2026 des BAG</li>", "<li>Ohne Anmeldung, ohne Kosten</li>"],
+      ["<li>Persönliche Beratung durch Experten</li>", "<li>Beratung nur, wenn Sie darum bitten</li>"],
+      [">Jetzt Prämien vergleichen<", ">Prämie berechnen<"],
+      [">Beratung anfordern<", ">Beratung vereinbaren<"],
+      ["<a href=\"#rechner\">Prämien vergleichen</a>", "<a href=\"#rechner\">Vergleich</a>"],
+      ["<a href=\"#situation\">Ihre Situation</a>", "<a href=\"#situation\">Situationen</a>"],
+      ["<a href=\"#beratung\" class=\"btn btn-small btn-primary\">Kostenlose Beratung</a>", "<a href=\"#beratung\" class=\"btn btn-small btn-primary\">Beratung</a>"],
+      ["<h2>Ihre Prämie 2026 berechnen", "<h2>Ihre Prämie, in einer Minute"],
+      ["<h2>So einfach funktioniert's", "<h2>Drei Schritte, mehr nicht"],
+      ["<h2>Kostenlose &amp; unverbindliche Beratung", "<h2>Sprechen wir darüber"]
+    ],
     "beschreibung": "Krankenkassen-Praemien 2026 vergleichen mit den offiziellen Daten des Bundesamts fuer Gesundheit."
   }
 ]
