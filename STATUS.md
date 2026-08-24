@@ -126,7 +126,81 @@ _dmarc                  TXT    v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com
 
 ---
 
-## 5. Entscheidungen, die nicht rückgängig gemacht werden sollten
+## 5. Mehrere Marken auf einer Lead-Liste
+
+Ziel sind bis zu 20 Websites, die alle in dieselbe Lead-Liste einzahlen. Jede
+Anfrage trägt die Marke, aus der sie stammt.
+
+### Wie eine Marke entsteht
+
+```
+node tools/neue-marke.js kassenklar     # eine Marke
+node tools/neue-marke.js --alle         # alle aus tools/marken.json
+```
+
+Der Generator nimmt die Website im Projektstamm als Vorlage und schreibt
+`sites/<id>/` neu. Drei Dinge gehören zu einer Marke:
+
+| Datei | Inhalt |
+|---|---|
+| `tools/marken.json` | Name, Domain, E-Mail, Farben, Icon-Zeichen |
+| `tools/themes/<id>.css` | das Design – **von Hand geschrieben** |
+| `sites/<id>/` | Ergebnis, wird bei jedem Lauf überschrieben |
+
+**Nie in `sites/` arbeiten.** Alles dort ist Ergebnis. Änderungen gehören in die
+Vorlage im Projektstamm oder in das Theme, danach neu erzeugen.
+
+Der Generator weigert sich, eine Marke ohne eigenes Theme zu bauen. Eine reine
+Farbkopie wäre für Google eine Dublette und für Besucher nicht unterscheidbar –
+lieber ein Fehler als zwanzig gleich aussehende Seiten.
+
+### Wie die Zuordnung funktioniert
+
+In `js/lead-core.js` stehen zwei Zeilen je Marke:
+
+```js
+SITE_ID: "kassenklar",
+SITE_NAME: "Kassenklar",
+```
+
+`SITE_NAME` reist als Feld `Website` mit jedem Lead an **denselben** Webhook und
+landet in der neuen Sheet-Spalte `Website`, direkt hinter `Status`. Ausserdem
+steht die Marke im Betreff der Lead-Mail. In der Kundenbestätigung erscheint sie
+nicht – der Interessent hat mit den anderen Marken nichts zu tun.
+
+Das Apps Script gleicht fehlende Spalten in einem bestehenden Sheet selbst an
+(`spaltenAngleichen`). Ohne das wären beim ersten Lead nach der Umstellung alle
+Werte um eine Spalte verrutscht.
+
+### Icons
+
+`tools/icons.js` erzeugt die komplette Favicon-Familie aus den Farbangaben in
+`marken.json` – SVG, vier PNG-Grössen, apple-touch-icon und ein ICO mit 16, 32
+und 48 Pixeln. Keine Fremdpakete, nur `zlib` aus Node. Das ICO enthält BMP-Daten
+statt PNG, siehe den Fallstrick weiter unten.
+
+### Deployment einer Marke
+
+Ein Vercel-Projekt je Marke, **Root Directory** auf `sites/<id>` gesetzt, eigene
+Domain darauf. Alle Projekte hängen am selben GitHub-Repository. Ein Push
+aktualisiert damit alle Marken gleichzeitig.
+
+### Der Vorbehalt, der bleibt
+
+20 fast identische Vergleichsseiten sind in Googles Spam-Richtlinien als
+Doorway-Netzwerk beschrieben. Die übliche Folge ist keine Abstrafung einzelner
+Seiten, sondern aller zusammen – swisspremia.ch eingeschlossen. Für bezahlten
+Verkehr und Direktzugriffe funktioniert der Aufbau, für organische Suche ist er
+ein Risiko.
+
+Wer das Risiko klein halten will, gibt jeder Marke einen eigenen Blickwinkel
+statt nur einer eigenen Farbe: eigene Zielgruppe, eigene Texte, eigene Fragen im
+Formular. Der Generator erzwingt bereits ein eigenes Theme; eigene Inhalte sind
+der nächste Schritt und Handarbeit.
+
+---
+
+## 6. Entscheidungen, die nicht rückgängig gemacht werden sollten
 
 **formsubmit.co ist abgeschaltet.** Der Dienst war am 14.8.2026 über Stunden nicht
 erreichbar (HTTP 000), hat dabei Leads verschluckt und den Notfall-Pfad ausgelöst, der
@@ -160,7 +234,7 @@ noch keine – die Felder wären sinnlose Reibung auf der einzigen bezahlten Lan
 
 ---
 
-## 6. Gelernte Fallstricke
+## 7. Gelernte Fallstricke
 
 **Das Apps Script wird durch einen Push nicht aktualisiert.** Es liegt im Google-Konto.
 Nach jeder Änderung: Inhalt von `tools/lead-webhook.gs` in den Editor kopieren, dann
@@ -188,7 +262,7 @@ publiziert waren. Autoritativ abfragen: `Resolve-DnsName -Server dns1.swizzonic.
 
 ---
 
-## 7. Offene Punkte
+## 8. Offene Punkte
 
 ### Dringend
 
@@ -217,7 +291,7 @@ löschen, in Zeile 85 des Skripts ersetzen, neue Version bereitstellen.
 
 ---
 
-## 8. Was als Nächstes ansteht
+## 9. Was als Nächstes ansteht
 
 Die Technik ist fertig. **Was fehlt, ist Verkehr.**
 

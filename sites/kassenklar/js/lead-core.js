@@ -1,5 +1,5 @@
 /* =========================================================================
-   SwissPremia – Lead-Core
+   Kassenklar – Lead-Core
    Gemeinsame Lead-Logik für index.html und alle Landingpages in /lp.
 
    Aufgaben:
@@ -19,11 +19,11 @@
     /* Kennung dieser Website. Steht im Lead, im Sheet und im Betreff, damit
        bei mehreren Marken erkennbar bleibt, woher eine Anfrage stammt.
        Beim Anlegen einer neuen Marke NUR diese zwei Zeilen anpassen. */
-    SITE_ID: "swisspremia",
-    SITE_NAME: "SwissPremia",
+    SITE_ID: "kassenklar",
+    SITE_NAME: "Kassenklar",
 
     /* Wohin die Lead-Benachrichtigung geht (formsubmit.co, gratis). */
-    LEAD_EMAIL: "info@swisspremia.ch",
+    LEAD_EMAIL: "info@kassenklar.ch",
 
     /* >>> HAUPTKANAL <<< URL der Google-Apps-Script-Web-App (endet auf /exec).
        Siehe tools/lead-webhook.gs. Das Skript schreibt jeden Lead ins Google
@@ -36,11 +36,11 @@
     /* Zweitkanal formsubmit.co – standardmässig AUS.
        Der Dienst war am 14.08.2026 über Stunden nicht erreichbar (HTTP 000)
        und hat dabei Leads verschluckt. Nur einschalten, wenn du ihn bewusst
-       als Reserve willst und info@swisspremia.ch dort bestätigt hast. */
+       als Reserve willst und info@kassenklar.ch dort bestätigt hast. */
     FORMSUBMIT_AKTIV: false,
 
     /* Name, der in der automatischen Antwort an den Interessenten steht. */
-    BERATER_NAME: "Ihr SwissPremia-Team",
+    BERATER_NAME: "Ihr Kassenklar-Team",
 
     /* Rückrufversprechen – muss zu deinem Follow-up-Prozess passen. */
     RUECKRUF_VERSPRECHEN: "innert 24 Stunden (werktags meist innert 1 Stunde)",
@@ -182,7 +182,7 @@
        das Formular gesehen hat – sonst wirkt der Erstkontakt unseriös. */
     if ((document.documentElement.lang || "").toLowerCase().indexOf("en") === 0) {
       return "Hello " + (vorname || "") + ",\n\n" +
-        "Thank you for your request to SwissPremia – we have received it.\n\n" +
+        "Thank you for your request to Kassenklar – we have received it.\n\n" +
         "YOUR DETAILS\n" + uebersicht + "\n\n" +
         "Something wrong or missing? Simply reply to this email.\n\n" +
         "WHAT HAPPENS NEXT\n" +
@@ -190,11 +190,11 @@
         "2. " + CONFIG.BERATER_NAME + " passes your request to a licensed insurance broker, who will contact you " + CONFIG.RUECKRUF_VERSPRECHEN_EN + ".\n" +
         "3. You receive a non-binding overview – and decide in your own time.\n\n" +
         "The consultation is free of charge and without obligation.\n\n" +
-        "Kind regards\n" + CONFIG.BERATER_NAME + "\nSwissPremia\n" + CONFIG.LEAD_EMAIL;
+        "Kind regards\n" + CONFIG.BERATER_NAME + "\nKassenklar\n" + CONFIG.LEAD_EMAIL;
     }
 
     return "Guten Tag " + (vorname || "") + "\n\n" +
-      "Vielen Dank für Ihre Anfrage bei SwissPremia – sie ist bei uns eingegangen.\n\n" +
+      "Vielen Dank für Ihre Anfrage bei Kassenklar – sie ist bei uns eingegangen.\n\n" +
       "IHRE ANGABEN\n" + uebersicht + "\n\n" +
       "Stimmt etwas nicht oder fehlt eine Angabe? Antworten Sie einfach auf diese E-Mail.\n\n" +
       "WAS JETZT PASSIERT\n" +
@@ -202,7 +202,7 @@
       "2. " + CONFIG.BERATER_NAME + " leitet Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich " + CONFIG.RUECKRUF_VERSPRECHEN + " bei Ihnen meldet.\n" +
       "3. Sie erhalten eine unverbindliche Übersicht – Sie entscheiden in Ruhe.\n\n" +
       "Die Beratung ist für Sie kostenlos und unverbindlich.\n\n" +
-      "Freundliche Grüsse\n" + CONFIG.BERATER_NAME + "\nSwissPremia\n" + CONFIG.LEAD_EMAIL;
+      "Freundliche Grüsse\n" + CONFIG.BERATER_NAME + "\nKassenklar\n" + CONFIG.LEAD_EMAIL;
   }
 
   /* ---------------------------------------------------------------
@@ -305,7 +305,7 @@
       .map(function (k) { return k + ": " + lead[k]; })
       .join("\n");
     return "mailto:" + CONFIG.LEAD_EMAIL +
-      "?subject=" + encodeURIComponent("Neue Anfrage – SwissPremia") +
+      "?subject=" + encodeURIComponent("Neue Anfrage – Kassenklar") +
       "&body=" + encodeURIComponent(text);
   }
 
@@ -354,7 +354,7 @@
      Lieber beim Öffnen der Seite laut in der Konsole als still im Betrieb. */
   if (!CONFIG.WEBHOOK_URL && !CONFIG.FORMSUBMIT_AKTIV) {
     console.error(
-      "[SwissPremia] Kein Versandkanal konfiguriert – Formulare können keine " +
+      "[Kassenklar] Kein Versandkanal konfiguriert – Formulare können keine " +
       "Anfragen zustellen. Bitte WEBHOOK_URL in js/lead-core.js eintragen " +
       "(Anleitung: tools/lead-webhook.gs)."
     );

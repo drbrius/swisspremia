@@ -1,0 +1,12 @@
+# Kassenklar – Krankenkassen-Vergleich Schweiz
+# https://www.kassenklar.ch
+
+User-agent: *
+Allow: /
+
+# Die Danke-Seite gehört nicht in den Index: Sie ist ohne vorheriges Formular
+# sinnlos und würde die Auswertung der Konversionen verfälschen.
+Disallow: /lp/danke.html
+Disallow: /lp/danke
+
+Sitemap: https://www.kassenklar.ch/sitemap.xml

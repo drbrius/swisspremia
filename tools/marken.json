@@ -1,0 +1,13 @@
+[
+  {
+    "id": "kassenklar",
+    "name": "Kassenklar",
+    "domain": "kassenklar.ch",
+    "email": "info@kassenklar.ch",
+    "themeFarbe": "#12b76a",
+    "iconGrund": "#0e1116",
+    "iconZeichen": "#12b76a",
+    "iconMarke": "haken",
+    "beschreibung": "Krankenkassen-Praemien 2026 vergleichen mit den offiziellen Daten des Bundesamts fuer Gesundheit."
+  }
+]

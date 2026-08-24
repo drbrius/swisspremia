@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+/* =========================================================================
+   Kassenklar – Theme
+
+   Liegt ueber css/style.css und css/lp.css und ersetzt deren Gestaltung.
+   Die Struktur bleibt, die Anmutung wird eine andere:
+
+     SwissPremia            Kassenklar
+     -----------------------------------------------------
+     Petrolblau + Gold      Tinte + Signalgruen
+     Figtree, leicht        Space Grotesk, fett
+     Pillen in Versalien    eckige Schaltflaechen
+     Radien 10 / 20 px      Radien 4 / 8 px
+     weiche Schatten        harte Konturen
+     Fotohintergrund        Raster auf Tinte
+
+   Wer eine weitere Marke anlegt, kopiert diese Datei und aendert die
+   Variablen im :root – der Rest passt sich an.
+   ========================================================================= */
+
+:root {
+  /* Leitfarben: Tinte statt Petrol */
+  --petrol: #12b76a;
+  --petrol-dunkel: #059154;
+  --petrol-hell: #32d583;
+  --slate: #1d2939;
+  --slate-tief: #0e1116;
+
+  /* Akzent: kein Gold, sondern dieselbe Signalfarbe in dunkler Stufe */
+  --gold: #12b76a;
+  --gold-dunkel: #059154;
+  --gold-text: #05603a;
+  --creme: #f2f4f7;
+
+  /* Text und Flaechen: hoeherer Kontrast als beim Vorbild */
+  --text: #344054;
+  --text-soft: #667085;
+  --bg: #ffffff;
+  --bg-alt: #f9fafb;
+  --card: #ffffff;
+  --line: #d0d5dd;
+  --gruen: #05603a;
+
+  /* Form: eckig statt rund, Kontur statt Schatten */
+  --radius: 4px;
+  --radius-gross: 8px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .06);
+  --shadow-stark: 0 4px 12px rgba(16, 24, 40, .1);
+}
+
+/* ===== Schrift ===== */
+body {
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .marke-name, .btn {
+  font-family: "Space Grotesk", Inter, "Segoe UI", system-ui, sans-serif;
+}
+
+/* Das Vorbild setzt grosse Headlines im leichten Schnitt. Hier tragen sie
+   Gewicht und stehen eng – das ist der auffaelligste Unterschied. */
+h1 {
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.05;
+}
+h2 { font-weight: 600; letter-spacing: -.02em; }
+h3 { font-weight: 600; letter-spacing: -.01em; }
+
+.eyebrow {
+  font-weight: 600;
+  letter-spacing: .12em;
+  font-size: .7rem;
+}
+
+/* ===== Schaltflaechen: eckig, gemischte Schreibweise ===== */
+.btn {
+  border-radius: var(--radius);
+  text-transform: none;
+  letter-spacing: -.01em;
+  font-weight: 600;
+  font-size: .95rem;
+  border-width: 1px;
+  padding: 13px 24px;
+}
+.btn-big { padding: 15px 30px; font-size: 1rem; }
+.btn-small { padding: 9px 16px; font-size: .85rem; }
+.btn-row { padding: 7px 14px; font-size: .8rem; }
+
+.btn-primary { color: #fff !important; }
+/* Gold war beim Vorbild die helle Zweitfarbe. Hier ist die Zweitfarbe
+   dunkel, damit die Signalfarbe der Hauptaktion vorbehalten bleibt. */
+.btn-gold {
+  background: var(--slate-tief);
+  border-color: var(--slate-tief);
+  color: #fff !important;
+}
+.btn-gold:hover { background: var(--slate); border-color: var(--slate); }
+.btn-ghost { color: var(--slate-tief) !important; }
+.btn-ghost:hover { border-color: var(--slate-tief); }
+
+/* ===== Hero: kein Foto, sondern Raster auf Tinte ===== */
+.hero, .lp-hero {
+  background: var(--slate-tief) !important;
+  color: #fff;
+}
+/* Das feine Raster ersetzt das Unsplash-Bild. Es kostet keinen Ladevorgang
+   und bleibt auf jedem Bildschirm gleich scharf. */
+.hero::before, .lp-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(75% 75% at 30% 40%, #000 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(75% 75% at 30% 40%, #000 0%, transparent 100%);
+}
+
+.hero h1, .lp-hero h1 { font-weight: 700; letter-spacing: -.03em; }
+.hero .accent, .lp-hero .accent { color: var(--petrol-hell); }
+.hero .eyebrow, .lp-hero .eyebrow { color: var(--petrol-hell); }
+.lead { color: rgba(255, 255, 255, .75); }
+
+.hero-benefits li::before {
+  border-left-color: var(--petrol-hell);
+  border-bottom-color: var(--petrol-hell);
+}
+
+/* ===== Karten: Kontur statt Schatten ===== */
+.hero-card, .calc-card, .lead-card, .lp-form-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-gross);
+}
+
+.field input[type=text], .field input[type=number], .field input[type=tel],
+.field input[type=email], .field select, .field textarea {
+  border-radius: var(--radius);
+}
+.field label {
+  text-transform: none;
+  letter-spacing: -.01em;
+  font-size: .875rem;
+  color: var(--slate);
+}
+
+/* ===== Kopfzeile ===== */
+.topbar { border-bottom: 1px solid var(--line); }
+.nav a { letter-spacing: -.01em; }

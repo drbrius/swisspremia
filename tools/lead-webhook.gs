@@ -106,6 +106,7 @@ var KONFIG = {
 var SPALTEN = [
   'Eingang',
   'Status',
+  'Website',
   'Priorität',
   'Kampagne',
   'Quelle',
@@ -132,7 +133,7 @@ var SPALTEN = [
 var STATUS_WERTE = ['Neu', 'Kontaktiert', 'Termin', 'Offerte', 'Abschluss', 'Verloren'];
 
 /* Verwaltungsfelder, die den Interessenten nichts angehen. */
-var NICHT_ANZEIGEN = ['Priorität', 'Kampagne', 'Quelle', 'Sprache', 'Zeitpunkt'];
+var NICHT_ANZEIGEN = ['Website', 'Priorität', 'Kampagne', 'Quelle', 'Sprache', 'Zeitpunkt'];
 
 /* ======================== Webhook-Einstieg ============================== */
 
@@ -190,9 +191,36 @@ function blattHolen() {
     blatt.setColumnWidth(SPALTEN.indexOf('Quelle') + 1, 220);
     blatt.setColumnWidth(SPALTEN.indexOf('Berechnung') + 1, 260);
     blatt.setColumnWidth(SPALTEN.indexOf('Notizen') + 1, 260);
+  } else {
+    spaltenAngleichen(blatt);
   }
 
   return blatt;
+}
+
+/* Ergaenzt fehlende Spalten in einem bereits bestehenden Sheet.
+   Ohne das wuerde eine neu eingefuegte Spalte alle Werte nach rechts
+   verschieben, waehrend die Kopfzeile unveraendert bliebe. Die Spalte wird
+   an genau der Stelle eingefuegt, an der sie in SPALTEN steht; vorhandene
+   Zeilen bekommen dort eine leere Zelle. */
+function spaltenAngleichen(blatt) {
+  var breite = blatt.getLastColumn();
+  if (breite === 0) return;
+
+  var kopf = blatt.getRange(1, 1, 1, breite).getValues()[0];
+
+  SPALTEN.forEach(function (name, i) {
+    if (kopf[i] === name) return;
+    if (kopf.indexOf(name) !== -1) return;   // vorhanden, nur an anderer Stelle
+
+    blatt.insertColumnBefore(i + 1);
+    blatt.getRange(1, i + 1)
+         .setValue(name)
+         .setFontWeight('bold')
+         .setBackground('#005786')
+         .setFontColor('#ffffff');
+    kopf.splice(i, 0, name);
+  });
 }
 
 function leadSpeichern(daten) {
