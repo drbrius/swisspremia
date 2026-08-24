@@ -101,7 +101,7 @@
 
     <div class="lp-form-card">
       <h2>Auf die Liste setzen</h2>
-      <p class="sub">Zwei Angaben genügen. Telefonnummer nur, wenn Sie den Vergleich lieber besprechen als lesen.</p>
+      <p class="sub">Name, PLZ und E-Mail genügen. Telefonnummer nur, wenn Sie den Vergleich lieber besprechen als lesen.</p>
 
       <form id="lpForm" novalidate>
         <div class="calc-grid">
@@ -110,15 +110,19 @@
             <input type="text" id="fVorname" name="vorname" data-label="Vorname" required autocomplete="given-name">
           </div>
           <div class="field">
-            <label for="fPlz">PLZ *</label>
-            <input type="text" id="fPlz" name="plz_ort" data-label="PLZ/Ort" required inputmode="numeric" maxlength="4" placeholder="8001">
-            <div class="field-hint">Bestimmt Ihre Prämienregion.</div>
+            <label for="fName">Nachname *</label>
+            <input type="text" id="fName" name="nachname" data-label="Nachname" required autocomplete="family-name">
           </div>
           <div class="field span-2">
             <label for="fEmail">E-Mail *</label>
             <input type="email" id="fEmail" name="email" data-label="E-Mail" required autocomplete="email" placeholder="name@beispiel.ch">
           </div>
-          <div class="field span-2">
+          <div class="field">
+            <label for="fPlz">PLZ *</label>
+            <input type="text" id="fPlz" name="plz_ort" data-label="PLZ/Ort" required inputmode="numeric" maxlength="4" placeholder="8001">
+            <div class="field-hint">Bestimmt Ihre Prämienregion.</div>
+          </div>
+          <div class="field">
             <label for="fTelefon">Telefon (optional)</label>
             <input type="tel" id="fTelefon" name="telefon" data-label="Telefon" autocomplete="tel" placeholder="079 123 45 67">
             <div class="field-hint">Ohne Nummer erhalten Sie den Vergleich ausschliesslich per E-Mail.</div>
