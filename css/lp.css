@@ -65,7 +65,11 @@
   .lp-next li::before { width: 34px; height: 34px; font-size: .88rem; }
   .lp-aktionen .btn { width: 100%; }
 
-  .lang-switch button { padding: 9px 14px; min-height: 40px; }
+  /* 40 px lagen unter der empfohlenen Tippflaeche von 44 px. Groesse und
+     Innenabstand stehen in der Grundregel weiter unten – dieser
+     Medienblock steht davor und wuerde bei gleicher Gewichtung
+     verlieren. */
+  .lang-switch button { min-height: 44px; }
   .lp-trust { gap: 8px 16px; font-size: .72rem; }
 }
 
@@ -164,7 +168,7 @@
 .lang-switch { display: flex; gap: 6px; align-items: center; }
 .lang-switch button {
   border: 1px solid var(--line); background: #fff; color: var(--text-soft);
-  border-radius: 999px; padding: 7px 15px; font: inherit; font-size: .74rem;
+  border-radius: 999px; padding: 8px 16px; font: inherit; font-size: .78rem;
   font-weight: 600; letter-spacing: .09em; cursor: pointer; transition: .15s;
 }
 .lang-switch button:hover { border-color: var(--petrol); color: var(--petrol); }
