@@ -145,6 +145,7 @@ Der Generator nimmt die Website im Projektstamm als Vorlage und schreibt
 |---|---|
 | `tools/marken.json` | Name, Domain, E-Mail, Farben, Icon-Zeichen |
 | `tools/themes/<id>.css` | das Design – **von Hand geschrieben** |
+| `abschnitte` in `marken.json` | Reihenfolge der Abschnitte auf der Startseite |
 | `sites/<id>/` | Ergebnis, wird bei jedem Lauf überschrieben |
 
 **Nie in `sites/` arbeiten.** Alles dort ist Ergebnis. Änderungen gehören in die
@@ -171,6 +172,20 @@ nicht – der Interessent hat mit den anderen Marken nichts zu tun.
 Das Apps Script gleicht fehlende Spalten in einem bestehenden Sheet selbst an
 (`spaltenAngleichen`). Ohne das wären beim ersten Lead nach der Umstellung alle
 Werte um eine Spalte verrutscht.
+
+### Reihenfolge der Abschnitte
+
+Die Startseite der Vorlage hat sechs Abschnitte mit `id`: `rechner`, `situation`,
+`warum`, `ablauf`, `fragen`, `beratung`. Das Feld `abschnitte` in `marken.json`
+bestimmt, in welcher Reihenfolge sie erscheinen.
+
+Umsortiert wird **im Dokument**, nicht per CSS-`order`. Wer die Seite mit der
+Tastatur bedient oder vorlesen laesst, folgt der Reihenfolge im HTML – eine rein
+optische Umsortierung wuerde beides auseinanderlaufen lassen.
+
+Stimmt die Liste nicht mit der Vorlage ueberein, bricht der Generator ab und
+nennt den fehlenden Abschnitt. Eine Startseite ohne Formular faellt beim
+Durchklicken nicht zwingend auf – deshalb lieber ein Fehler.
 
 ### Icons
 

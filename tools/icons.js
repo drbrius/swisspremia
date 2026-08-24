@@ -49,6 +49,10 @@ var ZEICHEN = {
     staerke: 0.13,
     striche: [[0.24, 0.52, 0.42, 0.70], [0.42, 0.70, 0.78, 0.32]]
   },
+  balken: {
+    staerke: 0.17,
+    striche: [[0.35, 0.74, 0.35, 0.50], [0.65, 0.74, 0.65, 0.28]]
+  },
   kreuz: {
     staerke: 0.16,
     striche: [[0.5, 0.2, 0.5, 0.8], [0.2, 0.5, 0.8, 0.5]]
@@ -69,11 +73,11 @@ function imAbgerundetenQuadrat(x, y, radius) {
 
 /* Zeichnet ein Icon als RGBA-Puffer. Vierfaches Ueberabtasten glaettet
    die Kanten – bei 16 px ist das der Unterschied zwischen lesbar und Brei. */
-function zeichne(groesse, grundHex, zeichenHex, zeichenName) {
+function zeichne(groesse, grundHex, zeichenHex, zeichenName, eckradius) {
   var grund = hexZuRgb(grundHex);
   var vorn = hexZuRgb(zeichenHex);
   var zeichen = ZEICHEN[zeichenName] || ZEICHEN.haken;
-  var radius = 0.18;
+  var radius = typeof eckradius === "number" ? eckradius : 0.18;
   var puffer = Buffer.alloc(groesse * groesse * 4);
   var proben = 4;
 
@@ -230,7 +234,7 @@ function ico(bilder) {
 
 /* ------------------------------------------------------------------ SVG */
 
-function svg(grundHex, zeichenHex, zeichenName) {
+function svg(grundHex, zeichenHex, zeichenName, eckradius) {
   var zeichen = ZEICHEN[zeichenName] || ZEICHEN.haken;
   var striche = zeichen.striche.map(function (s) {
     return '<line x1="' + (s[0] * 100).toFixed(1) + '" y1="' + (s[1] * 100).toFixed(1) +
@@ -238,7 +242,7 @@ function svg(grundHex, zeichenHex, zeichenName) {
   }).join("\n  ");
 
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">\n' +
-         '  <rect width="100" height="100" rx="18" fill="' + grundHex + '"/>\n' +
+         '  <rect width="100" height="100" rx="' + ((typeof eckradius === "number" ? eckradius : 0.18) * 100).toFixed(0) + '" fill="' + grundHex + '"/>\n' +
          '  <g stroke="' + zeichenHex + '" stroke-width="' + (zeichen.staerke * 100).toFixed(0) +
          '" stroke-linecap="round" stroke-linejoin="round" fill="none">\n  ' +
          striche + '\n  </g>\n</svg>\n';
@@ -251,10 +255,12 @@ function alleIcons(marke) {
   var vorn = marke.iconZeichen;
   var zeichen = marke.iconMarke;
 
-  function bild(g) { return zeichne(g, grund, vorn, zeichen); }
+  var eck = typeof marke.iconRadius === "number" ? marke.iconRadius : 0.18;
+
+  function bild(g) { return zeichne(g, grund, vorn, zeichen, eck); }
 
   return {
-    "favicon.svg": Buffer.from(svg(grund, vorn, zeichen), "utf8"),
+    "favicon.svg": Buffer.from(svg(grund, vorn, zeichen, eck), "utf8"),
     "favicon-48.png": png(48, bild(48)),
     "favicon-96.png": png(96, bild(96)),
     "favicon-192.png": png(192, bild(192)),

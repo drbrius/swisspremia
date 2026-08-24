@@ -1,213 +1,234 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap');
 
 /* =========================================================================
-   Kassenklar – Theme
+   Kassenklar – Theme "Papier"
 
-   Liegt ueber css/style.css und css/lp.css und ersetzt deren Gestaltung.
-   Die Struktur bleibt, die Anmutung wird eine andere:
+   Liegt ueber css/style.css und css/lp.css.
 
-     SwissPremia            Kassenklar
-     -----------------------------------------------------
-     Petrolblau + Gold      Tinte + Signalgruen
-     Figtree, leicht        Space Grotesk, fett
-     Pillen in Versalien    eckige Schaltflaechen
-     Radien 10 / 20 px      Radien 4 / 8 px
-     weiche Schatten        harte Konturen
-     Fotohintergrund        Raster auf Tinte
+   Die Vorlage ist eine Versicherungsseite: dunkler Fotohintergrund, Grotesk,
+   Pillen in Versalien. Kassenklar geht in die andere Richtung und sieht aus
+   wie eine gedruckte Verbraucherzeitschrift – hell, gesetzt, mit Kanten.
 
-   Wer eine weitere Marke anlegt, kopiert diese Datei und aendert die
-   Variablen im :root – der Rest passt sich an.
+     SwissPremia              Kassenklar
+     -------------------------------------------------------
+     Petrolblau + Gold        Papier + Terrakotta
+     Figtree, leicht          Fraunces, Serife
+     dunkler Hero             heller Hero, Foto blasst aus
+     Pillen in Versalien      rechteckig, mit hartem Schatten
+     weiche Schatten          versetzter Block, keine Weichzeichnung
+     Radien 10 / 20 px        keine Radien
+     Kreuz als Bildmarke      zwei Balken: teuer gegen guenstig
+
+   Wer eine weitere Marke anlegt, kopiert diese Datei und aendert den :root.
    ========================================================================= */
 
 :root {
-  /* Leitfarben: Tinte statt Petrol */
-  --petrol: #12b76a;
-  --petrol-dunkel: #059154;
-  --petrol-hell: #32d583;
-  --slate: #1d2939;
-  --slate-tief: #0e1116;
+  /* Die Vorlage denkt in "petrol" und "gold". Die Namen bleiben, damit
+     jede Regel der Vorlage weiter greift – gefuellt sind sie neu. */
+  --petrol: #b4462a;          /* Terrakotta, die Handlungsfarbe */
+  --petrol-dunkel: #8f3620;
+  --petrol-hell: #d4643f;
+  --slate: #4a423a;
+  --slate-tief: #16130f;      /* Tinte */
 
-  /* Akzent: kein Gold, sondern dieselbe Signalfarbe in dunkler Stufe */
-  --gold: #12b76a;
-  --gold-dunkel: #059154;
-  --gold-text: #05603a;
-  --creme: #f2f4f7;
+  --gold: #6f7f6a;            /* Salbei als ruhige Zweitfarbe */
+  --gold-dunkel: #5a6a56;
+  --gold-text: #4a5747;
+  --creme: #f2ece1;
 
-  /* Text und Flaechen: hoeherer Kontrast als beim Vorbild */
-  --text: #344054;
-  --text-soft: #667085;
-  --bg: #ffffff;
-  --bg-alt: #f9fafb;
-  --card: #ffffff;
-  --line: #d0d5dd;
-  --gruen: #05603a;
+  --text: #4a423a;
+  --text-soft: #7a7168;
+  --bg: #fbf8f3;              /* Papier */
+  --bg-alt: #f2ece1;
+  --card: #fffdfa;
+  --line: #d9cdbb;
+  --gruen: #4d6b4a;
 
-  /* Form: eckig statt rund, Kontur statt Schatten */
-  --radius: 4px;
-  --radius-gross: 8px;
-  --shadow: 0 1px 2px rgba(16, 24, 40, .06);
-  --shadow-stark: 0 4px 12px rgba(16, 24, 40, .1);
+  /* Keine Radien, kein Weichzeichner. Schatten sind versetzte Blocke,
+     wie ein zweiter Druckgang, der leicht daneben sitzt. */
+  --radius: 0px;
+  --radius-gross: 0px;
+  --shadow: 5px 5px 0 rgba(22, 19, 15, .09);
+  --shadow-stark: 9px 9px 0 rgba(22, 19, 15, .13);
 }
 
 /* ===== Schrift ===== */
 body {
   font-family: Inter, "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, .marke-name, .btn {
-  font-family: "Space Grotesk", Inter, "Segoe UI", system-ui, sans-serif;
+h1, h2, h3, h4 {
+  font-family: Fraunces, Georgia, "Times New Roman", serif;
+  color: var(--slate-tief);
 }
-
-/* Das Vorbild setzt grosse Headlines im leichten Schnitt. Hier tragen sie
-   Gewicht und stehen eng – das ist der auffaelligste Unterschied. */
-h1 {
-  font-weight: 700;
-  letter-spacing: -.03em;
-  line-height: 1.05;
-}
-h2 { font-weight: 600; letter-spacing: -.02em; }
+h1 { font-weight: 600; letter-spacing: -.02em; line-height: 1.06; }
+h2 { font-weight: 600; letter-spacing: -.015em; }
 h3 { font-weight: 600; letter-spacing: -.01em; }
 
+/* Die Auszeichnungszeile bleibt in Versalien – das ist der einzige Ort,
+   an dem die Vorlage und dieses Theme sich einig sind. */
 .eyebrow {
+  color: var(--petrol);
   font-weight: 600;
-  letter-spacing: .12em;
+  letter-spacing: .16em;
   font-size: .7rem;
 }
 
-/* ===== Schaltflaechen: eckig, gemischte Schreibweise ===== */
+/* ===== Schaltflaechen =====
+   Rechteckig, mit Kontur und versetztem Schatten. Beim Druecken wandert
+   die Flaeche auf den Schatten – die Bewegung ersetzt jeden Farbwechsel. */
 .btn {
-  border-radius: var(--radius);
+  border-radius: 0;
   text-transform: none;
   letter-spacing: -.01em;
   font-weight: 600;
   font-size: .95rem;
-  border-width: 1px;
-  padding: 13px 24px;
+  padding: 13px 26px;
+  border: 1.5px solid var(--slate-tief);
+  box-shadow: 3px 3px 0 var(--slate-tief);
+  transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
 }
-.btn-big { padding: 15px 30px; font-size: 1rem; }
-.btn-small { padding: 9px 16px; font-size: .85rem; }
-.btn-row { padding: 7px 14px; font-size: .8rem; }
+.btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--slate-tief);
+}
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--slate-tief);
+}
+.btn-big { padding: 15px 32px; font-size: 1rem; }
+.btn-small { padding: 9px 17px; font-size: .85rem; box-shadow: 2px 2px 0 var(--slate-tief); }
+.btn-row { padding: 7px 14px; font-size: .8rem; box-shadow: 2px 2px 0 var(--slate-tief); }
 
-.btn-primary { color: #fff !important; }
-/* Gold war beim Vorbild die helle Zweitfarbe. Hier ist die Zweitfarbe
-   dunkel, damit die Signalfarbe der Hauptaktion vorbehalten bleibt. */
-.btn-gold {
-  background: var(--slate-tief);
+.btn-primary { background: var(--petrol); color: #fff !important; }
+.btn-primary:hover { background: var(--petrol-dunkel); }
+.btn-gold { background: var(--slate-tief); color: var(--bg) !important; }
+.btn-gold:hover { background: #2a241d; }
+.btn-ghost { background: var(--card); color: var(--slate-tief) !important; }
+.btn-ghost:hover { background: var(--bg-alt); }
+
+/* Der Hero ist hier hell. Die Regel der Vorlage fuer helle Schrift auf
+   dunklem Grund wuerde die Schaltflaeche unsichtbar machen. */
+.auf-dunkel .btn-ghost {
+  color: var(--slate-tief) !important;
   border-color: var(--slate-tief);
-  color: #fff !important;
 }
-.btn-gold:hover { background: var(--slate); border-color: var(--slate); }
-.btn-ghost { color: var(--slate-tief) !important; }
-.btn-ghost:hover { border-color: var(--slate-tief); }
+.auf-dunkel .btn-ghost:hover { background: var(--bg-alt); }
 
 /* ===== Hero =====
-   Die Vorlage legt einen blau-petrolfarbenen Verlauf ueber das Foto. Hier
-   liegt Tinte darueber, die nach rechts in Gruen ausblendet – dasselbe
-   Bauprinzip, ein anderes Ergebnis. Die Fotos sind eigene, siehe unten. */
+   Der groesste Bruch: Die Vorlage legt eine dunkle Flaeche ueber das Foto
+   und setzt weisse Schrift darauf. Hier liegt Papier darueber, das nach
+   rechts durchlaessig wird – das Foto blasst aus, statt abzudunkeln. */
 .hero, .lp-hero {
   background:
     linear-gradient(100deg,
-      rgba(14, 17, 22, .94) 0%,
-      rgba(14, 17, 22, .86) 40%,
-      rgba(5, 96, 58, .55) 100%),
+      rgba(251, 248, 243, .975) 0%,
+      rgba(251, 248, 243, .93) 46%,
+      rgba(251, 248, 243, .38) 100%),
     var(--hero-bild),
-    linear-gradient(150deg, var(--slate-tief) 0%, #05341f 100%);
+    linear-gradient(150deg, var(--bg) 0%, var(--bg-alt) 100%);
   background-size: cover;
   background-position: center;
-  color: #fff;
+  color: var(--text);
+  border-bottom: 1.5px solid var(--slate-tief);
 }
 
-/* Signatur der Marke: ein feines Raster ueber dem Foto. Wo die Vorlage
-   einen weichen Goldschimmer setzt, liegt hier Millimeterpapier – das
-   passt zu einer Seite, die mit Zahlen argumentiert. */
-.hero::before, .lp-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, .06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(72% 72% at 26% 42%, #000 0%, transparent 100%);
-  -webkit-mask-image: radial-gradient(72% 72% at 26% 42%, #000 0%, transparent 100%);
+/* Die Vorlage setzt hier einen Goldschimmer. Auf hellem Grund waere das
+   ein Schleier, deshalb ersatzlos weg. */
+.hero::before, .lp-hero::before { display: none; }
+
+.hero h1, .lp-hero h1 { color: var(--slate-tief); font-weight: 600; letter-spacing: -.02em; }
+.hero .accent, .lp-hero .accent { color: var(--petrol); }
+.hero .eyebrow, .lp-hero .eyebrow { color: var(--petrol); }
+.lead { color: var(--text); }
+.hero-benefits li { color: var(--text); }
+.hero-benefits li::before {
+  border-left-color: var(--petrol);
+  border-bottom-color: var(--petrol);
 }
 
 /* Auf der Startseite steht die Karte links, der Text rechts – umgekehrt
-   zur Vorlage. Nur ab Tablet: darunter ist das Raster einspaltig, und
+   zur Vorlage. Erst ab Tablet: darunter ist das Raster einspaltig, und
    dort gehoert die Botschaft nach oben. */
 @media (min-width: 981px) {
-  .hero .hero-inner { grid-template-columns: .85fr 1.15fr; }
+  .hero .hero-inner { grid-template-columns: .82fr 1.18fr; }
   .hero .hero-inner > *:first-child { order: 2; }
   .hero .hero-inner > *:last-child { order: 1; }
 }
 
-.hero h1, .lp-hero h1 { font-weight: 700; letter-spacing: -.03em; }
-.hero .accent, .lp-hero .accent { color: var(--petrol-hell); }
-.hero .eyebrow, .lp-hero .eyebrow { color: var(--petrol-hell); }
-.lead { color: rgba(255, 255, 255, .75); }
-
-.hero-benefits li::before {
-  border-left-color: var(--petrol-hell);
-  border-bottom-color: var(--petrol-hell);
-}
-
-/* ===== Karten: Kontur statt Schatten ===== */
+/* ===== Flaechen =====
+   Kontur und versetzter Schatten statt weicher Kante. */
 .hero-card, .calc-card, .lead-card, .lp-form-card {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-gross);
+  border: 1.5px solid var(--slate-tief);
+  border-radius: 0;
+  background: var(--card);
+  box-shadow: var(--shadow);
 }
+
+.section-alt { background: var(--bg-alt); }
+
+/* Abschnitte bekommen eine Trennlinie – wie Spalten im Druck. */
+.section + .section { border-top: 1px solid var(--line); }
 
 .field input[type=text], .field input[type=number], .field input[type=tel],
 .field input[type=email], .field select, .field textarea {
-  border-radius: var(--radius);
+  border-radius: 0;
+  border-color: var(--slate-tief);
+  background: var(--bg);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--petrol);
+  box-shadow: 3px 3px 0 var(--petrol);
 }
 .field label {
   text-transform: none;
   letter-spacing: -.01em;
   font-size: .875rem;
-  color: var(--slate);
+  color: var(--slate-tief);
+  font-weight: 600;
 }
 
 /* ===== Kopfzeile ===== */
-.topbar { border-bottom: 1px solid var(--line); }
-.nav a { letter-spacing: -.01em; }
+.topbar { background: var(--bg); border-bottom: 1.5px solid var(--slate-tief); }
+.nav a { letter-spacing: -.01em; color: var(--slate-tief); }
+.nav a:hover { color: var(--petrol); }
+.logo { color: var(--slate-tief); }
 
 /* ===== Bildmarke =====
-   Die Vorlage traegt ein Schweizerkreuz. Das passt zu jeder zweiten
-   Versicherungsseite und waere hier eine Dublette. Kassenklar bekommt
-   einen Haken – dasselbe Zeichen wie im Favicon. Gebaut aus zwei
-   Rahmenlinien eines gedrehten Kastens, das traegt bis 16 Pixel. */
+   Die Vorlage traegt ein Schweizerkreuz – das Zeichen jeder zweiten
+   Versicherungsseite. Kassenklar zeigt stattdessen, was die Seite tut:
+   zwei Balken, ein hoher und ein niedriger, gleiche Leistung zu
+   verschiedenen Preisen. Dasselbe Zeichen steckt im Favicon. */
 .logo-cross {
-  border-radius: var(--radius);
   background: var(--petrol);
+  border-radius: 2px;
+  width: 30px;
+  height: 30px;
 }
-.logo-cross::after { display: none; }
-.logo-cross::before {
-  left: 9px;
-  top: 5px;
-  width: 8px;
-  height: 14px;
-  background: none;
-  border-right: 3.5px solid #fff;
-  border-bottom: 3.5px solid #fff;
-  transform: rotate(45deg);
+.logo-cross::before, .logo-cross::after {
+  background: var(--bg);
+  border-radius: 1px;
+  bottom: 7px;
+  top: auto;
+  width: 5px;
 }
+.logo-cross::before { left: 9px;  height: 8px; }
+.logo-cross::after  { left: 17px; height: 15px; }
 
-/* In der Fusszeile steht die Marke auf dunklem Grund. */
+/* ===== Fusszeile ===== */
+.footer { background: var(--slate-tief); color: rgba(251, 248, 243, .66); }
+.footer a { color: var(--petrol-hell); }
 .footer .logo-cross { background: var(--petrol); }
-.footer .logo-cross::before {
-  background: none;
-  border-right-color: var(--slate-tief);
-  border-bottom-color: var(--slate-tief);
-}
+.footer .logo-cross::before, .footer .logo-cross::after { background: var(--bg); }
+.footer .logo small { color: rgba(251, 248, 243, .5); }
 
 /* =========================================================================
    Hero-Bilder
 
    Eigene Auswahl, keine Ueberschneidung mit der Vorlage. Jedes Bild wurde
-   vor der Aufnahme angesehen, nicht nur auf HTTP 200 geprueft – eine
+   vor der Aufnahme angesehen und nicht nur auf HTTP 200 geprueft – eine
    gueltige Adresse sagt nichts darueber, was auf dem Foto zu sehen ist.
 
    Quelle: Unsplash (unsplash.com/license – kostenlos, auch kommerziell,

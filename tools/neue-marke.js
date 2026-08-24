@@ -103,6 +103,50 @@ function themeVerlinken(inhalt) {
   );
 }
 
+/* Stellt die Abschnitte der Startseite in die Reihenfolge aus marken.json.
+
+   Bewusst im Dokument und nicht per CSS-"order": Wer die Seite mit der
+   Tastatur bedient oder vorlesen laesst, folgt der Reihenfolge im HTML.
+   Eine rein optische Umsortierung wuerde beides auseinanderlaufen lassen.
+
+   Der Hero bleibt, wo er ist – umsortiert wird nur, was eine id hat. */
+function abschnitteSortieren(inhalt, marke) {
+  if (!Array.isArray(marke.abschnitte) || !marke.abschnitte.length) return inhalt;
+
+  var muster = /^<section id="([^"]+)"[\s\S]*?^<\/section>\n/gm;
+  var bloecke = {};
+  var gefunden = [];
+  var erster = -1;
+  var letzter = -1;
+  var treffer;
+
+  while ((treffer = muster.exec(inhalt)) !== null) {
+    bloecke[treffer[1]] = treffer[0];
+    gefunden.push(treffer[1]);
+    if (erster === -1) erster = treffer.index;
+    letzter = treffer.index + treffer[0].length;
+  }
+
+  if (!gefunden.length) return inhalt;
+
+  /* Laut abbrechen statt stillschweigend einen Abschnitt zu verlieren:
+     eine Seite ohne Formular faellt beim Durchklicken nicht zwingend auf. */
+  var fehlt = gefunden.filter(function (id) { return marke.abschnitte.indexOf(id) === -1; });
+  var unbekannt = marke.abschnitte.filter(function (id) { return gefunden.indexOf(id) === -1; });
+
+  if (fehlt.length || unbekannt.length) {
+    throw new Error(
+      'Abschnittsliste von "' + marke.id + '" passt nicht zur Vorlage.\n' +
+      (fehlt.length ? "  fehlt in marken.json: " + fehlt.join(", ") + "\n" : "") +
+      (unbekannt.length ? "  gibt es in der Vorlage nicht: " + unbekannt.join(", ") + "\n" : "") +
+      "  Vorlage hat: " + gefunden.join(", ")
+    );
+  }
+
+  var neu = marke.abschnitte.map(function (id) { return bloecke[id]; }).join("");
+  return inhalt.slice(0, erster) + neu + inhalt.slice(letzter);
+}
+
 /* ------------------------------------------------------------- Kopieren */
 
 function kopieren(von, nach, marke) {
@@ -126,6 +170,7 @@ function kopieren(von, nach, marke) {
 
   if (pfad.basename(von) === "lead-core.js") inhalt = leadCoreAnpassen(inhalt, marke);
   if (pfad.extname(von) === ".html") inhalt = schriftDerVorlageEntfernen(themeVerlinken(inhalt));
+  if (pfad.basename(von) === "index.html") inhalt = abschnitteSortieren(inhalt, marke);
 
   fs.writeFileSync(nach, inhalt, "utf8");
 }
