@@ -40,9 +40,9 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "InsuranceAgency",
+    "@type": "Organization",
     "name": "Kassenklar",
-    "description": "Unabhängiger Vergleich der Schweizer Krankenkassen-Prämien auf Basis der offiziellen Daten des Bundesamts für Gesundheit.",
+    "description": "Unabhängige Vergleichsplattform für Schweizer Krankenkassen-Prämien auf Basis der offiziellen Daten des Bundesamts für Gesundheit. Kassenklar berät nicht selbst; Anfragen werden an einen lizenzierten Versicherungsvermittler weitergegeben.",
     "url": "https://www.kassenklar.ch/",
     "areaServed": {
       "@type": "Country",
@@ -51,8 +51,47 @@
     "knowsLanguage": [
       "de-CH",
       "en"
+    ]
+  }
+  </script>
+
+  <!-- Der Rechner als eigenständiges Werkzeug. Nennt die Datenquelle
+       maschinenlesbar: Antwortmaschinen übernehmen bevorzugt Aussagen,
+       die ihre Herkunft mitliefern. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Kassenklar Prämienrechner",
+    "url": "https://www.kassenklar.ch/#rechner",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "browserRequirements": "JavaScript",
+    "isAccessibleForFree": true,
+    "inLanguage": [
+      "de-CH",
+      "en"
     ],
-    "priceRange": "Kostenlos"
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "CHF"
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "Kassenklar",
+      "url": "https://www.kassenklar.ch/"
+    },
+    "about": "Vergleich der Prämien der obligatorischen Krankenpflegeversicherung aller in der Schweiz zugelassenen Krankenversicherer",
+    "isBasedOn": {
+      "@type": "Dataset",
+      "name": "Prämien der obligatorischen Krankenpflegeversicherung",
+      "creator": {
+        "@type": "GovernmentOrganization",
+        "name": "Bundesamt für Gesundheit (BAG)"
+      },
+      "url": "https://www.priminfo.admin.ch/"
+    }
   }
   </script>
 
