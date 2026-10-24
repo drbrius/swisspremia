@@ -83,6 +83,24 @@ function leadCoreAnpassen(inhalt, marke) {
 /* Die Vorlage laedt Figtree. Jedes Theme bringt seine eigenen Schriften
    per @import mit, deshalb faellt der Verweis der Vorlage weg – sonst laedt
    jede Marke eine Schrift, die sie gar nicht benutzt. */
+/* Die Ratgeber unter /ratgeber/ gehoeren nur zu swisspremia.ch. Derselbe
+   Text auf zwanzig Domains waere fuer Google eine Dublette und wuerde
+   allen Marken zusammen schaden. Der Ordner wird nicht uebernommen (er
+   steht nicht in UEBERNEHMEN); hier fallen die Verweise darauf weg,
+   sonst zeigten Navigation und Sitemap der Marke ins Leere. */
+function ratgeberVerweiseEntfernen(inhalt, datei) {
+  if (datei.endsWith(".xml")) {
+    /* Blockweise statt mit einem Muster ueber mehrere Zeilen – das ist
+       lesbar und bricht nicht, wenn sich Einrueckung oder Zeilenenden
+       aendern. */
+    return inhalt
+      .split("</url>")
+      .filter(function (block) { return block.indexOf("/ratgeber/") === -1; })
+      .join("</url>");
+  }
+  return inhalt.replace(/[ \t]*<a href="\/ratgeber\/">Ratgeber<\/a>\n/g, "");
+}
+
 function schriftDerVorlageEntfernen(inhalt) {
   return inhalt.replace(/[ \t]*<link[^>]+fonts\.googleapis\.com\/css2[^>]*>\n/g, "");
 }
@@ -210,6 +228,8 @@ function kopieren(von, nach, marke, logoSvg) {
     inhalt = logoErsetzen(inhalt, logoSvg);
     inhalt = texteErsetzen(inhalt, marke);
   }
+  /* Bewusst ausserhalb des HTML-Zweigs: die Sitemap ist XML. */
+  inhalt = ratgeberVerweiseEntfernen(inhalt, von);
   if (pfad.basename(von) === "index.html") inhalt = abschnitteSortieren(inhalt, marke);
 
   fs.writeFileSync(nach, inhalt, "utf8");

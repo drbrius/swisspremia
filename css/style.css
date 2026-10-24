@@ -20,7 +20,10 @@
 
   /* Text & Flächen */
   --text: #4d4d4d;
-  --text-soft: #808080;
+  /* #808080 kam auf Weiss nur auf 3,95:1 und auf Creme auf 3,4:1 – unter
+     der Lesbarkeitsgrenze von 4,5:1 fuer Fliesstext. #6b6b6b erreicht
+     5,3:1 auf Weiss und 4,6:1 auf Creme. */
+  --text-soft: #6b6b6b;
   --bg: #ffffff;
   --bg-alt: #f7f8f9;
   --card: #ffffff;
@@ -382,7 +385,8 @@ a { color: var(--petrol); text-underline-offset: 3px; }
   h1 { font-size: clamp(1.85rem, 8.2vw, 2.3rem); line-height: 1.16; }
   h2 { font-size: 1.5rem; margin-bottom: 20px; }
   .lead { font-size: 1.02rem; margin: 18px 0 22px; }
-  .eyebrow { font-size: .72rem; letter-spacing: .15em; margin-bottom: 10px; }
+  /* .72rem ergab 11,5 px – unter der Lesbarkeitsgrenze von 12 px. */
+  .eyebrow { font-size: .78rem; letter-spacing: .15em; margin-bottom: 10px; }
 
   .topbar-inner { height: 62px; }
   .nav a:not(.btn) { display: none; }

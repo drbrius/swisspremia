@@ -202,6 +202,28 @@ Ein Vercel-Projekt je Marke, **Root Directory** auf `sites/<id>` gesetzt, eigene
 Domain darauf. Alle Projekte hängen am selben GitHub-Repository. Ein Push
 aktualisiert damit alle Marken gleichzeitig.
 
+### Ratgeber – nur auf swisspremia.ch
+
+Unter `/ratgeber/` liegen zwölf Ratgeber zu drei Suchbegriff-Familien: Kassenwechsel
+(Fristen, Kündigung, Franchise, Modelle, Zusatzversicherung), Region (Prämienregionen,
+Zürich, Bern, Umzug) und Alter (Kinder, 19–25, ab 26). Jede Seite hat Article-,
+FAQPage- und BreadcrumbList-Markup, Canonical, Open Graph und steht in der Sitemap.
+
+```
+node tools/build_ratgeber.js      # Inhalte aus tools/ratgeber-inhalte.js, schreibt
+                                  # ratgeber/ und die komplette sitemap.xml
+```
+
+**Die Ratgeber werden bewusst nicht auf andere Marken kopiert.** Derselbe Text auf
+zwanzig Domains wäre eine Dublette und würde allen Marken zusammen schaden. Der
+Marken-Generator übernimmt den Ordner nicht und entfernt Navigationslink und
+Sitemap-Einträge (`ratgeberVerweiseEntfernen`). Andere Marken brauchen eigene Texte.
+
+**Keine Prämienbeträge in den Ratgebern.** Fristen, Franchisestufen und Selbstbehalt
+stehen im Gesetz und ändern sich selten; Preise gehören in den Rechner, wo sie aus
+den BAG-Daten kommen. Ein Ratgeber mit eingetippten Beträgen ist nach einem Jahr
+falsch, ohne dass es jemand merkt.
+
 ### Der Vorbehalt, der bleibt
 
 20 fast identische Vergleichsseiten sind in Googles Spam-Richtlinien als
