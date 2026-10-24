@@ -4,3 +4,5 @@ tools/*.xlsx
 .vercel/
 .vercel
 .env*
+# Reels: gerenderte Videos sind gross und aus dem Code reproduzierbar
+tools/reels/out/

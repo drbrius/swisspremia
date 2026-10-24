@@ -224,6 +224,32 @@ stehen im Gesetz und ändern sich selten; Preise gehören in den Rechner, wo sie
 den BAG-Daten kommen. Ein Ratgeber mit eingetippten Beträgen ist nach einem Jahr
 falsch, ohne dass es jemand merkt.
 
+### Reels als Code (tools/reels)
+
+Sechs Reels in 9:16 mit Text im Bild und Stimme, gebaut mit Remotion. Die Inhalte
+stehen in `tools/reels/src/reels.js` – je Szene Bildtext, Sprechtext und Mindestdauer.
+Liegt eine Tonspur vor, wird die Szene so lang wie der Ton; sonst gilt die Mindestdauer.
+
+```
+cd tools/reels
+npm install
+$env:ELEVENLABS_API_KEY = "..."          # nur fuer dieses Fenster
+$env:ELEVENLABS_VOICE_ID = "XrExE9yKIg1WjnnlVkGX"   # Matilda; jede andere geht
+npm run stimme                            # erzeugt public/audio/*.mp3, ueberspringt Vorhandenes
+npm run render                            # schreibt out/*.mp4
+```
+
+**Der ElevenLabs-Schluessel kommt nur aus der Umgebung**, nie in eine Datei im
+Repository – es ist oeffentlich. Der Schluessel, der im Oktober 2026 benutzt wurde, stand
+im Chat und ist zu erneuern.
+
+**Der mitgelieferte Chrome Headless startet auf diesem Rechner nicht** (`spawn EFTYPE`,
+vermutlich weil das Projekt in OneDrive liegt). `render.js` nimmt deshalb den installierten
+Chrome oder Edge. Das gilt auch fuer `npx remotion still` und `compositions`: immer
+`--browser-executable` mitgeben.
+
+Die Tonspuren sind eingecheckt (42 Dateien, 2,6 MB), die Videos nicht.
+
 ### Der Vorbehalt, der bleibt
 
 20 fast identische Vergleichsseiten sind in Googles Spam-Richtlinien als
