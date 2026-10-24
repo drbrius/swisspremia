@@ -248,7 +248,19 @@ vermutlich weil das Projekt in OneDrive liegt). `render.js` nimmt deshalb den in
 Chrome oder Edge. Das gilt auch fuer `npx remotion still` und `compositions`: immer
 `--browser-executable` mitgeben.
 
-Die Tonspuren sind eingecheckt (42 Dateien, 2,6 MB), die Videos nicht.
+Die Tonspuren sind eingecheckt (104 Dateien, 6,3 MB), die Videos nicht.
+
+**Serie 2 (24.10.2026): fuenfzehn Reels mit Grafik**, alle auf Deutsch, 15-22 s. Die
+fuenfzehn Grafikszenen (Kalender, Brief, Selbstbehalt, Modelle, Karte, Familie,
+Zeitstrahl, Schalter, Tacho, Schloss, Muenzen, Checkliste, Treppe, Raster, Jahresring)
+stehen in `src/Grafik.jsx`, die gemeinsame Bewegungsschicht in `src/Bausteine.jsx`:
+driftender Hintergrund, Wort-fuer-Wort-Typografie mit Schaerfe-Einzug, Szenenuebergaenge,
+Pulsringe, Fortschrittsstrich. Alle 21 Reels teilen sie.
+
+**Rendern im Vordergrund, in Gruppen von vier bis fuenf.** Ein Hintergrund-Render wurde
+beim Ende der Sitzungsantwort abgebrochen. Vor dem Rendern Standbilder mit
+`npx remotion still` pruefen – die Sichtung hat sechs Layoutfehler gefunden, die im Code
+nicht sichtbar waren (Umschlag auf dem Gebaeude, Text auf dem Bogen, Figur in der Stufe).
 
 ### Der Vorbehalt, der bleibt
 

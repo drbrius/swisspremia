@@ -148,3 +148,32 @@ aussieht, lassen sich alle sechs auch als Code mit Remotion erzeugen: dann
 stimmen Schrift, Farben und Logo exakt, und Zahlen lassen sich pro Region
 automatisch aus den BAG-Daten einsetzen. Das wäre der nächste Schritt, wenn
 die Skripte freigegeben sind.
+
+---
+
+# Serie 2 – fünfzehn Reels mit Grafik (Oktober 2026)
+
+Alle auf Deutsch, 20–28 Sekunden, jeder mit mindestens einer animierten Grafik.
+Die vollständigen Szenen, Bildtexte und Sprechtexte stehen in
+`tools/reels/src/reels.js`; gerendert wird mit `npm run render`.
+
+| # | Reel | Grafik | Haken |
+|---|---|---|---|
+| 7 | Countdown zum 30. November | Monatskalender, der 30. wird eingekreist | Eingang zählt, nicht der Poststempel |
+| 8 | Eingeschrieben | Umschlag fliegt zur Kasse, Stempel schlägt auf | Der einzige Beweis, der zählt |
+| 9 | Der Selbstbehalt | Balken: Franchise + 10 % bis zum Deckel 700 | Mit der Franchise ist es nicht getan |
+| 10 | Drei Modelle | Drei Karten mit Piktogramm und Etikett | Alle günstiger als Standard |
+| 11 | Prämienregionen | Schweizer Umriss, Nadel, drei Ringe | Ihre Gemeinde bestimmt die Region |
+| 12 | Familienrabatt | Vier Figuren, Etikett ab dem dritten Kind | Nachrechnen schlägt Annehmen |
+| 13 | Neugeborene | Zeitstrahl Geburt → 3 Monate, Bogen zurück | Rückwirkend ab Tag 1 |
+| 14 | Unfalldeckung | Kippschalter, Prämie zählt runter | Ein Häkchen weniger |
+| 15 | Prämienverbilligung | Tacho mit Zeiger | Der Beitrag, den viele nicht abholen |
+| 16 | Reihenfolge Zusatzversicherung | Zwei Karten, Schloss rastet ein | Erst die Zusage, dann die Kündigung |
+| 17 | Das Sparglas | Münzen fallen ins Glas, Betrag zählt mit | Zwölfhundert im Jahr |
+| 18 | Checkliste Kassenwechsel | Fünf Haken ziehen sich auf | Kein Tag ohne Deckung |
+| 19 | Die zweite Stufe | Treppe, Figur steigt hinauf | Seit 19 nie verglichen? |
+| 20 | Alles im Gesetz | Vier Leistungen mit Haken | Eine teurere Kasse zahlt nicht mehr |
+| 21 | Zwei Fenster im Jahr | Jahresring, zwei Bögen leuchten gold | Das erste kennt kaum jemand |
+
+Beispielwerte, die vor der Veröffentlichung zu belegen sind: 420 → 395 beim
+Unfallausschluss (Reel 14), 100 Franken im Monat beim Sparglas (Reel 17).
