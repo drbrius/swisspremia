@@ -166,6 +166,8 @@ Oder einfach Claude fragen: *«Aktualisiere die Prämiendaten von priminfo.admin
 
 - Prämien: offizielle BAG-Daten, Angaben ohne Gewähr.
 - Die Formulare enthalten eine DSG-konform formulierte Einwilligung zur Kontaktaufnahme.
+  Ob das Kästchen gesetzt war und mit welchem Wortlaut, reist mit jedem Lead mit: Die Lead-Mail
+  zeigt die Einwilligung als eigenen Abschnitt, das Sheet führt sie in der Spalte `Einwilligung`.
   Für den produktiven Betrieb brauchen Sie zusätzlich eine eigene Datenschutzerklärung
   mit Impressum – **Meta verlangt den Link zur Datenschutzerklärung für Lead Ads zwingend.**
 - Telefonische Kaltakquise ist in der Schweiz seit dem 1. September 2024 verboten.

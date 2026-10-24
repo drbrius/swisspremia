@@ -149,7 +149,8 @@
   /* Steuer- und Verwaltungsfelder gehören nicht in die Kundenbestätigung. */
   var NICHT_ANZEIGEN = [
     "_subject", "_template", "_autoresponse", "_honey", "email", "Website",
-    "Priorität", "Kampagne", "Quelle", "Sprache", "Zeitpunkt"
+    "Priorität", "Kampagne", "Quelle", "Sprache", "Zeitpunkt",
+    "Einwilligung", "Einwilligungstext"
   ];
 
   /* Vergleicht Feldnamen unempfindlich gegen beschädigte Sonderzeichen:
@@ -203,6 +204,27 @@
       "3. Sie erhalten eine unverbindliche Übersicht – Sie entscheiden in Ruhe.\n\n" +
       "Die Beratung ist für Sie kostenlos und unverbindlich.\n\n" +
       "Freundliche Grüsse\n" + CONFIG.BERATER_NAME + "\nSwissPremia\n" + CONFIG.LEAD_EMAIL;
+  }
+
+  /* ---------------------------------------------------------------
+     2b. Einwilligung
+     Das Kästchen ist Pflicht – bisher reiste aber nur die Tatsache mit,
+     dass abgeschickt wurde. Für den Vermittler zählt der Wortlaut, dem
+     die Person zugestimmt hat: genau der Text neben dem Kästchen, in der
+     Sprache, in der sie ihn gesehen hat. Beides wandert in den Lead.
+     --------------------------------------------------------------- */
+  function einwilligung(form) {
+    var feld = form && form.querySelector('.consent input[type="checkbox"]');
+    if (!feld) return {};
+    var label = feld.closest ? feld.closest("label") : feld.parentNode;
+    var wortlaut = String(label ? label.textContent : "")
+      .replace(/\s+/g, " ")
+      .replace(/\s*\*\s*$/, "")
+      .trim();
+    return {
+      Einwilligung: feld.checked ? "Ja" : "Nein",
+      Einwilligungstext: wortlaut
+    };
   }
 
   /* ---------------------------------------------------------------
@@ -335,6 +357,7 @@
     quelle: ermittleQuelle,
     quelleAlsText: quelleAlsText,
     senden: sendeLead,
+    einwilligung: einwilligung,
     mailtoLink: mailtoLink,
     honeypotEinbauen: honeypotEinbauen,
     istBot: istBot,

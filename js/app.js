@@ -203,8 +203,7 @@
     btn.disabled = true;
     btn.textContent = "Wird gesendet …";
 
-    // Versand, Quellen-Tracking, Sicherungskopie und Auto-Antwort: siehe js/lead-core.js
-    LeadCore.senden({
+    var angaben = {
       Anrede: $("lfAnrede").value,
       Vorname: $("lfVorname").value.trim(),
       Nachname: $("lfName").value.trim(),
@@ -218,7 +217,14 @@
       Erreichbarkeit: $("lfZeit").value,
       Bemerkung: $("lfNachricht").value.trim(),
       Berechnung: letzteBerechnung || "Keine Berechnung durchgeführt"
-    }, {
+    };
+
+    // Einwilligung samt Wortlaut – der Vermittler muss belegen können, wozu zugestimmt wurde.
+    var einwilligung = LeadCore.einwilligung(form);
+    Object.keys(einwilligung).forEach(function (k) { angaben[k] = einwilligung[k]; });
+
+    // Versand, Quellen-Tracking, Sicherungskopie und Auto-Antwort: siehe js/lead-core.js
+    LeadCore.senden(angaben, {
       betreff: "🔥 Neue Lead-Anfrage – SwissPremia",
       prioritaet: letzteBerechnung ? "Hoch (hat gerechnet)" : "Normal"
     }).then(function (ergebnis) {

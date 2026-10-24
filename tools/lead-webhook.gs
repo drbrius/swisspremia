@@ -125,6 +125,7 @@ var SPALTEN = [
   'Interessen',
   'Berechnung',
   'Bemerkung',
+  'Einwilligung',
   'Kontaktversuche',
   'Nächster Schritt',
   'Notizen'
@@ -132,8 +133,10 @@ var SPALTEN = [
 
 var STATUS_WERTE = ['Neu', 'Kontaktiert', 'Termin', 'Offerte', 'Abschluss', 'Verloren'];
 
-/* Verwaltungsfelder, die den Interessenten nichts angehen. */
-var NICHT_ANZEIGEN = ['Website', 'Priorität', 'Kampagne', 'Quelle', 'Sprache', 'Zeitpunkt'];
+/* Verwaltungsfelder, die den Interessenten nichts angehen. Die Einwilligung
+   steht in der Kundenmail als Satz, nicht als Tabellenzeile. */
+var NICHT_ANZEIGEN = ['Website', 'Priorität', 'Kampagne', 'Quelle', 'Sprache', 'Zeitpunkt',
+                      'Einwilligung', 'Einwilligungstext'];
 
 /* ======================== Webhook-Einstieg ============================== */
 
@@ -237,6 +240,7 @@ function leadSpeichern(daten) {
       if (spalte === 'Kontaktversuche') return 0;
       if (spalte === 'Nächster Schritt') return 'Sofort anrufen';
       if (spalte === 'Notizen') return '';
+      if (spalte === 'Einwilligung') return einwilligungZelle(daten);
       return daten[spalte] !== undefined ? daten[spalte] : '';
     });
 
@@ -252,6 +256,15 @@ function leadSpeichern(daten) {
   } finally {
     sperre.releaseLock();
   }
+}
+
+/* Eine Zelle, die als Beleg taugt: Ja/Nein plus der Wortlaut, dem die
+   Person zugestimmt hat. Leer, wenn das Formular noch nichts mitschickt. */
+function einwilligungZelle(daten) {
+  var status = feldWert(daten, 'Einwilligung');
+  var wortlaut = feldWert(daten, 'Einwilligungstext');
+  if (!status) return '';
+  return status + (wortlaut ? ' – «' + wortlaut + '»' : '');
 }
 
 function rohSichern(inhalt) {
@@ -403,10 +416,18 @@ var FARBE = {
   petrol: '#005786',
   slate: '#212d39',
   gold: '#ccba89',
+  goldText: '#7d6839',
   creme: '#f4eee4',
   linie: '#dcdee2',
+  flaeche: '#f7f8fa',
   text: '#3d4852',
-  grau: '#7b8794'
+  grau: '#7b8794',
+  gruen: '#2e7d4f',
+  gruenHell: '#edf7ef',
+  amber: '#b7791f',
+  amberHell: '#fff8e1',
+  rot: '#b23a3a',
+  rotHell: '#fbeeee'
 };
 
 function htmlSchuetzen(s) {
@@ -569,34 +590,294 @@ function angabenAuflisten(daten, mitVerwaltung) {
   return zeilen.join('\n');
 }
 
+/* ---------- Bausteine der Lead-Mail ---------- */
+
+/* Liest ein Feld unempfindlich gegen Schreibweise und kaputte Umlaute. */
+function feldWert(daten, name) {
+  var kern = schluesselKern(name);
+  var treffer = Object.keys(daten || {}).filter(function (k) {
+    return schluesselKern(k) === kern;
+  })[0];
+  var wert = treffer === undefined ? '' : daten[treffer];
+  return String(wert == null ? '' : wert).trim();
+}
+
+/* Platzhalter, die das Formular für leere Felder schickt. In der Lead-Mail
+   bleiben sie sichtbar, aber gedämpft – "Keine Angabe" ist auch eine Auskunft. */
+var PLATZHALTER = ['Keine Angabe', 'Weiss ich nicht', 'Keine Berechnung durchgeführt',
+                   'Egal', 'Egal / jederzeit'];
+function istPlatzhalter(wert) { return PLATZHALTER.indexOf(wert) >= 0; }
+
+/* Schweizer Nummern lesbar: 0789156105 → 078 915 61 05 */
+function telefonLesbar(tel) {
+  var ziffern = String(tel || '').replace(/[^0-9+]/g, '');
+  var m = ziffern.match(/^(?:\+41|0041)(\d{2})(\d{3})(\d{2})(\d{2})$/);
+  if (m) return '+41 ' + m[1] + ' ' + m[2] + ' ' + m[3] + ' ' + m[4];
+  m = ziffern.match(/^0(\d{2})(\d{3})(\d{2})(\d{2})$/);
+  if (m) return '0' + m[1] + ' ' + m[2] + ' ' + m[3] + ' ' + m[4];
+  return String(tel || '').trim();
+}
+
+function telefonLink(tel) {
+  return String(tel || '').replace(/[^0-9+]/g, '');
+}
+
+function zeitstempel(datum) {
+  return Utilities.formatDate(datum, Session.getScriptTimeZone(), 'dd.MM.yyyy, HH:mm');
+}
+
+/* Welche Felder in welchen Abschnitt gehören. Felder, die in keiner Liste
+   stehen (etwa neue Fragen einer Landingpage), erscheinen unter "Weitere
+   Angaben" – so geht nichts verloren. */
+var KONTAKT_FELDER = ['Telefon', 'E-Mail', 'PLZ/Ort', 'Erreichbarkeit', 'Sprache'];
+var SITUATION_FELDER = ['Personen', 'Kinder', 'Geburtstermin', 'Einreise', 'Alter', 'Situation',
+                        'Grundversicherung', 'Franchise', 'Zusatzversicherung', 'Interessen', 'Bemerkung'];
+/* Felder, die anderswo in der Mail stehen und in keiner Tabelle wiederholt werden. */
+var EIGENS_FELDER = ['Anrede', 'Vorname', 'Nachname', 'Berechnung', 'Einwilligung', 'Einwilligungstext',
+                     'Website', 'Priorität', 'Kampagne', 'Quelle', 'Zeitpunkt', 'email'];
+
+/* Zeilen eines Abschnitts: [{name, wert}] – nur ausgefüllte Felder, in fester Reihenfolge. */
+function abschnittZeilen(daten, felder) {
+  return felder.map(function (name) {
+    return { name: name, wert: feldWert(daten, name) };
+  }).filter(function (z) { return z.wert !== ''; });
+}
+
+/* Alles, was keine Liste kennt. */
+function restZeilen(daten) {
+  var bekannt = [].concat(KONTAKT_FELDER, SITUATION_FELDER, EIGENS_FELDER).map(schluesselKern);
+  return Object.keys(daten).filter(function (k) {
+    return k.charAt(0) !== '_' && bekannt.indexOf(schluesselKern(k)) < 0;
+  }).map(function (k) {
+    return { name: k, wert: String(daten[k] == null ? '' : daten[k]).trim() };
+  }).filter(function (z) { return z.wert !== ''; });
+}
+
+/* Status, Zeitpunkt, Seite und Wortlaut der Einwilligung. */
+function einwilligungStatus(daten, eingang) {
+  var quelle = feldWert(daten, 'Quelle');
+  return {
+    status: feldWert(daten, 'Einwilligung'),          // 'Ja', 'Nein' oder '' (alte Formularversion)
+    wortlaut: feldWert(daten, 'Einwilligungstext'),
+    wann: feldWert(daten, 'Zeitpunkt') || zeitstempel(eingang),
+    seite: quelle.indexOf('→') >= 0 ? quelle.split('→').pop().trim() : ''
+  };
+}
+
+/* Kleine Marken (Priorität, Erreichbarkeit, Kampagne). Jede ist eine eigene
+   Mini-Tabelle als inline-block: nebeneinander, wo Platz ist, auf dem Handy
+   untereinander. Outlook kennt inline-block nicht und stapelt – das ist
+   in Ordnung. Alle in einer Tabellenzeile würden auf dem Handy den
+   ganzen Brief über den rechten Rand hinausschieben. */
+function markenHtml(marken) {
+  if (!marken.length) return '';
+  return '<div style="margin-top:14px;">' + marken.map(function (m) {
+    return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" ' +
+      'style="display:inline-block;vertical-align:top;margin:0 8px 8px 0;"><tr>' +
+        '<td style="background-color:' + m.hintergrund + ';border:1px solid ' + m.rand +
+          ';border-radius:999px;padding:5px 12px;font-family:Segoe UI,Helvetica,Arial,sans-serif;' +
+          'font-size:12px;font-weight:600;line-height:1.3;color:' + m.farbe + ';white-space:nowrap;">' +
+          htmlSchuetzen(m.text) +
+        '</td>' +
+      '</tr></table>';
+  }).join('') + '</div>';
+}
+
+/* Eine Schaltfläche; mehrere stehen nebeneinander und brechen bei Platzmangel um. */
+function knopfHtml(href, textHtml, gefuellt) {
+  var hintergrund = gefuellt ? FARBE.petrol : '#ffffff';
+  var farbe = gefuellt ? '#ffffff' : FARBE.petrol;
+  return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" ' +
+    'style="display:inline-block;vertical-align:top;margin:0 10px 10px 0;"><tr>' +
+      '<td style="background-color:' + hintergrund + ';border:2px solid ' + FARBE.petrol + ';border-radius:999px;">' +
+        '<a href="' + htmlSchuetzen(href) + '" style="display:inline-block;padding:11px 22px;' +
+          'font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:.3px;' +
+          'color:' + farbe + ';text-decoration:none;white-space:nowrap;">' + textHtml + '</a>' +
+      '</td>' +
+    '</tr></table>';
+}
+
+/* Zweispaltige Tabelle: links der Feldname, rechts der Wert.
+   Platzhalter wie "Keine Angabe" erscheinen gedämpft. */
+function zeilenTabelleHtml(zeilen) {
+  var html = zeilen.map(function (z, i) {
+    var rand = i === zeilen.length - 1 ? '' : 'border-bottom:1px solid ' + FARBE.linie + ';';
+    var wert;
+    if (z.html) wert = z.html;
+    else if (istPlatzhalter(z.wert)) {
+      wert = '<span style="color:' + FARBE.grau + ';font-weight:400;font-style:italic;">' +
+             htmlSchuetzen(z.wert) + '</span>';
+    } else wert = htmlSchuetzen(z.wert);
+    return '<tr>' +
+      '<td style="padding:9px 14px;' + rand + 'color:' + FARBE.grau +
+        ';font-size:13px;vertical-align:top;width:36%;">' + htmlSchuetzen(z.name) + '</td>' +
+      '<td style="padding:9px 14px;' + rand + 'color:' + FARBE.slate +
+        ';font-size:14px;font-weight:600;vertical-align:top;line-height:1.5;">' + wert + '</td>' +
+    '</tr>';
+  }).join('');
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" ' +
+         'style="border:1px solid ' + FARBE.linie + ';border-radius:8px;">' + html + '</table>';
+}
+
+function abschnittMitTabelleHtml(titel, zeilen) {
+  if (!zeilen.length) return '';
+  return abschnittHtml(titel) + zeilenTabelleHtml(zeilen);
+}
+
+/* Farbiger Hinweiskasten mit Titelzeile. */
+function hinweisHtml(titel, inhaltHtml, hintergrund, kante) {
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' +
+    '<tr><td style="background-color:' + hintergrund + ';border-left:4px solid ' + kante +
+      ';border-radius:0 8px 8px 0;padding:14px 18px;font-size:14px;line-height:1.6;color:' + FARBE.slate + ';">' +
+      (titel ? '<div style="font-weight:700;color:' + kante + ';margin-bottom:4px;">' + titel + '</div>' : '') +
+      inhaltHtml +
+    '</td></tr></table>';
+}
+
+function linkHtml(href, text) {
+  return '<a href="' + htmlSchuetzen(href) + '" style="color:' + FARBE.petrol + ';text-decoration:none;">' +
+         htmlSchuetzen(text) + '</a>';
+}
+
+/**
+ * Die Lead-Mail an dich. Aufbau von oben nach unten:
+ *   Wer – Anrufen – Kontakt – Situation – Berechnung – Weitere Angaben –
+ *   Einwilligung – Herkunft.
+ * Zuerst, was du zum Anrufen brauchst; die Einwilligung ist der Beleg,
+ * den der Vermittler bei einer Rückfrage vorweisen muss.
+ */
 function leadMelden(daten, zeile) {
   if (!KONFIG.BENACHRICHTIGUNG_EMAIL) return;
 
-  var name = [daten.Vorname, daten.Nachname].filter(String).join(' ') || 'Unbekannt';
-  var telefon = daten.Telefon || '–';
+  var eingang = new Date();
+  var name = [feldWert(daten, 'Vorname'), feldWert(daten, 'Nachname')].filter(String).join(' ') || 'Unbekannt';
+  var nameMitAnrede = [feldWert(daten, 'Anrede'), name].filter(String).join(' ');
+  var telefon = feldWert(daten, 'Telefon');
+  var email = feldWert(daten, 'E-Mail');
+  var erreichbar = feldWert(daten, 'Erreichbarkeit');
+  var prioritaet = feldWert(daten, 'Priorität') || 'Normal';
+  var kampagne = feldWert(daten, 'Kampagne');
+  var website = feldWert(daten, 'Website') || 'SwissPremia';
+  var berechnung = feldWert(daten, 'Berechnung');
+  if (istPlatzhalter(berechnung)) berechnung = '';
+  var einw = einwilligungStatus(daten, eingang);
+
+  var kontakt = [
+    { name: 'Telefon', wert: telefonLesbar(telefon),
+      html: telefon ? linkHtml('tel:' + telefonLink(telefon), telefonLesbar(telefon)) : '' },
+    { name: 'Erreichbar', wert: erreichbar },
+    { name: 'E-Mail', wert: email, html: email ? linkHtml('mailto:' + email, email) : '' },
+    { name: 'PLZ/Ort', wert: feldWert(daten, 'PLZ/Ort') },
+    { name: 'Sprache', wert: feldWert(daten, 'Sprache') }
+  ].filter(function (z) { return z.wert; });
+  var situation = abschnittZeilen(daten, SITUATION_FELDER);
+  var weitere = restZeilen(daten);
+  var herkunft = [
+    { name: 'Website', wert: website },
+    { name: 'Kampagne', wert: kampagne },
+    { name: 'Quelle', wert: feldWert(daten, 'Quelle') },
+    { name: 'Abgeschickt', wert: feldWert(daten, 'Zeitpunkt') },
+    { name: 'Eingang', wert: zeitstempel(eingang) },
+    { name: 'Google Sheet', wert: zeile ? 'Zeile ' + zeile : '' }
+  ].filter(function (z) { return z.wert; });
+
+  var einwZeile = 'Weitergabe an einen lizenzierten Versicherungsvermittler, Kontakt per Telefon oder E-Mail.';
+  var einwWann = 'Erteilt am ' + einw.wann + (einw.seite ? ' auf ' + einw.seite : '') + ' (' + website + ')';
+  var einwFehlt = 'Das Kästchen war zum Absenden Pflicht, der Wortlaut fehlt aber: ' +
+                  'Diese Website läuft noch mit der alten Formularversion.';
+
+  /* ---------- Klartext – für Programme ohne HTML ---------- */
+  function textAbschnitt(titel, zeilen) {
+    if (!zeilen.length) return '';
+    return '\n' + titel.toUpperCase() + '\n' +
+      zeilen.map(function (z) { return '  ' + z.name + ': ' + z.wert; }).join('\n') + '\n';
+  }
+
+  var einwText = '\nEINWILLIGUNG\n';
+  if (einw.status === 'Ja') {
+    einwText += '  ✓ ' + einwWann + '\n  ' + einwZeile + '\n' +
+      (einw.wortlaut ? '  Wortlaut: «' + einw.wortlaut + '»\n' : '');
+  } else if (einw.status === 'Nein') {
+    einwText += '  ✗ NICHT erteilt – nicht kontaktieren, erst klären.\n';
+  } else {
+    einwText += '  ⚠ Nicht übermittelt. ' + einwFehlt + '\n';
+  }
 
   var text =
-    'Neue Anfrage über swisspremia.ch\n\n' +
-    angabenAuflisten(daten, true) + '\n\n' +
-    '➡️ Jetzt anrufen – nicht später. Wer sofort zurückruft, erreicht deutlich mehr Leute.' +
-    (zeile ? '\n\nDer Lead steht als Zeile ' + zeile + ' im Google Sheet.' : '');
+    'NEUER LEAD · ' + website + '\n' +
+    nameMitAnrede + '\n' +
+    'Priorität: ' + prioritaet + ' · Eingang: ' + zeitstempel(eingang) + '\n' +
+    textAbschnitt('Kontakt', kontakt) +
+    textAbschnitt('Situation', situation) +
+    (berechnung ? '\nBERECHNUNG AUF DER WEBSITE\n  ' + berechnung + '\n' : '') +
+    textAbschnitt('Weitere Angaben', weitere) +
+    einwText +
+    textAbschnitt('Herkunft', herkunft) +
+    '\n➡️ Jetzt anrufen – nicht später. Wer sofort zurückruft, erreicht deutlich mehr Leute.\n';
 
-  var telLink = String(telefon).replace(/[^0-9+]/g, '');
-  var inhalt =
-    '<p style="margin:0 0 4px 0;font-size:20px;color:' + FARBE.slate + ';font-weight:600;">' +
-      htmlSchuetzen(name) + '</p>' +
-    '<p style="margin:0;font-size:15px;color:' + FARBE.grau + ';">Neue Anfrage über swisspremia.ch</p>' +
-    (telLink
-      ? '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 0 0;">' +
-        '<tr><td style="background-color:' + FARBE.petrol + ';border-radius:999px;">' +
-        '<a href="tel:' + htmlSchuetzen(telLink) + '" style="display:inline-block;padding:13px 30px;' +
-        'font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:.6px;' +
-        'color:#ffffff;text-decoration:none;">📞 ' + htmlSchuetzen(telefon) + ' anrufen</a>' +
-        '</td></tr></table>'
-      : '') +
-    abschnittHtml('Angaben') + angabenTabelleHtml(daten, true) +
-    kastenHtml('<strong>Jetzt anrufen, nicht später.</strong> Wer sofort zurückruft, erreicht deutlich mehr Leute.' +
-      (zeile ? ' Der Lead steht als Zeile ' + zeile + ' im Google Sheet.' : ''));
+  /* ---------- HTML ---------- */
+  var marken = [];
+  if (/^hoch/i.test(prioritaet)) {
+    marken.push({ text: '🔥 ' + prioritaet, hintergrund: FARBE.creme, rand: FARBE.gold, farbe: FARBE.goldText });
+  } else if (/wiedervorlage/i.test(prioritaet)) {
+    marken.push({ text: '📅 ' + prioritaet, hintergrund: FARBE.flaeche, rand: FARBE.linie, farbe: FARBE.text });
+  } else {
+    marken.push({ text: 'Priorität: ' + prioritaet, hintergrund: FARBE.flaeche, rand: FARBE.linie, farbe: FARBE.text });
+  }
+  if (erreichbar && !istPlatzhalter(erreichbar)) {
+    marken.push({ text: '🕒 ' + erreichbar, hintergrund: '#ffffff', rand: FARBE.petrol, farbe: FARBE.petrol });
+  }
+  if (kampagne && kampagne !== 'Direkt') {
+    marken.push({ text: '📣 ' + kampagne, hintergrund: FARBE.flaeche, rand: FARBE.linie, farbe: FARBE.text });
+  }
+
+  var kopf =
+    '<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:' + FARBE.grau + ';">' +
+      'Neue Anfrage · ' + htmlSchuetzen(website) + '</div>' +
+    '<div style="margin-top:6px;font-size:24px;line-height:1.2;font-weight:700;color:' + FARBE.slate + ';">' +
+      htmlSchuetzen(nameMitAnrede) + '</div>' +
+    markenHtml(marken);
+
+  var knoepfe = [];
+  if (telefon) knoepfe.push(knopfHtml('tel:' + telefonLink(telefon), '📞 ' + htmlSchuetzen(telefonLesbar(telefon)) + ' anrufen', true));
+  if (email) knoepfe.push(knopfHtml('mailto:' + email, '✉️ E-Mail schreiben', false));
+  var aktion = knoepfe.length
+    ? '<div style="margin-top:12px;">' + knoepfe.join('') + '</div>' +
+      '<div style="font-size:13px;line-height:1.5;color:' + FARBE.grau + ';">' +
+        'Jetzt anrufen, nicht später – wer sofort zurückruft, erreicht deutlich mehr Leute.</div>'
+    : '';
+
+  var berechnungHtml = berechnung
+    ? abschnittHtml('Berechnung auf der Website') +
+      hinweisHtml('', htmlSchuetzen(berechnung).replace(/(CHF\s?[\d'.,]+(?:\/Monat)?)/g,
+        '<strong style="color:' + FARBE.petrol + ';">$1</strong>'), FARBE.creme, FARBE.gold)
+    : '';
+
+  var einwHtml;
+  if (einw.status === 'Ja') {
+    einwHtml = hinweisHtml('✓ Einwilligung erteilt',
+      htmlSchuetzen(einwZeile) + '<br>' +
+      '<span style="font-size:13px;color:' + FARBE.grau + ';">' + htmlSchuetzen(einwWann) + '</span>' +
+      (einw.wortlaut
+        ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #cfe5d6;font-size:13px;' +
+          'line-height:1.55;font-style:italic;color:' + FARBE.text + ';">«' + htmlSchuetzen(einw.wortlaut) + '»</div>'
+        : ''),
+      FARBE.gruenHell, FARBE.gruen);
+  } else if (einw.status === 'Nein') {
+    einwHtml = hinweisHtml('✗ Keine Einwilligung', 'Nicht kontaktieren, bevor das geklärt ist.',
+      FARBE.rotHell, FARBE.rot);
+  } else {
+    einwHtml = hinweisHtml('⚠ Einwilligung nicht übermittelt', htmlSchuetzen(einwFehlt),
+      FARBE.amberHell, FARBE.amber);
+  }
+
+  var inhalt = kopf + aktion +
+    abschnittMitTabelleHtml('Kontakt', kontakt) +
+    abschnittMitTabelleHtml('Situation', situation) +
+    berechnungHtml +
+    abschnittMitTabelleHtml('Weitere Angaben', weitere) +
+    abschnittHtml('Einwilligung') + einwHtml +
+    abschnittMitTabelleHtml('Herkunft', herkunft);
 
   var html = htmlRahmen('Neuer Lead', inhalt,
     'Eine Antwort auf diese E-Mail geht direkt an den Interessenten.');
@@ -604,9 +885,9 @@ function leadMelden(daten, zeile) {
   // Antworten gehen direkt an den Interessenten
   mailSenden(
     KONFIG.BENACHRICHTIGUNG_EMAIL,
-    '🔥 Neuer Lead: ' + name + ' – ' + telefon,
+    '🔥 Neuer Lead: ' + name + ' – ' + (telefonLesbar(telefon) || '–'),
     text,
-    daten['E-Mail'] || KONFIG.BENACHRICHTIGUNG_EMAIL,
+    email || KONFIG.BENACHRICHTIGUNG_EMAIL,
     html
   );
 }
@@ -629,6 +910,8 @@ function bestaetigungSenden(daten) {
       'WHAT HAPPENS NEXT\n' +
       'We prepare your personal comparison based on the official federal premium ' +
       'data and pass your request to a licensed insurance broker, who will contact you shortly. The consultation is free and without obligation.\n\n' +
+      'By submitting the form you agreed that we pass your request on to the broker. ' +
+      'You can withdraw this consent at any time – a short reply to this email is enough.\n\n' +
       'Kind regards\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '')
     : 'Guten Tag ' + (daten.Vorname || '') + '\n\n' +
       'Vielen Dank für Ihre Anfrage bei SwissPremia – sie ist bei uns eingegangen.\n\n' +
@@ -638,6 +921,8 @@ function bestaetigungSenden(daten) {
       'Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
       'des Bundes zusammen und leiten Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich in Kürze bei Ihnen meldet. ' +
       'Die Beratung ist für Sie kostenlos und unverbindlich.\n\n' +
+      'Mit dem Absenden haben Sie der Weitergabe an den Vermittler zugestimmt. ' +
+      'Diese Einwilligung können Sie jederzeit widerrufen – eine kurze Antwort auf diese E-Mail genügt.\n\n' +
       'Freundliche Grüsse\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '');
 
   /* HTML-Fassung mit Kopfband. Der Klartext oben bleibt als Rückfall. */
@@ -650,7 +935,9 @@ function bestaetigungSenden(daten) {
       kastenHtml('<strong>Something wrong or missing?</strong> Simply reply to this email – it reaches us directly.') +
       abschnittHtml('What happens next') +
       '<p style="margin:0;">We prepare your personal comparison based on the official federal premium data ' +
-      'and pass your request to a licensed insurance broker, who will contact you shortly. The consultation is free and without obligation.</p>'
+      'and pass your request to a licensed insurance broker, who will contact you shortly. The consultation is free and without obligation.</p>' +
+      '<p style="margin:14px 0 0 0;font-size:13px;color:' + FARBE.grau + ';">By submitting the form you agreed that we pass your request on to the broker. ' +
+      'You can withdraw this consent at any time – a short reply to this email is enough.</p>'
     : '<p style="margin:0 0 14px 0;font-size:17px;color:' + FARBE.slate + ';">Guten Tag ' +
         htmlSchuetzen(daten.Vorname || '') + '</p>' +
       '<p style="margin:0;">Vielen Dank für Ihre Anfrage – sie ist bei uns eingegangen.</p>' +
@@ -659,7 +946,9 @@ function bestaetigungSenden(daten) {
       abschnittHtml('Was jetzt passiert') +
       '<p style="margin:0;">Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
       'des Bundes zusammen und leiten Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich in Kürze bei Ihnen meldet. ' +
-      'Die Beratung ist für Sie kostenlos und unverbindlich.</p>';
+      'Die Beratung ist für Sie kostenlos und unverbindlich.</p>' +
+      '<p style="margin:14px 0 0 0;font-size:13px;color:' + FARBE.grau + ';">Mit dem Absenden haben Sie der Weitergabe an den Vermittler zugestimmt. ' +
+      'Diese Einwilligung können Sie jederzeit widerrufen – eine kurze Antwort auf diese E-Mail genügt.</p>';
 
   var fuss = englisch
     ? 'SwissPremia · Swiss health insurance comparison<br>' +
@@ -750,20 +1039,30 @@ function einrichten() {
  */
 function testLead() {
   var beispiel = {
-    Priorität: 'Normal',
+    Website: 'SwissPremia',
+    Priorität: 'Hoch (hat gerechnet)',
     Kampagne: 'test',
-    Quelle: 'manueller Probelauf',
+    Quelle: 'manueller Probelauf → index.html',
     Zeitpunkt: new Date().toLocaleString('de-CH'),
+    Anrede: 'Frau',
     Vorname: 'Test',
     Nachname: 'Person',
-    Telefon: '079 000 00 00',
+    Telefon: '0790000000',
     'E-Mail': KONFIG.BENACHRICHTIGUNG_EMAIL,
     'PLZ/Ort': '8001 Zürich',
     Grundversicherung: 'CSS',
     Franchise: "CHF 2'500",
     Zusatzversicherung: 'keine',
+    Interessen: 'Grundversicherung, Franchise',
     Erreichbarkeit: 'Vormittag (8–12 Uhr)',
-    Sprache: 'Deutsch'
+    Bemerkung: '',
+    Berechnung: 'Offerten-Anfrage Krankenkasse 2026: Agrisano – Telmed, CHF 380.20/Monat ' +
+                "(PLZ 8001, Erwachsene (26+), Franchise CHF 2'500, ohne Unfall).",
+    Sprache: 'Deutsch',
+    Einwilligung: 'Ja',
+    Einwilligungstext: 'Ich bin einverstanden, dass SwissPremia meine Angaben an einen lizenzierten ' +
+                       'Versicherungsvermittler weitergibt und dieser mich telefonisch oder per E-Mail ' +
+                       'kontaktiert. Mehr dazu in der Datenschutzerklärung.'
   };
   var zeile = KONFIG.SHEET_SPEICHERN ? leadSpeichern(beispiel) : 0;
   leadMelden(beispiel, zeile);

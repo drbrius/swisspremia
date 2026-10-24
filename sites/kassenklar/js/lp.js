@@ -86,6 +86,11 @@
       });
       felder.Sprache = global.LP.sprache === "en" ? "Englisch" : "Deutsch";
 
+      /* Einwilligung samt Wortlaut in der gerade angezeigten Sprache. Das
+         Kästchen heisst _consent und fällt oben bewusst durch das Raster. */
+      var einwilligung = LeadCore.einwilligung(form);
+      Object.keys(einwilligung).forEach(function (k) { felder[k] = einwilligung[k]; });
+
       var btn = form.querySelector('button[type="submit"]');
       var urspruenglich = btn ? btn.textContent : "";
       if (btn) {
