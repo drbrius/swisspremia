@@ -30,10 +30,10 @@ var HEUTE = new Date().toISOString().slice(0, 10);
 var WEITERE_SEITEN = [
   { pfad: "/",                            lastmod: "2026-10-24", freq: "weekly",  prio: "1.0" },
   { pfad: "/ratgeber/",                   lastmod: HEUTE,        freq: "weekly",  prio: "0.9" },
-  { pfad: "/lp/neu-in-der-schweiz.html",  lastmod: "2026-08-15", freq: "monthly", prio: "0.9" },
+  { pfad: "/lp/neu-in-der-schweiz.html",  lastmod: "2026-08-20", freq: "monthly", prio: "0.9" },
   { pfad: "/lp/praemien-2027.html",       lastmod: "2026-08-24", freq: "monthly", prio: "0.9" },
-  { pfad: "/lp/baby.html",                lastmod: "2026-08-15", freq: "monthly", prio: "0.8" },
-  { pfad: "/lp/junge-erwachsene.html",    lastmod: "2026-08-15", freq: "monthly", prio: "0.8" },
+  { pfad: "/lp/baby.html",                lastmod: "2026-08-20", freq: "monthly", prio: "0.8" },
+  { pfad: "/lp/junge-erwachsene.html",    lastmod: "2026-08-20", freq: "monthly", prio: "0.8" },
   { pfad: "/impressum.html",              lastmod: "2026-08-20", freq: "yearly",  prio: "0.3" },
   { pfad: "/datenschutz.html",            lastmod: "2026-08-20", freq: "yearly",  prio: "0.3" }
 ];
