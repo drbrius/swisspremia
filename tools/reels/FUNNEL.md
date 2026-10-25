@@ -126,6 +126,16 @@ rund 450 Zeichen Sprechtext; alle 250 Kombinationen einmal zu vertonen sind rund
 Zeichen – danach fast nichts mehr. Ohne Schlüssel oder mit `"stimme": "aus"` wird stumm
 gerendert (Text steht ohnehin im Bild).
 
+**Schlüssel richtig kopieren:** In der Liste «API Keys» zeigt ElevenLabs nur die ID eines
+Schlüssels. Der Schlüssel selbst beginnt mit `sk_` und erscheint nur einmal, beim Anlegen. Für
+einen eingeschränkten Schlüssel reicht «Text to Speech: Access»; «Voices: Read» braucht der
+Funnel nicht, weil die Stimme fest eingetragen ist.
+
+**Kein stummer Ersatz bei kaputtem Schlüssel:** Ist ein Schlüssel gespeichert, aber ElevenLabs
+lehnt ab (falscher Schlüssel, Kontingent leer), rendert `tag.js` Reels ohne fertige Tonspur
+nicht, sondern lässt sie mit Fehler auf «geplant». Ein späterer Lauf am selben Tag holt sie
+nach. Nur ganz ohne Schlüssel wird bewusst stumm gerendert.
+
 ### 2.4 Aufgabenplanung
 
 ```powershell

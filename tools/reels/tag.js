@@ -60,6 +60,12 @@ const auswahl = plan.reels.filter((r) => !nurNr || r.nr === nurNr);
 const offen = auswahl.filter((r) => r.status === "geplant");
 
 /* ---------------------------------------------------------- 2 Stimme */
+/* Ist ein Schluessel gespeichert, aber ElevenLabs lehnt ab (falscher
+   Schluessel, Kontingent leer), werden Reels ohne fertige Tonspur NICHT
+   stumm gerendert, sondern bleiben "geplant" mit Fehler – sonst gingen
+   unbemerkt stumme Reels online. Ohne Schluessel (bewusst stumm) wird
+   wie bisher ohne Ton gerendert. */
+let stimmeKaputt = null;
 if (offen.length && !ohneStimme) {
   const gruppen = new Map();   // Audio-Ordner -> Reels
   for (const r of offen) {
@@ -73,7 +79,12 @@ if (offen.length && !ohneStimme) {
       if (e.erzeugt) protokoll(`Stimme: ${e.erzeugt} Tonspuren erzeugt (${e.zeichen} Zeichen), ${e.uebersprungen} vorhanden.`);
     } catch (e) {
       if (!(e instanceof StimmeFehler)) throw e;
-      protokoll("Stimme uebersprungen – es wird stumm gerendert. " + e.message.split("\n")[0]);
+      if (GEHEIM.elevenlabsKey) {
+        stimmeKaputt = e.message.split("\n")[0].slice(0, 300);
+        protokoll("FEHLER Stimme: " + stimmeKaputt + " – Reels ohne fertige Tonspur werden nicht gerendert.");
+      } else {
+        protokoll("Stimme uebersprungen – es wird stumm gerendert. " + e.message.split("\n")[0]);
+      }
       break;
     }
   }
@@ -95,6 +106,13 @@ for (const r of offen) {
        sorgt dafuer, dass Video und Titelbild dieselben Szenenlaengen haben. */
     const audioOrdner = path.join(WURZEL, "public", r.reel.audioOrdner || "audio");
     const tonVorhanden = r.reel.szenen.filter((s) => fs.existsSync(path.join(audioOrdner, `${r.reel.id}-${s.id}.mp3`))).map((s) => s.id);
+    const tonFehlt = r.reel.szenen.some((s) => s.stimme && !tonVorhanden.includes(s.id));
+    if (stimmeKaputt && tonFehlt && !fs.existsSync(ziel)) {
+      r.fehler = "Stimme: " + stimmeKaputt;
+      planSpeichern(plan);
+      console.log(`  Video   ${name} uebersprungen – Tonspur fehlt (ElevenLabs-Fehler)`);
+      continue;
+    }
     const reelMitTon = { ...r.reel, tonVorhanden };
     let sekunden;
     if (fs.existsSync(ziel)) {
@@ -124,13 +142,18 @@ for (const r of offen) {
 if (!arg["ohne-upload"]) {
   for (const r of auswahl.filter((x) => x.status === "gerendert")) {
     try {
+      /* Der Dateiname traegt eine Kennung aus dem Aenderungszeitpunkt: Ein
+         neu gerendertes Video bekommt so eine neue Adresse, und Instagram
+         kann nicht die alte Fassung aus dem CDN-Zwischenspeicher laden. */
+      const kennung = (datei) => Math.round(fs.statSync(datei).mtimeMs).toString(36).slice(-6);
+      const ablageName = (datei) => path.basename(datei).replace(/(\.\w+)$/, `-${kennung(datei)}$1`);
       const quelle = path.join(WURZEL, r.datei);
-      const url = await hochladen(quelle, path.join("reels", datum, path.basename(r.datei)));
+      const url = await hochladen(quelle, path.join("reels", datum, ablageName(quelle)));
       const probe = await erreichbar(url);
       if (!probe.ok) throw new Error(`URL nicht erreichbar (HTTP ${probe.status}${probe.fehler ? ", " + probe.fehler : ""}): ${url}`);
       let coverUrl = null;
       if (r.coverDatei && fs.existsSync(path.join(WURZEL, r.coverDatei))) {
-        coverUrl = await hochladen(path.join(WURZEL, r.coverDatei), path.join("reels", datum, path.basename(r.coverDatei)));
+        coverUrl = await hochladen(path.join(WURZEL, r.coverDatei), path.join("reels", datum, ablageName(path.join(WURZEL, r.coverDatei))));
         const probeCover = await erreichbar(coverUrl);
         if (!probeCover.ok) throw new Error(`Titelbild nicht erreichbar (HTTP ${probeCover.status}): ${coverUrl}`);
       }
