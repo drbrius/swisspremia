@@ -9,6 +9,7 @@
        node tag.js --ohne-stimme           stumm rendern (keine ElevenLabs-Kosten)
        node tag.js --ohne-upload           lokal lassen (kein Blob-Token noetig)
        node tag.js --nur=3                 nur Reel Nr. 3 des Plans bearbeiten
+       node tag.js --nachschub             heute noch Reels bis Fensterende anhaengen (--nachschub=2: hoechstens 2)
 
    Jeder Schritt merkt sich seinen Stand im Plan (plan/<datum>.json); ein
    zweiter Lauf am selben Tag macht nur, was noch fehlt. Das Posten
@@ -18,7 +19,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { KONFIG, WURZEL, AUSGABE_ORDNER, AUDIO_ORDNER, GEHEIM } from "./funnel/konfig.js";
 import { planLaden, planSpeichern, verlaufLaden, verlaufMerken, protokoll, aufraeumen, argumente } from "./funnel/zustand.js";
-import { planErstellen } from "./funnel/redaktion.js";
+import { planErstellen, nachschubPlanen } from "./funnel/redaktion.js";
 import { stimmenErzeugen, StimmeFehler } from "./funnel/stimme.js";
 import { reelRendern, coverRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
 import { hochladen, erreichbar } from "./funnel/ablage.js";
@@ -36,6 +37,18 @@ function abbruch(text) { protokoll("FEHLER " + text); process.exitCode = 1; }
 
 /* ------------------------------------------------------------ 1 Plan */
 let plan = arg.neu ? null : planLaden(datum);
+/* --nachschub[=N]: dem heutigen Plan weitere Reels fuer den Rest des
+   Sendefensters anhaengen (z. B. wenn der Funnel erst tagsueber startet). */
+if (plan && arg.nachschub) {
+  const { neu, hinweis } = nachschubPlanen(plan, KONFIG, { verlauf: verlaufLaden(), anzahl: arg.nachschub === true ? null : Number(arg.nachschub) });
+  if (neu.length) {
+    plan.reels.push(...neu);
+    planSpeichern(plan);
+    verlaufMerken(neu.map((r) => r.schluessel), datum);
+    protokoll(`Nachschub ${datum}: ${neu.length} Reels um ${neu.map((r) => r.zeit).join(", ")}.`);
+  }
+  if (hinweis) protokoll("Hinweis: " + hinweis);
+}
 if (!plan) {
   plan = planErstellen(datum, KONFIG, { anzahl: arg.anzahl ? Number(arg.anzahl) : null, verlauf: verlaufLaden() });
   planSpeichern(plan);

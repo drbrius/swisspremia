@@ -123,6 +123,18 @@ export function zeitfenster(datumText, n, konfig) {
   return { zeiten: zeiten.map(text), warnung };
 }
 
+/* Ein Planeintrag aus einem Paket. */
+function eintrag(p, nr, zeit, konfig) {
+  const { text, kommentar, warnungen } = bildtextBauen({ ...p.bildtext, sprache: p.sprache, modus: konfig.hashtags, stufe: p.stufe });
+  return {
+    nr, format: p.format, stufe: p.stufe || null, rahmen: p.rahmen || null, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
+    zeit, status: "geplant", reel: p.reel, bildtext: text, kommentar,
+    datei: null, url: null, containerId: null, mediaId: null, veroeffentlicht: null, fehler: null, versuche: 0,
+    warnungen: warnungen.length ? warnungen : undefined
+  };
+}
+const uhrzeit = (m) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+
 /* Der komplette Tagesplan – noch ohne Ton, Video und Veroeffentlichung. */
 export function planErstellen(datumText, konfig, { anzahl = null, verlauf = {} } = {}) {
   const gewuenscht = anzahl || anzahlFuer(datumText, konfig);
@@ -131,14 +143,30 @@ export function planErstellen(datumText, konfig, { anzahl = null, verlauf = {} }
   const hinweise = [];
   if (warnung) hinweise.push(warnung);
   if (pakete.length < gewuenscht) hinweise.push(`Nur ${pakete.length} von ${gewuenscht} Reels gefunden – zu wenig Kandidaten (Verlauf/Wiederholungssperre).`);
-  const reels = pakete.slice(0, zeiten.length).map((p, i) => {
-    const { text, kommentar, warnungen } = bildtextBauen({ ...p.bildtext, sprache: p.sprache, modus: konfig.hashtags, stufe: p.stufe });
-    return {
-      nr: i + 1, format: p.format, stufe: p.stufe || null, rahmen: p.rahmen || null, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
-      zeit: zeiten[i], status: "geplant", reel: p.reel, bildtext: text, kommentar,
-      datei: null, url: null, containerId: null, mediaId: null, veroeffentlicht: null, fehler: null, versuche: 0,
-      warnungen: warnungen.length ? warnungen : undefined
-    };
-  });
+  const reels = pakete.slice(0, zeiten.length).map((p, i) => eintrag(p, i + 1, zeiten[i], konfig));
   return { datum: datumText, erzeugt: new Date().toISOString(), gewuenscht, hinweise, reels };
+}
+
+/* Nachschub: weitere Reels fuer den Rest des heutigen Sendefensters –
+   ab "jetzt + vorlauf" Minuten (Zeit fuer Stimme, Render, Upload), im
+   Mindestabstand, hoechstens bis postBis. Ohne Saison-Reel (eroeffnet
+   den Tag, lief schon) und ohne Themen, die heute schon im Plan stehen.
+   Aus der Tagesauswahl werden die abendlichen Plaetze genommen – dort
+   liegt BOFU. Liefert die neuen Eintraege (noch nicht gespeichert). */
+export function nachschubPlanen(plan, konfig, { verlauf = {}, jetzt = new Date(), anzahl = null, vorlauf = 20 } = {}) {
+  const abstand = Math.max(1, Number(konfig.mindestabstandMinuten) || 1);
+  const bis = minuten(konfig.postBis);
+  const letzte = plan.reels.length ? Math.max(...plan.reels.map((r) => minuten(r.zeit))) : -Infinity;
+  let start = Math.max(jetzt.getHours() * 60 + jetzt.getMinutes() + vorlauf, letzte + abstand, minuten(konfig.postVon));
+  start = Math.ceil(start / 5) * 5;
+  const zeiten = [];
+  for (let m = start; m <= bis && (anzahl === null || zeiten.length < anzahl); m += abstand) zeiten.push(m);
+  if (!zeiten.length) return { neu: [], hinweis: `Kein Platz mehr im heutigen Sendefenster (bis ${konfig.postBis}).` };
+  const vorhanden = new Set(plan.reels.map((r) => r.schluessel));
+  const pakete = auswaehlen(plan.datum, zeiten.length + plan.reels.length + 6, konfig, verlauf)
+    .filter((p) => p.gruppe !== "saison" && !vorhanden.has(p.schluessel))
+    .slice(-zeiten.length);
+  const erste = plan.reels.length;
+  const neu = pakete.map((p, i) => eintrag(p, erste + i + 1, uhrzeit(zeiten[i]), konfig));
+  return { neu, hinweis: neu.length < zeiten.length ? `Nur ${neu.length} von ${zeiten.length} freien Plaetzen gefuellt.` : null };
 }
