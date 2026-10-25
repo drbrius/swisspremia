@@ -52,6 +52,13 @@ if ($Entfernen) {
 $node = (Get-Command node -ErrorAction SilentlyContinue).Source
 if (-not $node) { throw "node.exe nicht gefunden - Node.js installieren oder PATH pruefen." }
 
+# Aufgaben ohne sichtbares Fenster starten (unsichtbar.vbs): Ein Konsolenfenster
+# liesse sich schliessen und braeche den Lauf ab (Ergebnis 0xC000013A).
+# conhost --headless versteckt es auch, verliert aber den Rueckgabewert.
+function Aktion([string]$skript) {
+  New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\wscript.exe" -Argument "`"$Ordner\unsichtbar.vbs`" `"$node`" $skript" -WorkingDirectory $Ordner
+}
+
 if (-not $OhneSchluessel) {
   Write-Host "Schluessel als Nutzer-Umgebungsvariablen speichern. Enter = bestehenden Wert behalten.`n"
   $variablen = @(
@@ -75,7 +82,7 @@ if (-not $OhneSchluessel) {
 $einstellungen = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -WakeToRun `
   -ExecutionTimeLimit (New-TimeSpan -Hours 3) -MultipleInstances IgnoreNew -RestartCount 2 -RestartInterval (New-TimeSpan -Minutes 10)
 
-$aktionTag = New-ScheduledTaskAction -Execute $node -Argument "tag.js" -WorkingDirectory $Ordner
+$aktionTag = Aktion "tag.js"
 $ausloeserTag = New-ScheduledTaskTrigger -Daily -At $TagesStart
 Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger $ausloeserTag -Settings $einstellungen `
   -Description "Plant, vertont, rendert und laedt die Reels des Tages hoch (tools/reels/tag.js)." -Force | Out-Null
@@ -83,7 +90,7 @@ Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart"
 
 $einstellungenPosten = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
   -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew
-$aktionPosten = New-ScheduledTaskAction -Execute $node -Argument "posten.js" -WorkingDirectory $Ordner
+$aktionPosten = Aktion "posten.js"
 $ausloeserPosten = New-ScheduledTaskTrigger -Once -At (Get-Date).Date -RepetitionInterval (New-TimeSpan -Minutes $TaktMinuten) -RepetitionDuration ([TimeSpan]::MaxValue)
 Register-ScheduledTask -TaskName $NamePosten -Action $aktionPosten -Trigger $ausloeserPosten -Settings $einstellungenPosten `
   -Description "Veroeffentlicht faellige Reels auf Instagram (tools/reels/posten.js)." -Force | Out-Null
