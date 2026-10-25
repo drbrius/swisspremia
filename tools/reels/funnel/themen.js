@@ -206,11 +206,11 @@ export const STAMM = {
    ganze Saetze. */
 export const MYTHEN = [
   {
-    mythos: ["Wechseln lohnt sich nicht,", "die Prämien steigen überall."],
+    mythos: ["Wechseln lohnt nicht,", "überall wird's teurer."],
     mythosStimme: "Wechseln lohnt sich nicht, die Prämien steigen ja überall.",
-    wahrheit: ["Gestiegen ja –", "aber nicht gleich stark."],
+    wahrheit: ["Gestiegen ja –", "aber nicht überall", "gleich stark."],
     wahrheitStimme: "Stimmt nicht. Gestiegen ja, aber nicht überall gleich stark. Die Rangfolge der Kassen verschiebt sich jedes Jahr.",
-    detail: ["Seit Jahren nicht verglichen?", "Dann zahlen Sie", "sehr wahrscheinlich zu viel."],
+    detail: ["Lang nicht verglichen?", "Dann zahlen Sie", "sehr wahrscheinlich", "zu viel."],
     detailStimme: "Wer seit Jahren nicht verglichen hat, zahlt sehr wahrscheinlich zu viel.",
     aufhaenger: "«Wechseln bringt nichts, die Prämien steigen überall.» Stimmt nicht – und der Grund kostet Sie jedes Jahr Geld.",
     hashtags: ["wechsel"]
@@ -218,7 +218,7 @@ export const MYTHEN = [
   {
     mythos: ["Eine teurere Kasse", "zahlt mehr."],
     mythosStimme: "Eine teurere Kasse zahlt mehr.",
-    wahrheit: ["Der Leistungskatalog", "steht im Gesetz.", "Bei jeder Kasse gleich."],
+    wahrheit: ["Der Leistungskatalog", "steht im Gesetz.", "Für jede Kasse gleich."],
     wahrheitStimme: "Stimmt nicht. Was die Grundversicherung zahlt, steht im Gesetz. Bei jeder Kasse gleich.",
     detail: ["Unterschiedlich ist", "nur der Preis."],
     detailStimme: "Unterschiedlich ist nur der Preis.",
@@ -226,17 +226,17 @@ export const MYTHEN = [
     hashtags: []
   },
   {
-    mythos: ["Mit einer Krankheit", "nimmt mich keine Kasse."],
+    mythos: ["Mit einer Krankheit", "nimmt mich keine", "Kasse mehr."],
     mythosStimme: "Mit einer Krankheit nimmt mich keine Kasse.",
-    wahrheit: ["Jede Kasse muss Sie nehmen.", "Ohne Gesundheitsfragen."],
+    wahrheit: ["Jede Kasse muss", "Sie nehmen.", "Ohne Fragen zur", "Gesundheit."],
     wahrheitStimme: "Stimmt nicht. In der Grundversicherung muss jede Kasse jeden aufnehmen. Ohne Gesundheitsfragen, ohne Vorbehalt.",
-    detail: ["Ablehnen darf nur", "die Zusatzversicherung."],
+    detail: ["Ablehnen darf nur die", "Zusatzversicherung."],
     detailStimme: "Ablehnen darf nur die Zusatzversicherung.",
     aufhaenger: "«Mit meiner Krankheit nimmt mich keine andere Kasse.» In der Grundversicherung muss jede Kasse Sie nehmen.",
     hashtags: ["wechsel", "zusatz"]
   },
   {
-    mythos: ["Der Poststempel", "vom 30. November reicht."],
+    mythos: ["Der Poststempel vom", "30. November reicht."],
     mythosStimme: "Der Poststempel vom dreissigsten November reicht.",
     wahrheit: ["Es zählt der Eingang", "bei der Kasse."],
     wahrheitStimme: "Stimmt nicht. Es zählt der Tag, an dem die Kündigung bei der Kasse liegt – nicht der Tag, an dem Sie sie aufgeben.",
@@ -248,9 +248,9 @@ export const MYTHEN = [
   {
     mythos: ["Die Kasse wechseln", "geht nur im November."],
     mythosStimme: "Die Kasse wechseln geht nur im November.",
-    wahrheit: ["Auch per 1. Juli –", "Kündigung bis 31. März."],
+    wahrheit: ["Auch per 1. Juli:", "Kündigung bis", "31. März."],
     wahrheitStimme: "Nicht ganz. Mit der tiefsten Franchise im Standardmodell können Sie auch per ersten Juli wechseln. Kündigung bis einunddreissigsten März.",
-    detail: ["Gilt nur mit Franchise 300", "im Standardmodell."],
+    detail: ["Nur mit Franchise 300", "im Standardmodell."],
     detailStimme: "Das gilt nur mit Franchise dreihundert im Standardmodell. Für alle anderen bleibt der November.",
     aufhaenger: "«Wechseln geht nur im November.» Für die meisten ja. Für einige gibt es einen zweiten Termin.",
     hashtags: ["wechsel", "franchise"]
@@ -258,7 +258,7 @@ export const MYTHEN = [
   {
     mythos: ["Die Franchise ändern", "heisst Kasse wechseln."],
     mythosStimme: "Wer die Franchise ändern will, muss die Kasse wechseln.",
-    wahrheit: ["Die Franchise ändern Sie", "bei Ihrer Kasse.", "Jedes Jahr."],
+    wahrheit: ["Franchise ändern geht", "bei Ihrer Kasse.", "Jedes Jahr."],
     wahrheitStimme: "Stimmt nicht. Die Franchise ändern Sie jedes Jahr bei Ihrer Kasse, auf das neue Jahr. Meldung bis dreissigsten November.",
     detail: ["Und das Modell auch.", "Hausarzt, HMO, Telmed."],
     detailStimme: "Und das Modell gleich mit: Hausarzt, HMO oder Telmed.",
@@ -266,19 +266,19 @@ export const MYTHEN = [
     hashtags: ["franchise", "modelle"]
   },
   {
-    mythos: ["Grund- und Zusatzversicherung", "gehören zusammen."],
+    mythos: ["Grund- und Zusatz-", "versicherung gehören", "zusammen."],
     mythosStimme: "Grund- und Zusatzversicherung müssen bei derselben Kasse sein.",
     wahrheit: ["Nein. Beide lassen", "sich trennen."],
     wahrheitStimme: "Stimmt nicht. Beide lassen sich trennen. Grundversicherung wechseln, Zusatzversicherung behalten – das geht.",
-    detail: ["Die Zusatzversicherung", "zu kündigen, ist das Risiko.", "Nicht die Grundversicherung."],
+    detail: ["Nur die Zusatz-", "versicherung darf", "Sie ablehnen."],
     detailStimme: "Das Risiko liegt bei der Zusatzversicherung: Die darf eine neue Kasse ablehnen. Die Grundversicherung nicht.",
     aufhaenger: "«Grund- und Zusatzversicherung müssen bei derselben Kasse sein.» Müssen sie nicht.",
     hashtags: ["zusatz"]
   },
   {
-    mythos: ["Offene Prämien?", "Wechseln geht trotzdem."],
+    mythos: ["Offene Prämien?", "Wechseln geht", "trotzdem."],
     mythosStimme: "Offene Prämien? Wechseln geht trotzdem.",
-    wahrheit: ["Offene Prämien", "blockieren den Wechsel."],
+    wahrheit: ["Offene Rechnungen", "blockieren", "den Wechsel."],
     wahrheitStimme: "Stimmt nicht. Offene Prämien, Franchisen oder Selbstbehalte blockieren den Wechsel. Die alte Kasse lässt Sie nicht gehen.",
     detail: ["Erst bezahlen.", "Dann kündigen."],
     detailStimme: "Erst bezahlen. Dann kündigen.",
@@ -286,11 +286,11 @@ export const MYTHEN = [
     hashtags: ["wechsel"]
   },
   {
-    mythos: ["Kinder sind bei den Eltern", "automatisch mitversichert."],
+    mythos: ["Kinder sind bei", "den Eltern automatisch", "mitversichert."],
     mythosStimme: "Kinder sind bei den Eltern automatisch mitversichert.",
-    wahrheit: ["Jedes Kind braucht", "eine eigene Grundversicherung."],
+    wahrheit: ["Jedes Kind braucht", "eine eigene", "Grundversicherung."],
     wahrheitStimme: "Stimmt nicht. Jedes Kind braucht eine eigene Grundversicherung – innert drei Monaten nach der Geburt.",
-    detail: ["Und darf bei einer anderen", "Kasse sein als die Eltern."],
+    detail: ["Und darf bei einer", "anderen Kasse sein", "als die Eltern."],
     detailStimme: "Und es darf bei einer anderen Kasse sein als die Eltern. Nachrechnen lohnt sich.",
     aufhaenger: "«Unser Kind ist bei uns mitversichert.» Nein. Jedes Kind braucht eine eigene Grundversicherung.",
     hashtags: ["familie"]
@@ -298,7 +298,7 @@ export const MYTHEN = [
   {
     mythos: ["Hausarztmodell heisst:", "kein Spezialist mehr."],
     mythosStimme: "Hausarztmodell heisst: kein Spezialist mehr.",
-    wahrheit: ["Der Hausarzt überweist.", "Spezialist und Spital", "bleiben gedeckt."],
+    wahrheit: ["Der Hausarzt", "überweist. Spezialist", "und Spital bleiben", "gedeckt."],
     wahrheitStimme: "Stimmt nicht. Der Hausarzt überweist Sie. Spezialist und Spital bleiben gedeckt – Sie gehen nur zuerst zu ihm.",
     detail: ["Notfälle sowieso.", "In jedem Modell."],
     detailStimme: "Notfälle sind sowieso gedeckt. In jedem Modell.",
@@ -316,11 +316,11 @@ export const MYTHEN = [
     hashtags: ["verbilligung"]
   },
   {
-    mythos: ["Neu in der Schweiz?", "Zeit lassen mit der Kasse."],
+    mythos: ["Neu in der Schweiz?", "Mit der Kasse", "hat es Zeit."],
     mythosStimme: "Neu in der Schweiz? Mit der Krankenkasse kann man sich Zeit lassen.",
-    wahrheit: ["Drei Monate.", "Dann weist der Kanton zu –", "mit Zuschlag."],
+    wahrheit: ["Drei Monate. Dann", "weist der Kanton zu.", "Mit Zuschlag."],
     wahrheitStimme: "Stimmt nicht. Sie haben drei Monate. Danach weist der Kanton Ihnen eine Kasse zu – und ein Prämienzuschlag ist möglich.",
-    detail: ["Rechtzeitig angemeldet:", "Deckung ab Tag eins."],
+    detail: ["Rechtzeitig gemeldet:", "Deckung ab Tag eins."],
     detailStimme: "Rechtzeitig angemeldet, gilt die Deckung rückwirkend ab dem ersten Tag.",
     aufhaenger: "«Neu in der Schweiz – mit der Krankenkasse hat es Zeit.» Hat es nicht: drei Monate, dann wird zugewiesen.",
     hashtags: ["en"]

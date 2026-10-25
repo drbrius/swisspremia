@@ -20,6 +20,7 @@ Krankenkassenprämie, fordern eine Beratung an – und der Lead landet sofort be
 | `js/app.js` | Prämienrechner der Startseite |
 | `tools/lead-webhook.gs` | Google Apps Script: Lead-Mail an Sie, Bestätigung an den Kunden, Sheet-Übersicht |
 | `tools/build_data.js` | Erzeugt `data/praemien.js` und `data/plz.js` aus den BAG-Dateien |
+| `tools/reels/` | Instagram-Reels als Remotion-Code und der **Reel-Funnel**: täglich 10–20 Reels aus den Prämiendaten erzeugen, rendern und verteilt posten – siehe [`tools/reels/FUNNEL.md`](tools/reels/FUNNEL.md) |
 
 ## Design
 
