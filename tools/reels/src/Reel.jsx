@@ -8,6 +8,7 @@ import { MARKE } from "./reels.js";
 import { HINTERGRUND, Kreuz, Wortmarke, chf } from "./Marke.jsx";
 import { Buehne, BildKontext, SzenenKontext, useSprechschritt, woerterZaehlen, Ecke, Woerter, Rollziffern, Funken, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil } from "./Bausteine.jsx";
 import { GRAFIK } from "./Grafik.jsx";
+import { Spielszene } from "./Szenenbild.jsx";
 import { UEBERGANG, szenenStarts, gesamtFrames, streuwert } from "./takt.js";
 
 /* ------------------------------------------------------- Textszenen */
@@ -20,6 +21,26 @@ const Titel = ({ s, farben }) => {
   const schritt = useSprechschritt(anzahl, 6, 4, 12);
   let vorher = 0;
   const zeilen = s.text.map((zeile) => { const ab = 6 + vorher * schritt; vorher += woerterZaehlen([zeile]); return ab; });
+  const klein = useEinblenden(6 + anzahl * schritt + 4);
+  /* Mit Figur: Text oben, Spielszene darunter (mindestens ein Drittel
+     der Bildhoehe), Text etwas kleiner. */
+  if (s.figur) {
+    return (
+      <Buehne farben={farben}>
+        <div style={{ width: "100%" }}>
+          {s.text.map((zeile, i) => (
+            <div key={i} style={{ fontSize: 78, lineHeight: 1.12, fontWeight: 300, letterSpacing: "-0.01em" }}>
+              <Woerter text={zeile} akzent={farben.akzent} ab={zeilen[i]} schritt={schritt} />
+            </div>
+          ))}
+        </div>
+        <div style={{ width: 1080, marginTop: 40, display: "flex", justifyContent: "center" }}>
+          <Spielszene figur={s.figur} farben={farben} />
+        </div>
+        {s.klein && <div style={{ marginTop: 18, fontSize: 32, color: farben.leise, fontWeight: 400, ...klein }}>{s.klein}</div>}
+      </Buehne>
+    );
+  }
   return (
     <Buehne farben={farben}>
       {s.symbol && (
@@ -31,7 +52,7 @@ const Titel = ({ s, farben }) => {
         </div>
       ))}
       {s.klein && (
-        <div style={{ marginTop: 44, fontSize: 36, color: farben.leise, fontWeight: 400, ...useEinblenden(6 + anzahl * schritt + 4) }}>{s.klein}</div>
+        <div style={{ marginTop: 44, fontSize: 36, color: farben.leise, fontWeight: 400, ...klein }}>{s.klein}</div>
       )}
     </Buehne>
   );
@@ -167,6 +188,13 @@ const Abbinder = ({ s, farben }) => {
       <div style={{ marginTop: 56, fontSize: 60, fontWeight: 500, color: farben.akzent }}><Woerter text={MARKE.url + (s.urlZusatz || "")} akzent={farben.akzent} ab={18} /></div>
       <div style={{ marginTop: 22, fontSize: 36, letterSpacing: ".14em", textTransform: "uppercase", color: farben.leise, ...useEinblenden(28) }}>
         {s.urlZusatz ? "Free · Official federal data" : "Kostenlos · Offizielle BAG-Daten"}
+      </div>
+      {/* Aufforderung (CTA): jeder Rahmen endet mit einer Handlung. */}
+      <div style={{ marginTop: 54, ...useEinblenden(34) }}>
+        <div style={{ display: "inline-block", padding: "18px 44px", borderRadius: 999, backgroundColor: farben.akzent, color: MARKE.slate, fontSize: 44, fontWeight: 600,
+          transform: `scale(${1 + Math.max(0, Math.sin((frame - 40) / 7)) * 0.04})` }}>
+          {s.urlZusatz ? "Compare in 1 minute · link in bio" : "In 1 Minute vergleichen · Link im Profil"}
+        </div>
       </div>
     </Buehne>
   );

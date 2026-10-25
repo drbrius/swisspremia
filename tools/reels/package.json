@@ -12,7 +12,8 @@
     "posten": "node posten.js",
     "instagram": "node funnel/instagram.js",
     "attrappe": "node test/graph-attrappe.js",
-    "bilder": "node funnel/bilder.js"
+    "bilder": "node funnel/bilder.js",
+    "storyboard": "node test/storyboard.js"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.230",

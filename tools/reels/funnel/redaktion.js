@@ -128,7 +128,7 @@ export function planErstellen(datumText, konfig, { anzahl = null, verlauf = {} }
   const reels = pakete.slice(0, zeiten.length).map((p, i) => {
     const { text, kommentar, warnungen } = bildtextBauen({ ...p.bildtext, sprache: p.sprache, modus: konfig.hashtags });
     return {
-      nr: i + 1, format: p.format, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
+      nr: i + 1, format: p.format, rahmen: p.rahmen || null, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
       zeit: zeiten[i], status: "geplant", reel: p.reel, bildtext: text, kommentar,
       datei: null, url: null, containerId: null, mediaId: null, veroeffentlicht: null, fehler: null, versuche: 0,
       warnungen: warnungen.length ? warnungen : undefined

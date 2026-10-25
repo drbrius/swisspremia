@@ -326,3 +326,81 @@ export const MYTHEN = [
     hashtags: ["en"]
   }
 ];
+
+/* ------------------------------------------------- Copywriting-Rahmen */
+/* Jedes Format folgt einem dieser Rahmen; jede Szene traegt ihren
+   Schritt ("beat"). So bleibt jedes Skript ein Gedanke mit Haken,
+   Spannung und Aufforderung – und neue Formate haben eine Vorlage. */
+export const RAHMEN = {
+  "HPSCA": ["Hook", "Problem", "Agitation", "Solution", "CTA"],
+  "Story": ["Story", "Struggle", "Turning Point", "Lesson"],
+  "Problem-Promise": ["Problem", "Pain", "Promise", "Proof", "CTA"],
+  "AIDA": ["Attention", "Interest", "Desire", "Action"],
+  "Myth-Busting": ["Hook", "Myth", "Truth", "Example", "CTA"],
+  "Question": ["Question", "Curiosity", "Insight", "Takeaway"],
+  "Problem-Education": ["Problem", "Why It Matters", "How to Fix It"],
+  "Before-After-Bridge": ["Before", "After", "Bridge", "CTA"],
+  "Claim-Reason-Evidence": ["Claim", "Reason", "Evidence", "Action"],
+  "Objection Handling": ["Hook", "Objection", "Reframe", "Proof", "CTA"]
+};
+
+/* Rahmen der 21 Stamm-Reels (fertig vertont, nach ihrem Aufbau eingeordnet). */
+export const STAMM_RAHMEN = {
+  "zwei-termine": "Question", "gleiche-leistung": "Claim-Reason-Evidence", "mit-19": "Problem-Education", "franchise": "Question",
+  "new-in-switzerland": "HPSCA", "umzug": "Problem-Education", "countdown-november": "HPSCA", "eingeschrieben": "Problem-Education",
+  "selbstbehalt": "Problem-Education", "drei-modelle": "Claim-Reason-Evidence", "praemienregionen": "Claim-Reason-Evidence",
+  "familienrabatt": "Question", "neugeborene": "Problem-Education", "unfalldeckung": "Problem-Promise", "praemienverbilligung": "Problem-Promise",
+  "zusatz-reihenfolge": "Problem-Education", "sparglas": "Before-After-Bridge", "checkliste-wechsel": "Problem-Education",
+  "treppe-26": "Problem-Education", "leistungen-gleich": "Claim-Reason-Evidence", "zwei-fenster": "Question"
+};
+
+/* ------------------------------------------------ Einwand-Reihe */
+/* Objection Handling: Hook -> Einwand (Sprechblase) -> Umdeutung -> Beleg
+   -> Aufforderung. "beleg" waehlt die Belegszene in formate.js. */
+export const EINWAENDE = [
+  {
+    blase: ["Wechseln ist mir", "zu kompliziert."],
+    einwandStimme: "Wechseln ist mir zu kompliziert.",
+    umdeutung: ["Fünf Schritte.", "Ein Brief.", "**Fertig.**"],
+    umdeutungStimme: "Es sind fünf Schritte und ein eingeschriebener Brief.",
+    beleg: "checkliste",
+    aufhaenger: "«Wechseln ist mir zu kompliziert.» Es sind fünf Schritte und ein Brief.",
+    hashtags: ["wechsel"]
+  },
+  {
+    blase: ["Für ein paar Franken", "lohnt sich das nicht."],
+    einwandStimme: "Für ein paar Franken lohnt sich das nicht.",
+    umdeutung: ["Es sind keine paar", "Franken. Schon unter", "den **acht günstigsten**…"],
+    umdeutungStimme: "Es sind keine paar Franken. Schon unter den acht günstigsten Angeboten liegen Hunderte Franken im Jahr.",
+    beleg: "spanne",
+    aufhaenger: "«Für ein paar Franken lohnt sich das nicht.» Schon unter den acht günstigsten Angeboten liegen Hunderte Franken im Jahr.",
+    hashtags: []
+  },
+  {
+    blase: ["Bei der günstigen Kasse", "bekomme ich weniger."],
+    einwandStimme: "Bei der günstigen Kasse bekomme ich weniger.",
+    umdeutung: ["Grundversicherung:", "gleiche Leistung –", "**per Gesetz.**"],
+    umdeutungStimme: "In der Grundversicherung bekommen Sie bei jeder Kasse dieselben Leistungen. Das steht im Gesetz.",
+    beleg: "raster",
+    aufhaenger: "«Bei der günstigen Kasse bekomme ich weniger.» In der Grundversicherung nicht – die Leistungen stehen im Gesetz.",
+    hashtags: []
+  },
+  {
+    blase: ["Mit meiner Krankheit", "nimmt mich keine."],
+    einwandStimme: "Mit meiner Krankheit nimmt mich keine andere Kasse.",
+    umdeutung: ["Jede Kasse muss", "Sie aufnehmen –", "**ohne Fragen.**"],
+    umdeutungStimme: "In der Grundversicherung muss jede Kasse Sie aufnehmen. Ohne Gesundheitsfragen.",
+    beleg: "arzt",
+    aufhaenger: "«Mit meiner Krankheit nimmt mich keine andere Kasse.» In der Grundversicherung muss jede Sie aufnehmen.",
+    hashtags: ["wechsel"]
+  },
+  {
+    blase: ["Ich bin seit 20 Jahren", "bei meiner Kasse."],
+    einwandStimme: "Ich bin seit zwanzig Jahren bei meiner Kasse.",
+    umdeutung: ["Treue zahlt sich in der", "Grundversicherung", "**nicht aus.**"],
+    umdeutungStimme: "Treue wird in der Grundversicherung nicht belohnt. Die Rangfolge der Kassen ändert sich jedes Jahr.",
+    beleg: "denken",
+    aufhaenger: "«Ich bin seit 20 Jahren bei meiner Kasse.» Treue wird in der Grundversicherung nicht belohnt.",
+    hashtags: ["wechsel"]
+  }
+];

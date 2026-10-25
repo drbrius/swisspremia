@@ -81,6 +81,22 @@ sich zwei Sätze nie überlagern.
 **Sprechtexte:** Bei einer Szene mit mehr als etwa 100 Zeichen Sprechtext steht das Bild lange.
 Zahlen, die ohnehin im Bild stehen, nicht auch noch vorlesen.
 
+### Figuren und Copywriting-Rahmen (seit 25.10.2026)
+
+**Motion-Graphik-Menschen:** feste Besetzung (Lea, Marco, Noah, Dr. Keller, Mia, Herr Brunner)
+als flache, geometrische Figuren in den Markenfarben – Skelett, Posen mit Back-Easing, Gesicht,
+Frisur, Kleidung in `src/Figur.jsx`; 20 Spielszenen (Türen, Rechnungen, Laptop mit Lupe,
+Telefon, Briefkasten, Karton, Treppe, Torte, Sprechblase mit Stempel, Kalender, Familie, Ärztin,
+Baby, Wandern, Münzglas …) in `src/Szenenbild.jsx`. Eine Titelszene bekommt eine Figur mit
+`figur: { aktion, wer, … }`. Kontrollblatt: `npx remotion still src/index.jsx modellblatt`.
+
+**Rahmen:** Jedes Format folgt einem Copywriting-Rahmen (HPSCA, Story, Problem-Promise, AIDA,
+Myth-Busting, Question, Problem-Education, Before-After-Bridge, Claim-Reason-Evidence, Objection
+Handling – Liste in `funnel/themen.js`), jede Szene trägt ihren Schritt (`beat`), der Tagesplan
+den Rahmen. Neu: **Geschichte** (Story, je Region: Lea vergleicht und spart, echte Zahlen) und
+**Einwand** (Objection Handling, fünf Folgen). Das vollständige Storyboard aller Formate erzeugt
+`npm run storyboard` nach `marke/reels-storyboard.md` – aus demselben Code wie die Reels.
+
 ---
 
 ## 2. Einrichten – einmalig

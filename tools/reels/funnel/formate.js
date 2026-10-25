@@ -18,24 +18,29 @@
    ========================================================================= */
 import { REGIONEN, KANTONE, KANTONE_MIT_REGIONEN, MODELLE, JAHR, angebote, guenstigstes, praemieVon, kantonsMinimum } from "./daten.js";
 import { REELS } from "../src/reels.js";
-import { STAMM, MYTHEN, kantonHashtag } from "./themen.js";
+import { STAMM, MYTHEN, EINWAENDE, STAMM_RAHMEN, RAHMEN, kantonHashtag } from "./themen.js";
 import { hashtagsSammeln } from "./bildtext.js";
 import { zahlwort, franken, chf, tageBis, fingerabdruck, datumKurz } from "./sprache.js";
 import { AUDIO_ORDNER } from "./konfig.js";
 import { kantonBild } from "../src/bilder.js";
 
-const ABBINDER = { art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." };
+/* Abbinder = CTA jedes Rahmens: Marke, Adresse, "In 1 Minute vergleichen · Link im Profil". */
+const ABBINDER = { art: "abbinder", hintergrund: "petrol", dauer: 3.4, stimme: "Swisspremia Punkt C H." };
 const rund = (n) => Math.round(n);
 const jahr = (monatlich) => rund(monatlich * 12);
 
-function paket({ format, gruppe, param, titel, sprache = "de", szenen, cover = 0.3, bildtext, reelId = null, audioOrdner = AUDIO_ORDNER }) {
-  const mitIds = szenen.map((s, i) => ({ id: "s" + (i + 1), ...s }));
+/* rahmen: Name aus RAHMEN (themen.js); beats: der Schritt je Szene
+   (gleiche Reihenfolge wie szenen). Beides steuert nichts im Bild – es
+   dokumentiert das Skript und landet im Tagesplan. */
+function paket({ format, gruppe, param, titel, sprache = "de", szenen, cover = 0.3, bildtext, reelId = null, audioOrdner = AUDIO_ORDNER, rahmen = null, beats = [] }) {
+  if (rahmen && !RAHMEN[rahmen]) throw new Error(`Unbekannter Rahmen "${rahmen}" in Format ${format}`);
+  const mitIds = szenen.map((s, i) => ({ id: "s" + (i + 1), ...(beats[i] ? { beat: beats[i] } : {}), ...s }));
   /* Die Id traegt einen Fingerabdruck der Sprechtexte: aendert sich ein
      Satz, entsteht eine neue Id und damit eine neue Tonspur – sonst wird
      die alte wiederverwendet (spart ElevenLabs-Zeichen). */
   const id = reelId || `${format}-${param.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-${fingerabdruck(mitIds.map((s) => s.stimme || "").join("|"))}`;
   return {
-    format, gruppe, param, schluessel: `${format}|${param}`, titel, sprache, cover, bildtext,
+    format, gruppe, param, schluessel: `${format}|${param}`, titel, sprache, cover, bildtext, rahmen,
     reel: { id, titel, sprache, audioOrdner, szenen: mitIds }
   };
 }
@@ -62,19 +67,20 @@ export function franchise(region) {
   const name = region.name;
   return paket({
     format: "franchise", gruppe: "daten", param: region.schluessel, titel: `Franchise in ${name}`, cover: 0.28,
+    rahmen: "Question", beats: ["Question", "Curiosity", "Insight", "Insight", "Takeaway", "CTA"],
     szenen: [
-      { art: "zwei", hintergrund: "creme", bild: kantonBild(region.kanton, "dorf"), oben: (name.length > 14 ? "" : name + ": ") + "Franchise 2'500 vs. 300", links: { praefix: "CHF", bis: p2500 }, rechts: { praefix: "CHF", bis: p300 }, dauer: 3.2,
+      { art: "titel", hintergrund: "creme", text: [name.length > 14 ? "Franchise" : `${name}: Franchise`, "300 oder 2'500?"], figur: { aktion: "tueren", wer: "lea", links: "300", linksKlein: `${chf(p300)}/Mt.`, rechts: "2'500", rechtsKlein: `${chf(p2500)}/Mt.`, wahl: "rechts" }, dauer: 3.4,
         stimme: `${name}: Franchise zweitausendfünfhundert oder dreihundert? Gleiche Kasse, gleiches Modell.` },
       { art: "zaehler", hintergrund: "petrol", praefix: "CHF", von: 0, bis: ersparnis, oben: "Prämienersparnis im Jahr", unten: "mit Franchise 2'500", dauer: 3.2,
         stimme: `Mit der hohen Franchise sparen Sie ${franken(ersparnis)} Prämie im Jahr.` },
-      { art: "titel", hintergrund: "slate", text: ["Dafür tragen Sie bis zu", "**CHF 2'200** mehr selbst."], klein: "Wenn Sie krank werden.", dauer: 3.0,
+      { art: "titel", hintergrund: "slate", text: ["Krank? Dann tragen Sie", "bis **CHF 2'200** selbst."], figur: { aktion: "rechnungen", wer: "lea", betrag: "bis CHF 2'200" }, dauer: 3.0,
         stimme: "Dafür tragen Sie bis zu zweitausendzweihundert Franken mehr selbst – wenn Sie krank werden." },
       immer
-        ? { art: "titel", hintergrund: "petrol", text: ["Ersparnis grösser", "als das Risiko.", "2'500 gewinnt immer."], dauer: 3.2,
+        ? { art: "titel", hintergrund: "petrol", bild: kantonBild(region.kanton, "dorf"), text: ["Ersparnis grösser", "als das Risiko.", "2'500 gewinnt immer."], dauer: 3.2,
             stimme: "Hier ist die Ersparnis grösser als das Risiko. Die hohe Franchise gewinnt in jedem Fall." }
-        : { art: "titel", hintergrund: "petrol", text: ["Faustregel:", `Unter ${chf(grenze)}`, "Arztkosten im Jahr", "gewinnt 2'500."], dauer: 3.4,
+        : { art: "titel", hintergrund: "petrol", bild: kantonBild(region.kanton, "dorf"), text: ["Faustregel:", `Unter ${chf(grenze)}`, "Arztkosten im Jahr", "gewinnt 2'500."], dauer: 3.4,
             stimme: `Faustregel: Bleiben Ihre Arztkosten unter ${franken(grenze)} im Jahr, gewinnt die hohe Franchise.` },
-      { art: "titel", hintergrund: "creme", text: ["Franchise ändern –", "bis 30. November,", "ohne Kassenwechsel."], dauer: 3.2,
+      { art: "titel", hintergrund: "creme", text: ["Franchise ändern –", "bis 30. November,", "ohne Kassenwechsel."], figur: { aktion: "laptop", wer: "lea", bildschirm: ["Franchise", "2'500"] }, dauer: 3.2,
         stimme: "Die Franchise ändern Sie bis Ende November – ohne die Kasse zu wechseln." },
       ABBINDER
     ],
@@ -111,14 +117,17 @@ export function modelle(region) {
   ];
   return paket({
     format: "modelle", gruppe: "daten", param: region.schluessel, titel: `Modelle in ${name}`, cover: 0.3,
+    rahmen: "Claim-Reason-Evidence", beats: ["Claim", "Reason", "Evidence", "Evidence", "Action", "CTA"],
     szenen: [
       { art: "modelle", hintergrund: "slate", text: [`${name}:`, "drei Alternativen", "zum Standard."], dauer: 4.2,
         stimme: `Hausarzt, HMO oder Telmed: In ${name} sind alle drei günstiger als das Standardmodell – bei gleichen Leistungen.` },
+      { art: "titel", hintergrund: "creme", text: ["Der Grund: Sie gehen", "zuerst zum Hausarzt,", "in die Praxis – oder", "rufen an."], figur: { aktion: "telefon", wer: "noah", etikett: "Telmed" }, dauer: 3.2,
+        stimme: "Der Grund: Sie gehen zuerst zum Hausarzt, in die Gruppenpraxis – oder rufen an." },
       { art: "balken", hintergrund: "petrol", balken, text: ["Günstigstes Angebot", "je Modell, pro Monat."], dauer: 4.2,
         stimme: `Standard ${franken(s0)}. Hausarzt ${franken(s1)}. ${MODELLE[best.modell]} ${franken(best.praemie)}.` },
-      { art: "zaehler", hintergrund: "slate", praefix: "CHF", von: 0, bis: diff, oben: `Standard → ${bestName}:`, unten: "weniger im Jahr", dauer: 3.2,
+      { art: "zaehler", hintergrund: "slate", bild: "praxis", praefix: "CHF", von: 0, bis: diff, oben: `Standard → ${bestName}:`, unten: "weniger im Jahr", dauer: 3.2,
         stimme: `Vom Standard zum ${bestName}-Modell: ${franken(diff)} weniger im Jahr.` },
-      { art: "titel", hintergrund: "creme", bild: "arzt", text: ["Notfälle sind in jedem", "Modell gedeckt."], klein: "Sie binden sich nur bei der ersten Anlaufstelle.", dauer: 3.2,
+      { art: "titel", hintergrund: "creme", text: ["Notfälle sind in jedem", "Modell gedeckt."], figur: { aktion: "arzt" }, dauer: 3.2,
         stimme: "Notfälle sind in jedem Modell gedeckt. Sie binden sich nur bei der ersten Anlaufstelle." },
       ABBINDER
     ],
@@ -142,15 +151,16 @@ export function alter(region) {
   const diff = e.praemie - j.praemie, name = region.name;
   return paket({
     format: "alter", gruppe: "daten", param: region.schluessel, titel: `Altersklassen in ${name}`, cover: 0.35,
+    rahmen: "Problem-Education", beats: ["Problem", "Why It Matters", "Why It Matters", "How to Fix It", "CTA"],
     szenen: [
-      { art: "treppe", hintergrund: "petrol", stufen: ["Kinder", "19–25", "ab 26"], text: [`${name}:`, "drei Altersklassen,", "drei Prämien."], dauer: 4.6,
+      { art: "titel", hintergrund: "slate", text: [`${name}:`, "drei Altersklassen,", "drei Prämien."], figur: { aktion: "treppe", wer: "noah", preise: [chf(k.praemie), chf(j.praemie), chf(e.praemie)] }, dauer: 4.6,
         stimme: `${name}: Kinder, junge Erwachsene, Erwachsene. Drei Altersklassen, drei Prämien.` },
-      { art: "zwei", hintergrund: "slate", oben: "19–25 vs. ab 26", links: { praefix: "CHF", bis: j.praemie }, rechts: { praefix: "CHF", bis: e.praemie }, dauer: 3.0,
+      { art: "titel", hintergrund: "creme", text: ["Mit 26:", `**+ ${chf(diff)}**`, "im Monat. Automatisch."], figur: { aktion: "torte", wer: "noah", zahl: "26", etikett: `+ ${chf(diff)} / Mt.` }, dauer: 3.0,
         stimme: `Mit sechsundzwanzig steigt die Prämie um ${franken(diff)} im Monat. Automatisch.` },
-      { art: "titel", hintergrund: "creme", bild: "jung", text: ["Der Sprung mit 26", "ist der Moment", "zum Vergleichen."], dauer: 3.0,
-        stimme: "Der Sprung mit sechsundzwanzig ist der Moment zum Vergleichen." },
-      { art: "titel", hintergrund: "petrol", text: ["Jede Altersklasse hat", "eine andere Rangfolge", "der Kassen."], dauer: 3.0,
-        stimme: "Die Rangfolge der Kassen ist in jeder Altersklasse anders. Die Kasse der Eltern ist selten die günstigste für Sie." },
+      { art: "zwei", hintergrund: "slate", oben: "19–25 vs. ab 26", links: { praefix: "CHF", bis: j.praemie }, rechts: { praefix: "CHF", bis: e.praemie }, dauer: 3.0,
+        stimme: `Das sind ${franken(jahr(diff))} mehr im Jahr.` },
+      { art: "titel", hintergrund: "petrol", bild: "jung", text: ["Die Lösung:", "mit 26 neu vergleichen.", "Jede Altersklasse hat", "eine andere Rangfolge."], dauer: 3.4,
+        stimme: "Die Lösung: Mit sechsundzwanzig neu vergleichen. Die Rangfolge der Kassen ist in jeder Altersklasse anders." },
       ABBINDER
     ],
     bildtext: {
@@ -177,14 +187,15 @@ export function regionen(kanton) {
   const kantonName = KANTONE[kanton];
   return paket({
     format: "regionen", gruppe: "daten", param: kanton, titel: `Prämienregionen ${kantonName}`, cover: 0.32,
+    rahmen: "Claim-Reason-Evidence", beats: ["Claim", "Evidence", "Evidence", "Action", "CTA"],
     szenen: [
       { art: "karte", hintergrund: "slate", text: ["Gleicher Kanton.", "Andere Prämie."], dauer: 4.2,
         stimme: `Kanton ${kantonName}: ${zahlwort(liste.length)} Prämienregionen. Ihre Wohngemeinde entscheidet, in welcher Sie sind.` },
-      { art: "zwei", hintergrund: "petrol", oben: `${billig.region.ort} vs. ${teuer.region.ort}`, links: { praefix: "CHF", bis: billig.g.praemie }, rechts: { praefix: "CHF", bis: teuer.g.praemie }, dauer: 3.2,
+      { art: "zwei", hintergrund: "petrol", bild: kantonBild(kanton, "dorf"), oben: `${billig.region.ort} vs. ${teuer.region.ort}`, links: { praefix: "CHF", bis: billig.g.praemie }, rechts: { praefix: "CHF", bis: teuer.g.praemie }, dauer: 3.2,
         stimme: `Günstigstes Angebot in ${billig.region.ort}: ${franken(billig.g.praemie)}. In ${teuer.region.ort}: ${franken(teuer.g.praemie)}.` },
       { art: "zaehler", hintergrund: "creme", praefix: "CHF", von: 0, bis: jahr(diff), oben: "Unterschied im Jahr", unten: "gleiche Leistung", dauer: 3.2,
         stimme: `${franken(jahr(diff))} Unterschied im Jahr – für dieselbe Grundversicherung.` },
-      { art: "titel", hintergrund: "slate", bild: kantonBild(kanton, "dorf"), text: ["Die Region können Sie", "nicht wählen.", "Die Kasse schon."], dauer: 3.0,
+      { art: "titel", hintergrund: "slate", text: ["Die Region können Sie", "nicht wählen.", "Die Kasse schon."], figur: { aktion: "denken", wer: "marco", einfall: true }, dauer: 3.0,
         stimme: "Die Region können Sie nicht wählen. Die Kasse schon." },
       ABBINDER
     ],
@@ -209,14 +220,17 @@ export function unfall(region) {
   if (diff < 100) return null;
   return paket({
     format: "unfall", gruppe: "daten", param: region.schluessel, titel: `Unfalldeckung in ${name}`, cover: 0.3,
+    rahmen: "Problem-Promise", beats: ["Problem", "Pain", "Promise", "Proof", "Proof", "CTA"],
     szenen: [
-      { art: "titel", hintergrund: "slate", bild: "laptop", text: ["Angestellt,", "mindestens 8 Stunden", "pro Woche?"], dauer: 2.8,
+      { art: "titel", hintergrund: "slate", text: ["Angestellt,", "mindestens 8 Stunden", "pro Woche?"], figur: { aktion: "laptop", wer: "lea", bildschirm: ["Pensum", "8+ Std."] }, dauer: 2.8,
         stimme: "Angestellt, mindestens acht Stunden pro Woche?" },
+      { art: "titel", hintergrund: "creme", text: ["Dann zahlen Sie", "den Unfall vielleicht", "**doppelt**."], figur: { aktion: "schulter", wer: "lea" }, dauer: 2.8,
+        stimme: "Dann zahlen Sie den Unfall vielleicht doppelt: beim Arbeitgeber und bei der Kasse." },
       { art: "schalter", hintergrund: "petrol", aus: "mit Unfall", an: "ohne Unfall", von: pM, bis: pO, text: ["Unfall läuft über", "den Arbeitgeber."], dauer: 4.6,
         stimme: "Dann läuft der Unfall über den Arbeitgeber. Die Unfalldeckung der Krankenkasse können Sie ausschliessen." },
-      { art: "zaehler", hintergrund: "creme", praefix: "CHF", von: 0, bis: diff, oben: `In ${name}:`, unten: "weniger im Jahr", dauer: 3.0,
+      { art: "zaehler", hintergrund: "creme", bild: "laptop", praefix: "CHF", von: 0, bis: diff, oben: `In ${name}:`, unten: "weniger im Jahr", dauer: 3.0,
         stimme: `${franken(diff)} weniger im Jahr – für ein Häkchen.` },
-      { art: "titel", hintergrund: "petrol", text: ["Stelle gekündigt oder", "selbstständig?", "Unfall wieder", "einschliessen."], klein: "Die Deckung des Arbeitgebers endet 31 Tage nach Austritt.", dauer: 3.6,
+      { art: "titel", hintergrund: "petrol", text: ["Stelle gekündigt?", "Unfall wieder", "einschliessen."], figur: { aktion: "karton", wer: "lea" }, klein: "Die Deckung des Arbeitgebers endet 31 Tage nach Austritt.", dauer: 3.6,
         stimme: "Stelle gekündigt oder selbstständig? Dann den Unfall wieder einschliessen." },
       ABBINDER
     ],
@@ -243,14 +257,15 @@ export function kantone(kanton) {
   const heute = KANTONE[kanton];
   return paket({
     format: "kantone", gruppe: "daten", param: kanton, titel: `Kantone im Vergleich (${heute})`, cover: 0.3,
+    rahmen: "AIDA", beats: ["Attention", "Interest", "Desire", "Action", "CTA"],
     szenen: [
       { art: "titel", hintergrund: "slate", bild: "flagge", text: ["Gleiche Leistung.", "26 Kantone.", "26 Preisniveaus."], dauer: 3.0,
         stimme: "Gleiche Grundversicherung, sechsundzwanzig Kantone, sechsundzwanzig Preisniveaus." },
       { art: "balken", hintergrund: "petrol", balken: reihe.map((x) => ({ label: x.kanton, hoehe: x.g.praemie / max.g.praemie, gold: x === min })), text: ["Günstigstes Angebot", "pro Monat, Erwachsene."], dauer: 4.4,
         stimme: `${KANTONE[min.kanton]}: ${franken(min.g.praemie)}. ${KANTONE[mitte.kanton]}: ${franken(mitte.g.praemie)}. ${KANTONE[max.kanton]}: ${franken(max.g.praemie)}.` },
-      { art: "titel", hintergrund: "creme", text: ["Wegziehen? Nein.", "Vergleichen reicht –", heute.length > 14 ? "auch bei Ihnen." : `auch in ${heute}.`], dauer: 3.2,
+      { art: "titel", hintergrund: "creme", figur: { aktion: "schulter", wer: "marco" }, text: ["Wegziehen? Nein.", "Vergleichen reicht –", heute.length > 14 ? "auch bei Ihnen." : `auch in ${heute}.`], dauer: 3.2,
         stimme: `Wegziehen müssen Sie deswegen nicht. Vergleichen reicht – auch in ${heute}.` },
-      { art: "titel", hintergrund: "petrol", text: ["In Ihrem Kanton liegen", "die Kassen Hunderte", "Franken auseinander."], dauer: 3.2,
+      { art: "titel", hintergrund: "petrol", figur: { aktion: "laptop", wer: "lea", bildschirm: ["Kassen", "vergleichen"] }, text: ["In Ihrem Kanton liegen", "die Kassen Hunderte", "Franken auseinander."], dauer: 3.2,
         stimme: "Denn innerhalb Ihres Kantons liegen die Kassen Hunderte Franken im Jahr auseinander." },
       ABBINDER
     ],
@@ -276,15 +291,18 @@ export function flexibel(region) {
   const name = region.name, modell = MODELLE[sparsam.modell];
   return paket({
     format: "flexibel", gruppe: "daten", param: region.schluessel, titel: `Sparpotenzial in ${name}`, cover: 0.3,
+    rahmen: "Before-After-Bridge", beats: ["Before", "Before", "After", "Bridge", "Bridge", "CTA"],
     szenen: [
-      { art: "titel", hintergrund: "slate", bild: "gipfel", text: ["Gesund, flexibel,", "selten beim Arzt?"], dauer: 2.6,
+      { art: "titel", hintergrund: "slate", text: ["Gesund, flexibel,", "selten beim Arzt?"], figur: { aktion: "wandern", wer: "marco" }, dauer: 2.6,
         stimme: "Gesund, flexibel, selten beim Arzt?" },
+      { art: "titel", hintergrund: "creme", bild: "gipfel", text: ["Standard mit 300:", `**${chf(standard.praemie)}** im Monat.`, `${modell} mit 2'500:`, `**${chf(sparsam.praemie)}** im Monat.`], dauer: 4.2,
+        stimme: `Standard mit dreihundert Franchise – oder ${modell} mit zweitausendfünfhundert.` },
       { art: "muenzen", hintergrund: "petrol", bis: ersparnis, text: [`${name}:`, "so viel liegt drin.", "Pro Jahr."], dauer: 4.6,
         stimme: `In ${name} liegen bis zu ${franken(ersparnis)} im Jahr drin.` },
-      { art: "titel", hintergrund: "creme", text: ["Standard mit 300:", `**${chf(standard.praemie)}** im Monat.`, `${modell} mit 2'500:`, `**${chf(sparsam.praemie)}** im Monat.`], dauer: 4.2,
-        stimme: `Standard mit dreihundert Franchise – oder ${modell} mit zweitausendfünfhundert.` },
-      { art: "titel", hintergrund: "slate", text: ["Der Haken:", "Krank? Dann zahlen Sie", "bis **CHF 2'200**", "mehr selbst."], dauer: 3.4,
+      { art: "titel", hintergrund: "slate", text: ["Der Haken: krank?", "Bis **CHF 2'200**", "selbst zahlen."], figur: { aktion: "rechnungen", wer: "marco", betrag: "bis CHF 2'200" }, dauer: 3.4,
         stimme: "Der Haken: Werden Sie krank, zahlen Sie bis zweitausendzweihundert Franken mehr selbst. Das Geld muss da sein." },
+      { art: "titel", hintergrund: "creme", text: ["Modell und Franchise", "ändern Sie", "bis **30. November**."], figur: { aktion: "laptop", wer: "marco", bildschirm: [modell, "2'500"] }, dauer: 3.0,
+        stimme: "Modell und Franchise ändern Sie bis Ende November." },
       ABBINDER
     ],
     bildtext: {
@@ -316,17 +334,20 @@ export function countdown(datum) {
     const szenen = [
       { art: "zahl", hintergrund: "creme", oben: "Kündigungsfrist 30. November", zahl: String(tage), wort: tage === 1 ? "Tag" : "Tage", dauer: 2.8,
         stimme: tage === 0 ? "Heute ist der dreissigste November. Letzter Tag." : `Noch ${zahlwort(tage)} ${tage === 1 ? "Tag" : "Tage"} bis zum dreissigsten November.` },
-      { art: "titel", hintergrund: "petrol", bild: "brief", text: ["Bis dann muss die", "Kündigung **da sein** –", "nicht abgeschickt."], dauer: 3.2,
+      { art: "titel", hintergrund: "petrol", text: ["Bis dann muss die", "Kündigung **da sein** –", "nicht abgeschickt."], figur: { aktion: "briefkasten", wer: "lea", etikett: "eingeschrieben" }, dauer: 3.2,
         stimme: "Bis dann muss die Kündigung bei der Kasse eingetroffen sein. Nicht abgeschickt – eingetroffen." },
+      { art: "titel", hintergrund: "slate", text: ["Einen Tag zu spät?", "**Ein Jahr länger**", "bei der alten Kasse."], figur: { aktion: "kalender", wer: "marco" }, dauer: 3.0,
+        stimme: "Einen Tag zu spät? Dann bleiben Sie ein ganzes Jahr länger bei der alten Kasse." },
       knapp
         ? { art: "titel", hintergrund: "slate", text: ["Jetzt eingeschrieben", "aufgeben.", "Nicht morgen."], dauer: 2.8, stimme: "Jetzt eingeschrieben aufgeben. Nicht morgen." }
-        : { art: "zahl", hintergrund: "slate", zahl: "20.", wort: "November – spätestens aufgeben", dauer: 3.0, stimme: "Spätestens am zwanzigsten November aufgeben. Dann sind Sie sicher." },
-      { art: "titel", hintergrund: "creme", text: ["Erst die Zusage", "der neuen Kasse.", "Dann kündigen."], dauer: 2.8,
+        : { art: "zahl", hintergrund: "slate", bild: "brief", zahl: "20.", wort: "November – spätestens aufgeben", dauer: 3.0, stimme: "Spätestens am zwanzigsten November aufgeben. Dann sind Sie sicher." },
+      { art: "titel", hintergrund: "creme", text: ["Erst die Zusage", "der neuen Kasse.", "Dann kündigen."], figur: { aktion: "laptop", wer: "lea", bildschirm: ["Zusage", "erhalten"] }, dauer: 2.8,
         stimme: "Erst die schriftliche Zusage der neuen Kasse. Dann kündigen." },
       ABBINDER
     ];
     return paket({
       format: "countdown", gruppe: "saison", param, titel: `Countdown: ${tage} Tage`, cover: 0.05, szenen,
+      rahmen: "HPSCA", beats: ["Hook", "Problem", "Agitation", "Solution", "Solution", "CTA"],
       bildtext: {
         aufhaenger: tage === 0 ? "Heute ist der 30. November. Was jetzt nicht bei der Kasse liegt, gilt erst nächstes Jahr." : `Noch ${tage} ${tage === 1 ? "Tag" : "Tage"}: Am 30. November muss die Kündigung bei der Krankenkasse liegen – nicht unterwegs sein.`,
         absaetze: [
@@ -343,14 +364,15 @@ export function countdown(datum) {
     const tage = tageBis(datum, 3, 31);
     return paket({
       format: "countdown", gruppe: "saison", param, titel: `Countdown März: ${tage} Tage`, cover: 0.05,
+      rahmen: "HPSCA", beats: ["Hook", "Problem", "Agitation", "Solution", "CTA"],
       szenen: [
         { art: "zahl", hintergrund: "creme", oben: "Zweite Frist: 31. März", zahl: String(tage), wort: tage === 1 ? "Tag" : "Tage", dauer: 2.8,
           stimme: `Noch ${zahlwort(tage)} ${tage === 1 ? "Tag" : "Tage"} bis zum einunddreissigsten März.` },
         { art: "titel", hintergrund: "petrol", bild: "kalender", text: ["Kündigung bis", "31. März –", "Wechsel per 1. Juli."], dauer: 2.8,
           stimme: "Kündigung bis einunddreissigsten März, Wechsel per ersten Juli." },
-        { art: "titel", hintergrund: "slate", text: ["Nur mit Franchise 300", "im Standardmodell."], klein: "Alle anderen warten bis November.", dauer: 3.2,
+        { art: "titel", hintergrund: "slate", text: ["Nur mit Franchise 300", "im Standardmodell."], figur: { aktion: "denken", wer: "marco", einfall: true }, klein: "Alle anderen warten bis November.", dauer: 3.2,
           stimme: "Das gilt nur mit Franchise dreihundert im Standardmodell. Alle anderen warten bis November." },
-        { art: "titel", hintergrund: "creme", text: ["Eingang zählt.", "Eingeschrieben senden."], dauer: 2.6,
+        { art: "titel", hintergrund: "creme", text: ["Eingang zählt.", "Eingeschrieben senden."], figur: { aktion: "briefkasten", wer: "lea" }, dauer: 2.6,
           stimme: "Auch hier zählt der Eingang. Eingeschrieben schicken." },
         ABBINDER
       ],
@@ -377,13 +399,105 @@ export function mythos(i) {
   if (!m) return null;
   return paket({
     format: "mythos", gruppe: "wissen", param: String(i + 1), titel: `Mythos ${i + 1}`, cover: 0.45,
+    rahmen: "Myth-Busting", beats: ["Myth", "Truth", "Example", "CTA"],
     szenen: [
-      { art: "titel", hintergrund: "slate", bild: MYTHOS_BILD[i] || "alpen", symbol: "✕", text: ["Mythos:", ...m.mythos], dauer: 3.2, stimme: `Mythos: ${m.mythosStimme}` },
-      { art: "titel", hintergrund: "petrol", text: ["**Stimmt nicht.**", ...m.wahrheit], dauer: 3.6, stimme: m.wahrheitStimme },
-      { art: "titel", hintergrund: "creme", text: m.detail, dauer: 3.2, stimme: m.detailStimme },
+      { art: "titel", hintergrund: "slate", text: ["**Mythos:**"], figur: { aktion: "sprechblase", wer: "marco", blase: m.mythos }, dauer: 3.2, stimme: `Mythos: ${m.mythosStimme}` },
+      { art: "titel", hintergrund: "petrol", text: ["**Stimmt nicht.**", ...m.wahrheit], figur: { aktion: "sprechblase", wer: "marco", blase: m.mythos, stempel: "frueh" }, dauer: 3.6, stimme: m.wahrheitStimme },
+      { art: "titel", hintergrund: "creme", bild: MYTHOS_BILD[i] || "alpen", text: m.detail, dauer: 3.2, stimme: m.detailStimme },
       ABBINDER
     ],
     bildtext: { aufhaenger: m.aufhaenger, absaetze: [m.wahrheitStimme, m.detailStimme], quelle: "", hashtags: hashtagsSammeln(m.hashtags) }
+  });
+}
+
+/* ------------------------------------------------- 11 Geschichte (Story) */
+/* Story -> Struggle -> Turning Point -> Lesson. Lea ist eine Beispielfigur;
+   die Zahlen sind echt: guenstigstes Angebot im Standard- und im
+   Hausarztmodell der Region (Erwachsene, Franchise 300, mit Unfall). */
+export function geschichte(region) {
+  const st = guenstigstes(region.schluessel, "E", 300, "M", 0), ha = guenstigstes(region.schluessel, "E", 300, "M", 1);
+  if (!st || !ha || st.praemie <= ha.praemie) return null;
+  const s0 = st.praemie, s1 = ha.praemie, diff = jahr(s0 - s1);
+  if (diff < 240) return null;
+  const wo = region.mehrere ? `in ${region.ort}` : `im Kanton ${region.kantonName}`;
+  return paket({
+    format: "geschichte", gruppe: "daten", param: region.schluessel, titel: `Leas Geschichte (${region.name})`, cover: 0.2,
+    rahmen: "Story", beats: ["Story", "Struggle", "Turning Point", "Lesson", "Lesson", "CTA"],
+    szenen: [
+      { art: "titel", hintergrund: "creme", text: ["Das ist Lea.", `Sie wohnt ${wo}.`], figur: { aktion: "winken", wer: "lea" }, klein: "Beispielfigur – Zahlen: BAG-Prämien " + JAHR, dauer: 3.0,
+        stimme: `Das ist Lea. Sie wohnt ${wo} und ist seit Jahren bei derselben Kasse.` },
+      { art: "titel", hintergrund: "slate", text: ["Jedes Jahr teurer.", "Standardmodell:", `**${chf(s0)}** im Monat.`], figur: { aktion: "schulter", wer: "lea" }, dauer: 3.2,
+        stimme: `Jedes Jahr wird es teurer. Im Standardmodell zahlt sie ${franken(s0)} im Monat.` },
+      { art: "titel", hintergrund: "petrol", text: ["Dann vergleicht sie.", "Hausarztmodell:", `**${chf(s1)}** im Monat.`], figur: { aktion: "laptop", wer: "lea", bildschirm: ["Hausarzt", chf(s1)] }, dauer: 3.4,
+        stimme: `Dann vergleicht sie. Im Hausarztmodell sind es ${franken(s1)} – bei gleichen Leistungen.` },
+      { art: "zaehler", hintergrund: "creme", bild: kantonBild(region.kanton, "dorf"), praefix: "CHF", von: 0, bis: diff, oben: "Lea spart", unten: "im Jahr", dauer: 3.0,
+        stimme: `${franken(diff)} im Jahr.` },
+      { art: "titel", hintergrund: "petrol", text: ["Gleiche Leistungen.", "Einmal im Jahr", "**vergleichen** lohnt sich."], figur: { aktion: "jubeln", wer: "lea" }, dauer: 3.0,
+        stimme: "Gleiche Leistungen. Einmal im Jahr vergleichen lohnt sich." },
+      ABBINDER
+    ],
+    bildtext: {
+      aufhaenger: `Lea ${wo} zahlte ${chf(s0)} im Monat. Dann hat sie verglichen – und spart ${chf(diff)} im Jahr.`,
+      absaetze: [
+        `Lea ist eine Beispielfigur, die Zahlen sind echt: Das günstigste Angebot im Standardmodell kostet hier ${chf(s0)} im Monat, im Hausarztmodell ${chf(s1)}. Gleiche Grundversicherung, gleiche Leistungen.`,
+        "Im Hausarztmodell gehen Sie zuerst zu Ihrem Hausarzt, der Sie bei Bedarf überweist. Notfälle sind immer gedeckt.",
+        "Modell und Kasse wechseln Sie auf das neue Jahr – Kündigung bis 30. November."
+      ],
+      quelle: quelle(region, "günstigstes Angebot im Standard- und im Hausarztmodell, Erwachsene, Franchise 300, mit Unfalldeckung"),
+      hashtags: tagsRegion(region, "modelle", "wechsel")
+    }
+  });
+}
+
+/* ------------------------------------------- 12 Einwand (Objection Handling) */
+/* Hook -> Einwand (Sprechblase) -> Umdeutung -> Beleg -> Aufforderung. */
+/* Region fuer den Beleg "schon unter den acht guenstigsten …": Genf hat
+   acht Standard-Angebote in den Daten und eine Spanne von rund CHF 680
+   im Jahr (Zuerich nur sechs Angebote, CHF 238) – Text und Zahl passen. */
+const SPANNE_REGION = "GE0";
+function einwandBeleg(e) {
+  if (e.beleg === "checkliste") return { art: "checkliste", hintergrund: "slate", punkte: ["Vergleichen", "Neue Kasse anfragen", "Zusage abwarten", "Eingeschrieben kündigen", "Bestätigung prüfen"], dauer: 5.0,
+    stimme: "Vergleichen. Anfragen. Zusage abwarten. Eingeschrieben kündigen. Bestätigung prüfen." };
+  if (e.beleg === "raster") return { art: "raster", hintergrund: "creme", text: ["Alles im Gesetz.", "Bei jeder Kasse gleich."], dauer: 4.2,
+    stimme: "Arzt, Spital, Medikamente, Notfall: bei jeder Kasse gleich." };
+  if (e.beleg === "arzt") return { art: "titel", hintergrund: "creme", text: ["Ohne Gesundheitsfragen.", "Ohne Vorbehalt."], figur: { aktion: "arzt" }, dauer: 3.0,
+    stimme: "Ohne Gesundheitsfragen, ohne Vorbehalt. Ablehnen darf nur die Zusatzversicherung." };
+  if (e.beleg === "denken") return { art: "titel", hintergrund: "creme", text: ["Die Rangfolge", "ändert sich", "**jedes Jahr**."], figur: { aktion: "denken", wer: "marco", einfall: true }, dauer: 3.0,
+    stimme: "Wer jedes Jahr vergleicht, bleibt vorne." };
+  if (e.beleg === "spanne") {
+    const r = REGIONEN.find((x) => x.schluessel === SPANNE_REGION) || REGIONEN[0];
+    const liste = angebote(r.schluessel, "E", 300, "M").filter((a) => a.modell === 0);
+    if (liste.length < 2) return null;
+    const diff = jahr(liste[liste.length - 1].praemie - liste[0].praemie);
+    return { art: "zaehler", hintergrund: "creme", bild: kantonBild(r.kanton, "dorf"), praefix: "CHF", von: 0, bis: diff, oben: `${r.name}: Platz 1 bis ${liste.length}`, unten: "Unterschied im Jahr", dauer: 3.4,
+      stimme: `In ${r.name}, nur unter den ${zahlwort(liste.length)} günstigsten Angeboten im Standardmodell: ${franken(diff)} im Jahr.`, quelleRegion: r };
+  }
+  return null;
+}
+export function einwand(i) {
+  const e = EINWAENDE[i];
+  if (!e) return null;
+  const beleg = einwandBeleg(e);
+  if (!beleg) return null;
+  const { quelleRegion, ...belegSzene } = beleg;
+  return paket({
+    format: "einwand", gruppe: "wissen", param: String(i + 1), titel: `Einwand ${i + 1}`, cover: 0.3,
+    rahmen: "Objection Handling", beats: ["Objection", "Reframe", "Proof", "CTA", "CTA"],
+    szenen: [
+      { art: "titel", hintergrund: "slate", text: ["**Kennen Sie den Satz?**"], figur: { aktion: "sprechblase", wer: "marco", blase: e.blase }, dauer: 3.2,
+        stimme: `Kennen Sie den Satz? ${e.einwandStimme}` },
+      { art: "titel", hintergrund: "petrol", text: e.umdeutung, figur: { aktion: "zeigen", wer: "lea" }, dauer: 3.4, stimme: e.umdeutungStimme },
+      belegSzene,
+      { art: "titel", hintergrund: "creme", text: ["Vergleichen dauert", "**eine Minute**."], figur: { aktion: "laptop", wer: "lea", bildschirm: ["Vergleich", "1 Minute"] }, dauer: 2.6,
+        stimme: "Vergleichen dauert eine Minute." },
+      ABBINDER
+    ],
+    bildtext: {
+      aufhaenger: e.aufhaenger,
+      absaetze: [e.umdeutungStimme, belegSzene.stimme],
+      quelle: quelleRegion ? quelle(quelleRegion, "acht günstigste Angebote im Standardmodell, Erwachsene, Franchise 300, mit Unfalldeckung") : "",
+      hashtags: hashtagsSammeln(e.hashtags)
+    }
   });
 }
 
@@ -398,7 +512,7 @@ export function stamm(reel, datum) {
   const t = STAMM[reel.id] || { aufhaenger: reel.titel, absaetze: [], hashtags: [] };
   const sprache = reel.sprache || t.sprache || "de";
   return paket({
-    format: "stamm", gruppe: "wissen", param: reel.id, titel: reel.titel, sprache, cover: 0.3,
+    format: "stamm", gruppe: "wissen", param: reel.id, titel: reel.titel, sprache, cover: 0.3, rahmen: STAMM_RAHMEN[reel.id] || null,
     reelId: reel.id, audioOrdner: "audio", szenen: reel.szenen.map(({ id, ...rest }) => rest),
     bildtext: { aufhaenger: t.aufhaenger, absaetze: t.absaetze, quelle: "", hashtags: hashtagsSammeln(t.hashtags || []) }
   });
@@ -407,7 +521,7 @@ export function stamm(reel, datum) {
 /* ---------------------------------------------------------- Kandidaten */
 /* Alles, was an einem Tag moeglich ist – ungebaut; "bauen" erzeugt das
    Paket erst bei Bedarf (und kann null liefern, wenn Daten fehlen). */
-export const DATENFORMATE = { franchise, modelle, alter, unfall, flexibel };
+export const DATENFORMATE = { franchise, modelle, alter, unfall, flexibel, geschichte };
 
 export function kandidaten(datum) {
   const liste = [];
@@ -420,6 +534,7 @@ export function kandidaten(datum) {
   }
   liste.push({ gruppe: "saison", format: "countdown", param: datumKurz(datum), bauen: () => countdown(datum) });
   MYTHEN.forEach((_, i) => liste.push({ gruppe: "wissen", format: "mythos", param: String(i + 1), bauen: () => mythos(i) }));
+  EINWAENDE.forEach((_, i) => liste.push({ gruppe: "wissen", format: "einwand", param: String(i + 1), bauen: () => einwand(i) }));
   for (const reel of REELS) liste.push({ gruppe: "wissen", format: "stamm", param: reel.id, bauen: () => stamm(reel, datum) });
   return liste.map((k) => ({ ...k, schluessel: `${k.format}|${k.param}` }));
 }

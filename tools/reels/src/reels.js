@@ -34,7 +34,7 @@ export const REELS = [
     szenen: [
       { id: "s1", art: "zahl", hintergrund: "creme", zahl: "30.", wort: "November", dauer: 2.4,
         stimme: "Dreissigster November." },
-      { id: "s2", art: "titel", hintergrund: "creme", text: ["Bis dann muss Ihre Kündigung", "bei der Kasse **sein** –", "nicht abgeschickt."], dauer: 3.4,
+      { id: "s2", art: "titel", figur: { aktion: "briefkasten", wer: "lea", etikett: "eingeschrieben" }, hintergrund: "creme", text: ["Bis dann muss Ihre Kündigung", "bei der Kasse **sein** –", "nicht abgeschickt."], dauer: 3.4,
         stimme: "Bis dann muss Ihre Kündigung bei der Krankenkasse eingetroffen sein. Nicht abgeschickt – eingetroffen." },
       { id: "s3", art: "zahl", hintergrund: "petrol", zahl: "30.", wort: "Juni", dauer: 2.4,
         stimme: "Und: Dreissigster Juni." },
@@ -63,7 +63,7 @@ export const REELS = [
         stimme: "Zweihundertzwanzig mal zwölf: zweitausendsechshundertvierzig Franken im Jahr." },
       { id: "s5", art: "titel", hintergrund: "slate", text: ["Für nichts.", "Keine Leistung mehr,", "keine weniger."], dauer: 3.0,
         stimme: "Für nichts. Keine Leistung mehr, keine weniger." },
-      { id: "s6", art: "titel", hintergrund: "creme", text: ["Ihre Region, Ihre Franchise,", "Ihr Modell –", "in einer Minute verglichen."], dauer: 3.4,
+      { id: "s6", art: "titel", figur: { aktion: "laptop", wer: "lea", bildschirm: ["Vergleich", "1 Minute"] }, hintergrund: "creme", text: ["Ihre Region, Ihre Franchise,", "Ihr Modell –", "in einer Minute verglichen."], dauer: 3.4,
         stimme: "Ihre Region, Ihre Franchise, Ihr Modell. In einer Minute verglichen." },
       { id: "s7", art: "abbinder", hintergrund: "petrol", dauer: 2.6,
         stimme: "Swisspremia Punkt C H." }
@@ -76,7 +76,7 @@ export const REELS = [
     szenen: [
       { id: "s1", art: "zahl", hintergrund: "slate", zahl: "19", wort: "Alles Gute zum Geburtstag", dauer: 2.6,
         stimme: "Alles Gute zum neunzehnten Geburtstag." },
-      { id: "s2", art: "titel", hintergrund: "petrol", text: ["Ihre Prämie steigt.", "Automatisch."], dauer: 2.8,
+      { id: "s2", art: "titel", figur: { aktion: "torte", wer: "noah", zahl: "19" }, hintergrund: "petrol", text: ["Ihre Prämie steigt.", "Automatisch."], dauer: 2.8,
         stimme: "Ihre Krankenkassenprämie steigt. Automatisch." },
       { id: "s3", art: "balken", hintergrund: "petrol", balken: [{ label: "Kinder", hoehe: 0.3 }, { label: "19–25", hoehe: 0.62, gold: true }, { label: "ab 26", hoehe: 1 }], text: ["Drei Altersklassen.", "Zwei Sprünge."], dauer: 4.0,
         stimme: "Drei Altersklassen, zwei Sprünge. Der erste mit neunzehn, der zweite mit sechsundzwanzig." },
@@ -97,7 +97,7 @@ export const REELS = [
     szenen: [
       { id: "s1", art: "zwei", hintergrund: "creme", links: { praefix: "", bis: 300 }, rechts: { praefix: "", bis: 2500 }, oben: "Franchise", dauer: 2.8,
         stimme: "Franchise: dreihundert oder zweitausendfünfhundert?" },
-      { id: "s2", art: "titel", hintergrund: "creme", text: ["Hohe Franchise", "= tiefere Prämie."], dauer: 2.6,
+      { id: "s2", art: "titel", figur: { aktion: "tueren", wer: "lea", links: "300", rechts: "2'500", wahl: "rechts" }, hintergrund: "creme", text: ["Hohe Franchise", "= tiefere Prämie."], dauer: 2.6,
         stimme: "Hohe Franchise, tiefere Prämie." },
       { id: "s3", art: "zaehler", hintergrund: "petrol", praefix: "CHF", von: 0, bis: 2200, oben: "Dafür tragen Sie bis zu", unten: "mehr selbst", dauer: 3.2,
         stimme: "Dafür tragen Sie bis zu zweitausendzweihundert Franken mehr selbst." },
@@ -105,7 +105,7 @@ export const REELS = [
         stimme: "Eins: Prämienersparnis im Jahr. Zwei: Franchisedifferenz. Drei: Was gaben Sie letztes Jahr beim Arzt aus? Ehrlich geschätzt." },
       { id: "s6", art: "titel", bild: "rechner", hintergrund: "petrol", text: ["Die Mitte ist oft", "die schlechteste Wahl."], dauer: 2.8,
         stimme: "Die Mitte ist oft die schlechteste Wahl." },
-      { id: "s7", art: "titel", hintergrund: "creme", text: ["Die Franchise ändern Sie,", "ohne die Kasse zu wechseln.", "Bis Ende November."], dauer: 3.6,
+      { id: "s7", art: "titel", figur: { aktion: "laptop", wer: "lea", bildschirm: ["Franchise", "ändern"] }, hintergrund: "creme", text: ["Die Franchise ändern Sie,", "ohne die Kasse zu wechseln.", "Bis Ende November."], dauer: 3.6,
         stimme: "Die Franchise können Sie ändern, ohne die Kasse zu wechseln. Bis Ende November." },
       { id: "s8", art: "abbinder", hintergrund: "petrol", dauer: 2.6,
         stimme: "Swisspremia Punkt C H." }
@@ -121,7 +121,7 @@ export const REELS = [
         stimme: "Welcome to Switzerland. Your ninety days start now." },
       { id: "s2", art: "titel", bild: "flagge", hintergrund: "slate", text: ["You have 3 months", "to get health insurance.", "It's the law."], dauer: 3.4,
         stimme: "You have three months to get health insurance. It's the law." },
-      { id: "s3", art: "titel", hintergrund: "petrol", text: ["Sign up in time –", "and you're covered", "from day one."], klein: "Retroactively, from the day you arrived.", dauer: 3.6,
+      { id: "s3", art: "titel", figur: { aktion: "karton", wer: "marco" }, hintergrund: "petrol", text: ["Sign up in time –", "and you're covered", "from day one."], klein: "Retroactively, from the day you arrived.", dauer: 3.6,
         stimme: "Sign up in time, and you're covered from day one – retroactively, from the day you arrived." },
       { id: "s4", art: "titel", hintergrund: "petrol", text: ["No health check.", "No rejection.", "Every insurer must take you."], dauer: 3.6,
         stimme: "No health check. No rejection. Every insurer must take you." },
@@ -144,7 +144,7 @@ export const REELS = [
         stimme: "Umgezogen. Prämie: sechzig Franken weniger im Monat." },
       { id: "s3", art: "balken", hintergrund: "petrol", balken: [{ label: "Region 1", hoehe: 1 }, { label: "Region 2", hoehe: 0.8 }, { label: "Region 3", hoehe: 0.62, gold: true }], text: ["Bis zu drei Prämienregionen", "pro Kanton."], dauer: 4.0,
         stimme: "Bis zu drei Prämienregionen pro Kanton. Ihre Gemeinde entscheidet." },
-      { id: "s4", art: "titel", hintergrund: "petrol", text: ["Umzug der Kasse melden –", "sonst zahlen Sie", "den falschen Betrag."], dauer: 3.4,
+      { id: "s4", art: "titel", figur: { aktion: "karton", wer: "marco", links: "alt", rechts: "neu" }, hintergrund: "petrol", text: ["Umzug der Kasse melden –", "sonst zahlen Sie", "den falschen Betrag."], dauer: 3.4,
         stimme: "Melden Sie den Umzug Ihrer Kasse. Sonst zahlen Sie den falschen Betrag." },
       { id: "s5", art: "titel", hintergrund: "creme", text: ["Neue Adresse?", "Guter Moment zum Vergleichen.", "Frist: 30. November."], dauer: 3.6,
         stimme: "Neue Adresse? Ein guter Moment zum Vergleichen. Frist: dreissigster November." },
@@ -162,7 +162,7 @@ export const REELS = [
       stimme: "Rechnen Sie zurück: Die Post braucht Tage, eingeschrieben noch etwas mehr." },
     { id: "s3", art: "zahl", hintergrund: "slate", zahl: "20.", wort: "November – spätestens aufgeben", dauer: 3.0,
       stimme: "Spätestens am zwanzigsten November aufgeben. Dann sind Sie sicher." },
-    { id: "s4", art: "titel", hintergrund: "creme", text: ["Vergleichen dauert", "eine Minute."], dauer: 2.4,
+    { id: "s4", art: "titel", figur: { aktion: "laptop", wer: "lea", bildschirm: ["Vergleich", "1 Minute"] }, hintergrund: "creme", text: ["Vergleichen dauert", "eine Minute."], dauer: 2.4,
       stimme: "Vergleichen dauert eine Minute." },
     { id: "s5", art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." }
   ]},
@@ -170,7 +170,7 @@ export const REELS = [
   { id: "eingeschrieben", titel: "Eingeschrieben", szenen: [
     { id: "s1", art: "brief", hintergrund: "creme", text: ["Eingeschrieben.", "Der einzige Beweis, der zählt."], dauer: 4.2,
       stimme: "Schicken Sie die Kündigung eingeschrieben. Das ist der einzige Beweis, der im Streitfall zählt." },
-    { id: "s2", art: "titel", bild: "brief", hintergrund: "petrol", text: ["Der Poststempel", "hilft Ihnen nicht."], dauer: 3.0,
+    { id: "s2", art: "titel", figur: { aktion: "briefkasten", wer: "lea", etikett: "eingeschrieben" }, hintergrund: "petrol", text: ["Der Poststempel", "hilft Ihnen nicht."], dauer: 3.0,
       stimme: "Der Poststempel hilft Ihnen nicht. Es zählt der Tag, an dem der Brief bei der Kasse liegt." },
     { id: "s3", art: "checkliste", hintergrund: "slate", punkte: ["Name und Versichertennummer", "«Grundversicherung» ausdrücklich", "Alle Personen nennen", "Datum und Unterschrift"], dauer: 4.6,
       stimme: "Ins Schreiben gehören: Name und Versichertennummer, das Wort Grundversicherung, alle Personen, Datum und Unterschrift." },
@@ -178,7 +178,7 @@ export const REELS = [
   ]},
 
   { id: "selbstbehalt", titel: "Der Selbstbehalt", szenen: [
-    { id: "s1", art: "titel", hintergrund: "creme", text: ["Mit der Franchise", "ist es nicht getan."], dauer: 2.6,
+    { id: "s1", art: "titel", figur: { aktion: "rechnungen", wer: "lea", betrag: "+ 10 %" }, hintergrund: "creme", text: ["Mit der Franchise", "ist es nicht getan."], dauer: 2.6,
       stimme: "Mit der Franchise ist es nicht getan." },
     { id: "s2", art: "selbstbehalt", hintergrund: "petrol", text: ["10 % Selbstbehalt.", "Höchstens 700 im Jahr."], dauer: 4.2,
       stimme: "Über der Franchise zahlen Sie zehn Prozent Selbstbehalt. Höchstens siebenhundert Franken im Jahr." },
@@ -192,11 +192,11 @@ export const REELS = [
   { id: "drei-modelle", titel: "Drei Modelle", szenen: [
     { id: "s1", art: "modelle", hintergrund: "slate", text: ["Drei Modelle.", "Alle günstiger als Standard."], dauer: 4.2,
       stimme: "Hausarzt, HMO oder Telmed. Alle drei sind günstiger als das Standardmodell." },
-    { id: "s2", art: "titel", hintergrund: "petrol", text: ["Sie tauschen freie Arztwahl", "gegen eine tiefere Prämie."], dauer: 3.0,
+    { id: "s2", art: "titel", figur: { aktion: "telefon", wer: "noah", etikett: "Telmed" }, hintergrund: "petrol", text: ["Sie tauschen freie Arztwahl", "gegen eine tiefere Prämie."], dauer: 3.0,
       stimme: "Sie tauschen ein Stück freie Arztwahl gegen eine tiefere Prämie." },
     { id: "s3", art: "titel", bild: "arzt", hintergrund: "creme", text: ["Sie haben ohnehin", "einen Hausarzt?", "Dann kostet Sie das nichts."], dauer: 3.2,
       stimme: "Sie haben ohnehin einen Hausarzt? Dann kostet Sie das Hausarztmodell gar nichts." },
-    { id: "s4", art: "titel", hintergrund: "slate", text: ["Notfälle sind", "in jedem Modell gedeckt."], dauer: 2.6,
+    { id: "s4", art: "titel", figur: { aktion: "arzt" }, hintergrund: "slate", text: ["Notfälle sind", "in jedem Modell gedeckt."], dauer: 2.6,
       stimme: "Notfälle sind in jedem Modell gedeckt." },
     { id: "s5", art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." }
   ]},
@@ -204,7 +204,7 @@ export const REELS = [
   { id: "praemienregionen", titel: "Prämienregionen", szenen: [
     { id: "s1", art: "karte", hintergrund: "slate", text: ["Ihre Gemeinde", "bestimmt die Region."], dauer: 4.4,
       stimme: "Ihre Wohngemeinde bestimmt die Prämienregion. Bis zu drei pro Kanton." },
-    { id: "s2", art: "titel", hintergrund: "petrol", text: ["Gleiche Kasse, gleiches Modell –", "in Region 1 teurer", "als in Region 3."], dauer: 3.4,
+    { id: "s2", art: "titel", figur: { aktion: "karton", wer: "marco", links: "Region 1", rechts: "Region 3" }, hintergrund: "petrol", text: ["Gleiche Kasse, gleiches Modell –", "in Region 1 teurer", "als in Region 3."], dauer: 3.4,
       stimme: "Gleiche Kasse, gleiches Modell – in Region eins teurer als in Region drei." },
     { id: "s3", art: "titel", bild: "dorf", hintergrund: "creme", text: ["Die Region können Sie", "nicht wählen.", "Die Kasse schon."], dauer: 3.0,
       stimme: "Die Region können Sie nicht wählen. Die Kasse schon." },
@@ -214,7 +214,7 @@ export const REELS = [
   { id: "familienrabatt", titel: "Familienrabatt", szenen: [
     { id: "s1", art: "familie", hintergrund: "petrol", etikett: "Rabatt", text: ["Ab dem zweiten Kind", "gibt es oft Rabatt."], dauer: 4.4,
       stimme: "Ab dem zweiten oder dritten Kind gewähren viele Kassen einen Rabatt auf die Kinderprämie." },
-    { id: "s2", art: "titel", hintergrund: "slate", text: ["Wie hoch? Ab welchem Kind?", "Legt jede Kasse selbst fest."], dauer: 3.0,
+    { id: "s2", art: "titel", figur: { aktion: "familie", etikett: "Rabatt?" }, hintergrund: "slate", text: ["Wie hoch? Ab welchem Kind?", "Legt jede Kasse selbst fest."], dauer: 3.0,
       stimme: "Wie hoch und ab welchem Kind – das legt jede Kasse selbst fest." },
     { id: "s3", art: "titel", bild: "kinder", hintergrund: "creme", text: ["Alle bei derselben Kasse?", "Nachrechnen schlägt Annehmen."], dauer: 3.0,
       stimme: "Alle bei derselben Kasse? Nachrechnen schlägt Annehmen." },
@@ -226,7 +226,7 @@ export const REELS = [
       stimme: "Ihr Kind muss innert drei Monaten versichert sein. Rechtzeitig angemeldet, gilt die Deckung rückwirkend ab dem ersten Tag." },
     { id: "s2", art: "titel", bild: "baby", hintergrund: "petrol", text: ["Grundversicherung:", "niemand wird abgelehnt.", "Auch kein Säugling."], dauer: 3.2,
       stimme: "In der Grundversicherung wird niemand abgelehnt. Auch kein Säugling." },
-    { id: "s3", art: "titel", hintergrund: "slate", text: ["Zusatzversicherung:", "vor der Geburt abschliessen."], klein: "Danach ist eine Gesundheitsprüfung möglich.", dauer: 3.6,
+    { id: "s3", art: "titel", figur: { aktion: "baby", wer: "lea" }, hintergrund: "slate", text: ["Zusatzversicherung:", "vor der Geburt abschliessen."], klein: "Danach ist eine Gesundheitsprüfung möglich.", dauer: 3.6,
       stimme: "Die Zusatzversicherung schliessen Sie am besten vor der Geburt ab. Danach ist eine Gesundheitsprüfung möglich." },
     { id: "s4", art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." }
   ]},
@@ -236,13 +236,13 @@ export const REELS = [
       stimme: "Angestellt, mindestens acht Stunden pro Woche?" },
     { id: "s2", art: "schalter", hintergrund: "petrol", aus: "mit Unfall", an: "ohne Unfall", von: 420, bis: 395, text: ["Unfall läuft über", "den Arbeitgeber."], dauer: 4.6,
       stimme: "Dann sind Sie über den Arbeitgeber unfallversichert und können die Unfalldeckung in der Grundversicherung ausschliessen." },
-    { id: "s3", art: "titel", hintergrund: "creme", text: ["Ein Häkchen weniger.", "Jeden Monat weniger Prämie."], dauer: 3.0,
+    { id: "s3", art: "titel", figur: { aktion: "laptop", wer: "lea", bildschirm: ["Unfall", "ausschliessen"] }, hintergrund: "creme", text: ["Ein Häkchen weniger.", "Jeden Monat weniger Prämie."], dauer: 3.0,
       stimme: "Ein Häkchen weniger. Jeden Monat weniger Prämie." },
     { id: "s4", art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." }
   ]},
 
   { id: "praemienverbilligung", titel: "Prämienverbilligung", szenen: [
-    { id: "s1", art: "titel", hintergrund: "creme", text: ["Prämienverbilligung.", "Der Beitrag, den viele", "nicht abholen."], dauer: 3.2,
+    { id: "s1", art: "titel", figur: { aktion: "muenzen", wer: "brunner", betrag: "Antrag stellen" }, hintergrund: "creme", text: ["Prämienverbilligung.", "Der Beitrag, den viele", "nicht abholen."], dauer: 3.2,
       stimme: "Prämienverbilligung: der Beitrag, den viele nicht abholen." },
     { id: "s2", art: "tacho", hintergrund: "petrol", anteil: .7, links: "kein Anspruch", rechts: "voller Beitrag", text: ["Der Anspruch hängt", "vom Einkommen ab."], dauer: 4.4,
       stimme: "Der Anspruch hängt vom steuerbaren Einkommen ab – und ist in jedem Kanton anders geregelt." },
@@ -252,7 +252,7 @@ export const REELS = [
   ]},
 
   { id: "zusatz-reihenfolge", titel: "Die Reihenfolge bei der Zusatzversicherung", szenen: [
-    { id: "s1", art: "titel", hintergrund: "slate", text: ["Zusatzversicherung wechseln?", "Die Reihenfolge entscheidet."], dauer: 3.0,
+    { id: "s1", art: "titel", figur: { aktion: "denken", wer: "lea", einfall: true }, hintergrund: "slate", text: ["Zusatzversicherung wechseln?", "Die Reihenfolge entscheidet."], dauer: 3.0,
       stimme: "Zusatzversicherung wechseln? Die Reihenfolge entscheidet." },
     { id: "s2", art: "schloss", hintergrund: "petrol", erst: "Neue Zusage schriftlich", dann: "Alte Zusatzversicherung kündigen", text: ["Erst die Zusage.", "Dann die Kündigung."], dauer: 4.6,
       stimme: "Erst die schriftliche Zusage der neuen Kasse. Dann die Kündigung der alten. Nie umgekehrt." },
@@ -266,13 +266,13 @@ export const REELS = [
       stimme: "Hundert Franken im Monat weniger. Das sind zwölfhundert Franken im Jahr." },
     { id: "s2", art: "titel", bild: "muenzstapel", hintergrund: "petrol", text: ["Gleiche Leistung.", "Das Geld bleibt bei Ihnen."], dauer: 2.8,
       stimme: "Gleiche Leistung. Das Geld bleibt bei Ihnen." },
-    { id: "s3", art: "titel", hintergrund: "creme", text: ["Einmal im Jahr vergleichen.", "Im Oktober oder November."], dauer: 3.4,
+    { id: "s3", art: "titel", figur: { aktion: "laptop", wer: "lea", bildschirm: ["Vergleich", "Okt./Nov."] }, hintergrund: "creme", text: ["Einmal im Jahr vergleichen.", "Im Oktober oder November."], dauer: 3.4,
       stimme: "Einmal im Jahr vergleichen. Im Oktober oder November, wenn die neuen Prämien bekannt sind." },
     { id: "s4", art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." }
   ]},
 
   { id: "checkliste-wechsel", titel: "Checkliste Kassenwechsel", szenen: [
-    { id: "s1", art: "titel", hintergrund: "creme", text: ["Krankenkasse wechseln", "in fünf Schritten."], dauer: 2.6,
+    { id: "s1", art: "titel", figur: { aktion: "zeigen", wer: "lea" }, hintergrund: "creme", text: ["Krankenkasse wechseln", "in fünf Schritten."], dauer: 2.6,
       stimme: "Krankenkasse wechseln – in fünf Schritten." },
     { id: "s2", art: "checkliste", hintergrund: "slate", punkte: ["Vergleichen", "Neue Kasse anfragen", "Zusage abwarten", "Eingeschrieben kündigen", "Bestätigungen prüfen"], dauer: 5.2,
       stimme: "Vergleichen. Neue Kasse anfragen. Zusage abwarten. Eingeschrieben kündigen. Beide Bestätigungen prüfen." },
@@ -286,7 +286,7 @@ export const REELS = [
       stimme: "Die Prämie steigt in zwei Stufen. Die zweite mit sechsundzwanzig – und dann bleibt sie oben." },
     { id: "s2", art: "titel", bild: "jung", hintergrund: "slate", text: ["Seit 19 nie verglichen?", "Dann zahlen Sie", "sehr wahrscheinlich zu viel."], dauer: 3.4,
       stimme: "Seit neunzehn nie verglichen? Dann zahlen Sie sehr wahrscheinlich zu viel." },
-    { id: "s3", art: "titel", hintergrund: "creme", text: ["Die Rangfolge der Kassen", "ändert sich jedes Jahr."], dauer: 2.8,
+    { id: "s3", art: "titel", figur: { aktion: "denken", wer: "noah" }, hintergrund: "creme", text: ["Die Rangfolge der Kassen", "ändert sich jedes Jahr."], dauer: 2.8,
       stimme: "Die Rangfolge der Kassen ändert sich jedes Jahr." },
     { id: "s4", art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." }
   ]},
@@ -296,7 +296,7 @@ export const REELS = [
       stimme: "Arzt, Spital, Medikamente, Notfall: Was die Grundversicherung zahlt, steht im Gesetz. Bei jeder Kasse gleich." },
     { id: "s2", art: "titel", bild: "medikamente", hintergrund: "petrol", text: ["Eine teurere Kasse", "zahlt nicht mehr.", "Sie kostet nur mehr."], dauer: 3.2,
       stimme: "Eine teurere Kasse zahlt nicht mehr. Sie kostet nur mehr." },
-    { id: "s3", art: "titel", hintergrund: "slate", text: ["Unterschiedlich ist", "nur der Preis."], dauer: 2.4,
+    { id: "s3", art: "titel", figur: { aktion: "schulter", wer: "marco" }, hintergrund: "slate", text: ["Unterschiedlich ist", "nur der Preis."], dauer: 2.4,
       stimme: "Unterschiedlich ist nur der Preis." },
     { id: "s4", art: "abbinder", hintergrund: "petrol", dauer: 2.6, stimme: "Swisspremia Punkt C H." }
   ]},
@@ -304,7 +304,7 @@ export const REELS = [
   { id: "zwei-fenster", titel: "Zwei Fenster im Jahr", szenen: [
     { id: "s1", art: "jahresring", hintergrund: "slate", fenster: [[2, 6], [10, 12]], erst: "bis 31. März", zweit: "bis 30. November", text: ["Zwei Fenster im Jahr.", "Das erste kennt kaum jemand."], dauer: 5.0,
       stimme: "Zwei Fenster im Jahr: bis dreissigsten November für den Januar – und bis einunddreissigsten März für den Juli." },
-    { id: "s2", art: "titel", hintergrund: "petrol", text: ["Das Juni-Fenster gilt nur", "mit tiefster Franchise", "im Standardmodell."], dauer: 3.4,
+    { id: "s2", art: "titel", figur: { aktion: "zeigen", wer: "lea" }, hintergrund: "petrol", text: ["Das Juni-Fenster gilt nur", "mit tiefster Franchise", "im Standardmodell."], dauer: 3.4,
       stimme: "Das Juni-Fenster gilt nur mit der tiefsten Franchise im Standardmodell." },
     { id: "s3", art: "titel", bild: "kalender", hintergrund: "creme", text: ["Wer beide verpasst,", "wartet ein Jahr."], dauer: 2.6,
       stimme: "Wer beide verpasst, wartet ein Jahr." },

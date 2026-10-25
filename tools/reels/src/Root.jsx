@@ -4,6 +4,7 @@ import { getAudioDurationInSeconds } from "@remotion/media-utils";
 import { Reel } from "./Reel.jsx";
 import { REELS } from "./reels.js";
 import { FPS, NACHHALL, gesamtFrames } from "./takt.js";
+import { Modellblatt } from "./Modellblatt.jsx";
 
 export { FPS };
 export const BREITE = 1080;
@@ -76,5 +77,8 @@ export const RemotionRoot = () => (
       defaultProps={{ reel: REELS[0], dauern: null }}
       calculateMetadata={metadaten}
     />
+
+    {/* Kontrollblatt der Figuren (Standbild): npx remotion still src/index.jsx modellblatt out/modellblatt.png */}
+    <Composition id="modellblatt" component={Modellblatt} width={BREITE} height={HOEHE} fps={FPS} durationInFrames={60} />
   </>
 );
