@@ -51,12 +51,19 @@ http.createServer(async (req, res) => {
     return fs.createReadStream(datei).pipe(res);
   }
 
-  const m = pfad.match(/^\/v\d+\.\d+\/([^/]+)(?:\/([^/]+))?$/);
+  /* Token-Endpunkte ohne Version (graph.instagram.com) und mit Version. */
+  const m = pfad.match(/^(?:\/v\d+\.\d+)?\/([^/]+)(?:\/([^/]+))?$/);
   if (!m) return fehler(res, 404, "Unbekannter Pfad " + pfad, 803);
   if (!params.access_token) return fehler(res, 400, "An access token is required to request this resource.", 104);
   const [, knoten, kante] = m;
 
   if (knoten === "refresh_access_token") return json(res, { access_token: "neu-" + Date.now(), token_type: "bearer", expires_in: 5_184_000 });
+  if (knoten === "access_token") {
+    /* Wie Instagram: ein bereits langlebiges Token laesst sich nicht nochmals tauschen. */
+    if (/^lang/.test(params.access_token)) return fehler(res, 400, "Invalid platform app", 190);
+    return json(res, { access_token: "lang-" + Date.now(), token_type: "bearer", expires_in: 5_184_000 });
+  }
+  if (knoten === "me" && !kante) return json(res, { user_id: "17841400000000000", username: "attrappe", name: "Attrappe", followers_count: 0, media_count: zustand.medien.length });
   if (knoten === "debug_token") return json(res, { data: { type: "PAGE", is_valid: true, expires_at: 0, scopes: ["instagram_basic", "instagram_content_publish"] } });
 
   if (kante === "media" && req.method === "POST") {

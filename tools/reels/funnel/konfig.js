@@ -41,6 +41,7 @@ const STANDARD = {
   videoBasisUrl: "",               // bei ablage=ordner: oeffentliche Basis-URL dieses Ordners
   aufbewahrungTage: 14,            // gerenderte Videos und Plaene aelter als das werden geloescht
   igHost: "graph.facebook.com",    // oder graph.instagram.com (Instagram-Login ohne Facebook-Seite)
+  igLogin: "",                     // "facebook" | "instagram"; leer = aus igHost abgeleitet
   igApiVersion: "v26.0",
   igProtokoll: "https"
 };
@@ -56,7 +57,7 @@ const UMGEBUNG = {
   reelsProTag: "REELS_PRO_TAG", postVon: "POST_VON", postBis: "POST_BIS", mindestabstandMinuten: "MINDESTABSTAND_MINUTEN",
   proTick: "PRO_TICK", hashtags: "HASHTAGS", stimme: "STIMME", ablage: "ABLAGE", videoOrdner: "VIDEO_ORDNER",
   videoBasisUrl: "VIDEO_BASIS_URL", aufbewahrungTage: "AUFBEWAHRUNG_TAGE", igHost: "IG_HOST", igApiVersion: "IG_API_VERSION",
-  igProtokoll: "IG_PROTOKOLL", wiederholungStammTage: "WIEDERHOLUNG_STAMM_TAGE"
+  igProtokoll: "IG_PROTOKOLL", igLogin: "IG_LOGIN", wiederholungStammTage: "WIEDERHOLUNG_STAMM_TAGE"
 };
 
 function zusammenfuehren() {

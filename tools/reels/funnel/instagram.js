@@ -27,21 +27,29 @@
      node funnel/instagram.js kontingent
      node funnel/instagram.js auffrischen           nur graph.instagram.com
    ========================================================================= */
+import fs from "node:fs";
+import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { KONFIG, GEHEIM, maskiert } from "./konfig.js";
+import { KONFIG, GEHEIM, WURZEL, maskiert } from "./konfig.js";
 
 export class InstagramFehler extends Error {
   constructor(text, details = {}) { super(text); Object.assign(this, details); }
 }
 
 const basis = () => `${KONFIG.igProtokoll}://${KONFIG.igHost}/${KONFIG.igApiVersion}`;
-const istInstagramLogin = () => /graph\.instagram\.com/.test(KONFIG.igHost);
+/* Instagram-Login (graph.instagram.com) oder Facebook-Login (graph.facebook.com)?
+   igLogin in funnel.json/IG_LOGIN entscheidet; leer = aus dem Host abgeleitet. */
+export const istInstagramLogin = () => KONFIG.igLogin === "instagram" || (!KONFIG.igLogin && /graph\.instagram\.com/.test(KONFIG.igHost));
+
+/* Token-Endpunkte von graph.instagram.com liegen ausserhalb der Version. */
+const OHNE_VERSION = new Set(["/access_token", "/refresh_access_token"]);
 
 export async function api(pfad, { methode = "GET", params = {}, token = GEHEIM.igToken } = {}) {
   const p = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== null) p.set(k, String(v));
   if (token) p.set("access_token", token);
-  const url = basis() + pfad + (methode === "GET" ? "?" + p.toString() : "");
+  const wurzel = istInstagramLogin() && OHNE_VERSION.has(pfad) ? `${KONFIG.igProtokoll}://${KONFIG.igHost}` : basis();
+  const url = wurzel + pfad + (methode === "GET" ? "?" + p.toString() : "");
   const r = await fetch(url, methode === "GET" ? {} : { method: methode, headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: p.toString() });
   let daten = null;
   const text = await r.text();
@@ -59,6 +67,10 @@ export async function api(pfad, { methode = "GET", params = {}, token = GEHEIM.i
 export const verbunden = () => Boolean(GEHEIM.igUserId && GEHEIM.igToken);
 
 export async function konto() {
+  if (istInstagramLogin()) {
+    const d = await api("/me", { params: { fields: "user_id,username,name,followers_count,media_count" } });
+    return { ...d, id: d.user_id || d.id };
+  }
   return api(`/${GEHEIM.igUserId}`, { params: { fields: "id,username,name,followers_count,media_count" } });
 }
 
@@ -128,17 +140,28 @@ export async function tokenAuffrischen() {
   return { tage: Math.round((d.expires_in || 0) / 86400), gespeichert };
 }
 
-/* Kurzlebiges Token (z. B. aus dem Graph API Explorer) in ein langlebiges
-   tauschen und das Konto bestimmen. Facebook-Login: Seite -> Instagram-
-   Konto -> Seiten-Token. Instagram-Login: /access_token + /me. */
+/* Token in ein langlebiges tauschen und das Konto bestimmen.
+   Facebook-Login (graph.facebook.com): kurzlebiges Nutzer-Token aus dem
+     Graph API Explorer -> langlebig -> Seite -> Instagram-Konto -> Seiten-Token.
+   Instagram-Login (graph.instagram.com): Token aus dem App-Dashboard
+     ("Zugriffstoken generieren") ist bereits langlebig (60 Tage) und wird
+     direkt verwendet; ein kurzlebiges aus dem Login-Ablauf wird mit dem
+     App-Geheimcode getauscht, wenn META_APP_SECRET gesetzt ist. */
 export async function verbinden(kurzToken) {
   const appId = GEHEIM.metaAppId, appSecret = GEHEIM.metaAppSecret;
-  if (!appId || !appSecret) throw new InstagramFehler("META_APP_ID und META_APP_SECRET werden zum Eintauschen gebraucht (Meta for Developers ▸ App ▸ Einstellungen ▸ Allgemein).");
   if (istInstagramLogin()) {
-    const lang = await api("/access_token", { params: { grant_type: "ig_exchange_token", client_secret: appSecret }, token: kurzToken });
-    const ich = await api("/me", { params: { fields: "user_id,username" }, token: lang.access_token });
-    return [{ art: "instagram-login", userId: ich.user_id || ich.id, username: ich.username, token: lang.access_token, tage: Math.round((lang.expires_in || 0) / 86400) }];
+    let token = kurzToken, tage = null;
+    if (appSecret) {
+      try {
+        const lang = await api("/access_token", { params: { grant_type: "ig_exchange_token", client_secret: appSecret }, token: kurzToken });
+        token = lang.access_token;
+        tage = Math.round((lang.expires_in || 0) / 86400);
+      } catch (e) { /* schon langlebig – direkt verwenden */ }
+    }
+    const ich = await api("/me", { params: { fields: "user_id,username" }, token });
+    return [{ art: "instagram-login", userId: ich.user_id || ich.id, username: ich.username, token, tage }];
   }
+  if (!appId || !appSecret) throw new InstagramFehler("META_APP_ID und META_APP_SECRET werden zum Eintauschen gebraucht (Meta for Developers ▸ App ▸ Einstellungen ▸ Allgemein).");
   const lang = await api("/oauth/access_token", { params: { grant_type: "fb_exchange_token", client_id: appId, client_secret: appSecret, fb_exchange_token: kurzToken }, token: null });
   const seiten = await api("/me/accounts", { params: { fields: "id,name,access_token,instagram_business_account{id,username}" }, token: lang.access_token });
   return (seiten.data || []).filter((s) => s.instagram_business_account).map((s) => ({
@@ -172,10 +195,25 @@ if (alsSkript) {
       console.log(`Token aufgefrischt, gueltig ${r.tage} Tage. ${r.gespeichert.hinweis}`);
     } else if (befehl === "verbinden") {
       const kurz = rest.find((t) => !t.startsWith("--"));
-      if (!kurz) throw new InstagramFehler("Aufruf: node funnel/instagram.js verbinden <kurzlebiges-token> [--nicht-speichern]");
+      if (!kurz) throw new InstagramFehler("Aufruf: node funnel/instagram.js verbinden <token> [--instagram] [--konto=N] [--nicht-speichern]");
+      /* --instagram: Token stammt aus "API-Einrichtung mit Instagram-Login";
+         dann laeuft alles ueber graph.instagram.com, und funnel.json
+         merkt sich das. */
+      if (rest.includes("--instagram")) {
+        KONFIG.igLogin = "instagram";
+        if (KONFIG.igHost === "graph.facebook.com") {
+          KONFIG.igHost = "graph.instagram.com";
+          const datei = path.join(WURZEL, "funnel.json");
+          const f = fs.existsSync(datei) ? JSON.parse(fs.readFileSync(datei, "utf8")) : {};
+          f.igHost = "graph.instagram.com";
+          f.igLogin = "instagram";
+          fs.writeFileSync(datei, JSON.stringify(f, null, 2) + "\n");
+          console.log("funnel.json: igHost auf graph.instagram.com gestellt.");
+        }
+      }
       const konten = await verbinden(kurz);
       if (!konten.length) throw new InstagramFehler("Keine Facebook-Seite mit verbundenem Instagram-Profi-Konto gefunden. Instagram-Konto in ein Business-/Creator-Konto umwandeln und mit der Seite verknuepfen.");
-      konten.forEach((k, i) => console.log(`${i + 1}. @${k.username}  (Konto-Id ${k.userId}${k.seite ? ", Seite " + k.seite : ""}${k.tage ? ", Token " + k.tage + " Tage gueltig" : ", Seiten-Token ohne Ablauf"})`));
+      konten.forEach((k, i) => console.log(`${i + 1}. @${k.username}  (Konto-Id ${k.userId}${k.seite ? ", Seite " + k.seite : ""}${k.tage ? ", Token " + k.tage + " Tage gueltig" : k.art === "instagram-login" ? ", Token 60 Tage gueltig, wird automatisch verlaengert" : ", Seiten-Token ohne Ablauf"})`));
       const wahl = konten[Number(rest.find((t) => /^--konto=\d+$/.test(t))?.split("=")[1] || 1) - 1] || konten[0];
       if (rest.includes("--nicht-speichern")) {
         console.log(`\nGewaehlt: @${wahl.username}. Token ${maskiert(wahl.token)} – nicht gespeichert (--nicht-speichern).`);

@@ -85,9 +85,26 @@ Facebook-Seite SwissPremia (Instagram ▸ Einstellungen ▸ Konto ▸ Mit Facebo
    ```
    Zeigt Konto, Follower und das Kontingent (`x von 50 in 24 h`).
 
-*Ohne Facebook-Seite* geht der Weg «Instagram API mit Instagram-Login»: in `funnel.json`
-`"igHost": "graph.instagram.com"` setzen, das Token aus dem Business-Login der App mit
-`verbinden` eintauschen; `posten.js` frischt es dann alle 20 Tage selbst auf (gültig 60).
+**Weg B: Token aus dem Dashboard («Instagram-Login»).** Bietet der Graph API Explorer für
+die App nur ein App-Token an (passiert bei neuen Apps ohne «Facebook Login for Business»),
+ist dieser Weg einfacher und braucht keine Facebook-Seite:
+
+1. App-Dashboard ▸ «Anwendungsfälle» ▸ Instagram-Fall «Anpassen» ▸ **«API-Einrichtung mit
+   Instagram-Login»**. Lässt die App nur die Facebook-Variante zu, eine zweite App
+   («SwissPremia Reels IG») mit dem Instagram-Anwendungsfall anlegen und dort diese
+   Variante wählen.
+2. Unter **«Zugriffstoken generieren»** ▸ «Instagram-Konto hinzufügen» ▸ im Fenster mit den
+   Zugangsdaten von @swisspremia anmelden und die Berechtigungen erlauben.
+3. Beim nun gelisteten Konto auf **«Token generieren»** ▸ Kästchen «Ich verstehe» ▸ Token
+   kopieren.
+4. PowerShell im Ordner `tools/reels`:
+   ```powershell
+   node funnel/instagram.js verbinden <token> --instagram
+   ```
+   Das stellt `funnel.json` auf `graph.instagram.com`, liest das Konto und speichert
+   `IG_USER_ID` und `IG_ACCESS_TOKEN`. Das Token gilt 60 Tage; `posten.js` verlängert es
+   alle 20 Tage selbst.
+5. Neues Fenster, `node funnel/instagram.js pruefen`.
 
 ### 2.2 Ablage für die Videos
 

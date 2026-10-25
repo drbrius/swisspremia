@@ -18,7 +18,7 @@ import path from "node:path";
 import { KONFIG, PLAN_ORDNER } from "./funnel/konfig.js";
 import { planLaden, planSpeichern, protokoll, argumente } from "./funnel/zustand.js";
 import { datumKurz, datumLesen } from "./funnel/sprache.js";
-import { verbunden, kontingent, containerErstellen, fertigWarten, veroeffentlichen, kommentieren, permalink, tokenAuffrischen, InstagramFehler } from "./funnel/instagram.js";
+import { verbunden, kontingent, containerErstellen, fertigWarten, veroeffentlichen, kommentieren, permalink, tokenAuffrischen, istInstagramLogin, InstagramFehler } from "./funnel/instagram.js";
 
 const arg = argumente();
 const jetzt = arg.jetzt ? new Date(arg.jetzt) : new Date();
@@ -39,7 +39,7 @@ if (!faellig.length) { if (laut) console.log(`Nichts faellig (${datum}, ${jetzt.
 if (!verbunden()) { protokoll(`${faellig.length} Reels faellig, aber Instagram ist nicht verbunden (IG_USER_ID / IG_ACCESS_TOKEN). Siehe FUNNEL.md.`); process.exit(2); }
 
 /* Instagram-Login: Token alle 20 Tage verlaengern (gilt 60). */
-if (/graph\.instagram\.com/.test(KONFIG.igHost)) {
+if (istInstagramLogin()) {
   const stand = path.join(PLAN_ORDNER, "token-stand.json");
   const letzte = fs.existsSync(stand) ? JSON.parse(fs.readFileSync(stand, "utf8")).aufgefrischt : null;
   if (!letzte || (jetzt - new Date(letzte)) / 86_400_000 > 20) {
