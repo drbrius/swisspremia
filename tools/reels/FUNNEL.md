@@ -97,6 +97,16 @@ den Rahmen. Neu: **Geschichte** (Story, je Region: Lea vergleicht und spart, ech
 **Einwand** (Objection Handling, fünf Folgen). Das vollständige Storyboard aller Formate erzeugt
 `npm run storyboard` nach `marke/reels-storyboard.md` – aus demselben Code wie die Reels.
 
+**Funnel-Stufen (TOFU/MOFU/BOFU):** Jedes Format gehört zu einer Stufe (`funnel/themen.js`:
+`FORMAT_STUFE`, `STAMM_STUFE`). TOFU (Mythen, Kantone, Regionen, Altersklassen, neun
+Stamm-Reels) endet mit «Folgen & speichern», MOFU (Franchise, Modelle, Unfall, Sparpotenzial,
+acht Stamm-Reels) mit «In 1 Minute vergleichen», BOFU (Geschichte, Einwand, Countdown,
+Checkliste, Eingeschrieben, New in Switzerland) mit «Kostenlos anfragen» – im Abbinder und
+im Bildtext. Die Redaktion stellt den Tag nach `stufen` zusammen (in der Kündigungsfrist
+`stufenSaison` mit mehr BOFU), BOFU eher abends, jedes Format bei bis zu 16 Reels höchstens
+zweimal. Der Link im Profil führt für alle drei Stufen auf die Website; wer für BOFU direkt
+aufs Anfrageformular will, braucht eine Link-Seite mit mehreren Zielen.
+
 ---
 
 ## 2. Einrichten – einmalig
@@ -219,7 +229,9 @@ node funnel/instagram.js kontingent
 | `postVon` / `postBis` | `07:00` / `21:30` | Sendefenster, lokale Zeit |
 | `mindestabstandMinuten` | `30` | nie zwei Reels näher beieinander |
 | `proTick` | `1` | wie viele fällige Reels ein Lauf von `posten.js` postet |
-| `mix` | daten .5, wissen .35, saison .15 | Anteile je Tag |
+| `stufen` | tofu .45, mofu .35, bofu .2 | Funnel-Mix je Tag (TOFU/MOFU/BOFU) |
+| `stufenSaison` | tofu .35, mofu .35, bofu .3 | Funnel-Mix, solange eine Kündigungsfrist läuft |
+| `mix` | daten .5, wissen .35 | innerhalb einer Stufe: Daten- zu Wissens-Reels |
 | `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
 | `hashtags` | `bildtext` | `bildtext`, `kommentar` (erster Kommentar) oder `keine` |
 | `stimme` | `auto` | `aus` = immer stumm |

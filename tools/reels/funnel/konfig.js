@@ -32,7 +32,9 @@ const STANDARD = {
   postBis: "21:30",                // letztes Reel des Tages
   mindestabstandMinuten: 30,       // nie zwei Reels naeher beieinander
   proTick: 1,                      // wie viele faellige Reels ein Lauf von posten.js hoechstens veroeffentlicht
-  mix: { daten: 0.5, wissen: 0.35, saison: 0.15 },   // Anteile je Tag; Saison nur, wenn gerade eine Frist laeuft
+  mix: { daten: 0.5, wissen: 0.35, saison: 0.15 },   // innerhalb einer Funnel-Stufe: Verhaeltnis daten/wissen (saison wird nicht mehr genutzt)
+  stufen: { tofu: 0.45, mofu: 0.35, bofu: 0.2 },     // Funnel-Mix im Normalbetrieb
+  stufenSaison: { tofu: 0.35, mofu: 0.35, bofu: 0.3 }, // waehrend einer Kuendigungsfrist (Countdown laeuft)
   wiederholungStammTage: 14,       // ein Stamm-Reel fruehestens nach so vielen Tagen erneut
   hashtags: "bildtext",            // bildtext | kommentar | keine
   stimme: "auto",                  // auto (wenn Schluessel da) | aus
@@ -69,6 +71,8 @@ function zusammenfuehren() {
     }
   }
   k.mix = { ...STANDARD.mix, ...(k.mix || {}) };
+  k.stufen = { ...STANDARD.stufen, ...(k.stufen || {}) };
+  k.stufenSaison = { ...STANDARD.stufenSaison, ...(k.stufenSaison || {}) };
   return k;
 }
 

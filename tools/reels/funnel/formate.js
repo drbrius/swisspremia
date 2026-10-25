@@ -18,7 +18,7 @@
    ========================================================================= */
 import { REGIONEN, KANTONE, KANTONE_MIT_REGIONEN, MODELLE, JAHR, angebote, guenstigstes, praemieVon, kantonsMinimum } from "./daten.js";
 import { REELS } from "../src/reels.js";
-import { STAMM, MYTHEN, EINWAENDE, STAMM_RAHMEN, RAHMEN, kantonHashtag } from "./themen.js";
+import { STAMM, MYTHEN, EINWAENDE, STAMM_RAHMEN, RAHMEN, stufeFuer, kantonHashtag } from "./themen.js";
 import { hashtagsSammeln } from "./bildtext.js";
 import { zahlwort, franken, chf, tageBis, fingerabdruck, datumKurz } from "./sprache.js";
 import { AUDIO_ORDNER } from "./konfig.js";
@@ -34,13 +34,16 @@ const jahr = (monatlich) => rund(monatlich * 12);
    dokumentiert das Skript und landet im Tagesplan. */
 function paket({ format, gruppe, param, titel, sprache = "de", szenen, cover = 0.3, bildtext, reelId = null, audioOrdner = AUDIO_ORDNER, rahmen = null, beats = [] }) {
   if (rahmen && !RAHMEN[rahmen]) throw new Error(`Unbekannter Rahmen "${rahmen}" in Format ${format}`);
-  const mitIds = szenen.map((s, i) => ({ id: "s" + (i + 1), ...(beats[i] ? { beat: beats[i] } : {}), ...s }));
+  /* Funnel-Stufe (TOFU/MOFU/BOFU, themen.js): steuert die Aufforderung im
+     Abbinder und im Bildtext und den Tagesmix der Redaktion. */
+  const stufe = stufeFuer(format, param);
+  const mitIds = szenen.map((s, i) => ({ id: "s" + (i + 1), ...(beats[i] ? { beat: beats[i] } : {}), ...s, ...(s.art === "abbinder" ? { stufe } : {}) }));
   /* Die Id traegt einen Fingerabdruck der Sprechtexte: aendert sich ein
      Satz, entsteht eine neue Id und damit eine neue Tonspur – sonst wird
      die alte wiederverwendet (spart ElevenLabs-Zeichen). */
   const id = reelId || `${format}-${param.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-${fingerabdruck(mitIds.map((s) => s.stimme || "").join("|"))}`;
   return {
-    format, gruppe, param, schluessel: `${format}|${param}`, titel, sprache, cover, bildtext, rahmen,
+    format, gruppe, param, schluessel: `${format}|${param}`, titel, sprache, cover, bildtext, rahmen, stufe,
     reel: { id, titel, sprache, audioOrdner, szenen: mitIds }
   };
 }
@@ -536,5 +539,5 @@ export function kandidaten(datum) {
   MYTHEN.forEach((_, i) => liste.push({ gruppe: "wissen", format: "mythos", param: String(i + 1), bauen: () => mythos(i) }));
   EINWAENDE.forEach((_, i) => liste.push({ gruppe: "wissen", format: "einwand", param: String(i + 1), bauen: () => einwand(i) }));
   for (const reel of REELS) liste.push({ gruppe: "wissen", format: "stamm", param: reel.id, bauen: () => stamm(reel, datum) });
-  return liste.map((k) => ({ ...k, schluessel: `${k.format}|${k.param}` }));
+  return liste.map((k) => ({ ...k, stufe: stufeFuer(k.format, k.param), schluessel: `${k.format}|${k.param}` }));
 }

@@ -9,10 +9,10 @@
    ========================================================================= */
 import fs from "node:fs";
 import path from "node:path";
-import { PROJEKT } from "../funnel/konfig.js";
+import { PROJEKT, KONFIG } from "../funnel/konfig.js";
 import { REGION } from "../funnel/daten.js";
 import * as F from "../funnel/formate.js";
-import { RAHMEN, STAMM_RAHMEN, EINWAENDE, MYTHEN } from "../funnel/themen.js";
+import { RAHMEN, STAMM_RAHMEN, EINWAENDE, MYTHEN, STUFEN, FORMAT_STUFE, STAMM_STUFE } from "../funnel/themen.js";
 import { REELS } from "../src/reels.js";
 /* JSX laesst sich in Node nicht laden – Besetzung und Aktionen aus dem Quelltext lesen. */
 const quelltext = (datei) => fs.readFileSync(new URL("../src/" + datei, import.meta.url), "utf8");
@@ -44,6 +44,8 @@ const textImBild = (s) => {
 function tabelle(p) {
   const zeilen = p.reel.szenen.map((s, i) => `| ${i + 1} | **${s.beat || "–"}** | ${bild(s)} | ${textImBild(s)} | ${sauber(s.stimme)} |`);
   return [
+    `**Funnel-Stufe:** ${STUFEN[p.stufe] ? STUFEN[p.stufe].name : "–"} · **Aufforderung:** ${STUFEN[p.stufe] ? STUFEN[p.stufe].ctaVideo : "–"}`,
+    "",
     `**Rahmen:** ${p.rahmen} (${(RAHMEN[p.rahmen] || []).join(" → ")})`,
     "",
     "| # | Schritt | Bild | Text im Bild | Stimme |",
@@ -95,6 +97,17 @@ for (const [name, , p] of formate) if (p) (nutzung[p.rahmen] ??= []).push(name);
 for (const [id, r] of Object.entries(STAMM_RAHMEN)) (nutzung[r] ??= []).push(`Stamm: ${id}`);
 for (const [name, schritte] of Object.entries(RAHMEN)) md.push(`| ${name} | ${schritte.join(" → ")} | ${(nutzung[name] || ["–"]).join(", ")} |`);
 md.push("");
+md.push("## Funnel-Stufen");
+md.push("");
+md.push("Jedes Reel dient einer Stufe und führt mit seiner Aufforderung in die nächste. Die Redaktion stellt den Tag nach diesen Anteilen zusammen; BOFU-Reels liegen eher am Abend, der Countdown eröffnet den Tag.");
+md.push("");
+md.push("| Stufe | Ziel | Aufforderung im Video | Anteil normal | Anteil in der Frist | Formate |");
+md.push("|---|---|---|---|---|---|");
+for (const [id, s] of Object.entries(STUFEN)) {
+  const formateDerStufe = [...Object.entries(FORMAT_STUFE).filter(([, st]) => st === id).map(([f]) => f), ...Object.entries(STAMM_STUFE).filter(([, st]) => st === id).map(([r]) => "Stamm: " + r)];
+  md.push(`| ${s.name} | ${s.ziel} | ${s.ctaVideo} | ${Math.round(KONFIG.stufen[id] * 100)} % | ${Math.round(KONFIG.stufenSaison[id] * 100)} % | ${formateDerStufe.join(", ")} |`);
+}
+md.push("");
 md.push("## Besetzung");
 md.push("");
 md.push("| Figur | Rolle | Merkmale |");
@@ -121,12 +134,12 @@ md.push("## Stamm-Reels");
 md.push("");
 md.push("Fertig vertont; Figuren und Fotos ergänzen einzelne Szenen, die Sprechtexte sind unverändert.");
 md.push("");
-md.push("| Reel | Rahmen | Figurenszenen | Fotoszenen |");
-md.push("|---|---|---|---|");
+md.push("| Reel | Stufe | Rahmen | Figurenszenen | Fotoszenen |");
+md.push("|---|---|---|---|---|");
 for (const r of REELS) {
   const fig = r.szenen.filter((s) => s.figur).map((s) => `${s.id}: ${s.figur.aktion}`).join(", ");
   const foto = r.szenen.filter((s) => s.bild).map((s) => `${s.id}: ${s.bild}`).join(", ");
-  md.push(`| ${r.titel} | ${STAMM_RAHMEN[r.id] || "–"} | ${fig || "–"} | ${foto || "–"} |`);
+  md.push(`| ${r.titel} | ${(STAMM_STUFE[r.id] || "–").toUpperCase()} | ${STAMM_RAHMEN[r.id] || "–"} | ${fig || "–"} | ${foto || "–"} |`);
 }
 md.push("");
 fs.writeFileSync(ziel, md.join("\n"));

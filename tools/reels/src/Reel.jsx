@@ -9,6 +9,7 @@ import { HINTERGRUND, Kreuz, Wortmarke, chf } from "./Marke.jsx";
 import { Buehne, BildKontext, SzenenKontext, useSprechschritt, woerterZaehlen, Ecke, Woerter, Rollziffern, Funken, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil } from "./Bausteine.jsx";
 import { GRAFIK } from "./Grafik.jsx";
 import { Spielszene } from "./Szenenbild.jsx";
+import { STUFEN } from "../funnel/themen.js";
 import { UEBERGANG, szenenStarts, gesamtFrames, streuwert } from "./takt.js";
 
 /* ------------------------------------------------------- Textszenen */
@@ -193,7 +194,11 @@ const Abbinder = ({ s, farben }) => {
       <div style={{ marginTop: 54, ...useEinblenden(34) }}>
         <div style={{ display: "inline-block", padding: "18px 44px", borderRadius: 999, backgroundColor: farben.akzent, color: MARKE.slate, fontSize: 44, fontWeight: 600,
           transform: `scale(${1 + Math.max(0, Math.sin((frame - 40) / 7)) * 0.04})` }}>
-          {s.urlZusatz ? "Compare in 1 minute · link in bio" : "In 1 Minute vergleichen · Link im Profil"}
+          {(() => {
+            /* Aufforderung je Funnel-Stufe (funnel/themen.js); ohne Stufe: vergleichen. */
+            const st = STUFEN[s.stufe] || STUFEN.mofu;
+            return s.urlZusatz ? st.ctaVideoEn : st.ctaVideo;
+          })()}
         </div>
       </div>
     </Buehne>

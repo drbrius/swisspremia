@@ -354,6 +354,46 @@ export const STAMM_RAHMEN = {
   "treppe-26": "Problem-Education", "leistungen-gleich": "Claim-Reason-Evidence", "zwei-fenster": "Question"
 };
 
+/* ------------------------------------- Funnel-Stufen (TOFU / MOFU / BOFU) */
+/* Jedes Reel dient einer Stufe und fuehrt mit seiner Aufforderung in die
+   naechste: TOFU -> folgen/speichern (dranbleiben), MOFU -> vergleichen
+   (Rechner auf der Website), BOFU -> anfragen (Formular, Lead). */
+export const STUFEN = {
+  tofu: {
+    name: "TOFU · Aufmerksamkeit", ziel: "Problem bewusst machen, Reichweite, Follower",
+    ctaVideo: "Folgen & speichern · @swisspremia", ctaVideoEn: "Follow & save · @swisspremia",
+    ctaBildtext: "Folgen Sie @swisspremia: Krankenkassen-Wissen in 20 Sekunden. Und speichern Sie den Beitrag für die Wechselsaison.",
+    ctaBildtextEn: "Follow @swisspremia for Swiss health insurance in 20 seconds – and save this for later."
+  },
+  mofu: {
+    name: "MOFU · Abwägen", ziel: "Optionen verstehen, vergleichen, Vertrauen",
+    ctaVideo: "In 1 Minute vergleichen · Link im Profil", ctaVideoEn: "Compare in 1 minute · link in bio",
+    ctaBildtext: "Alle Kassen mit den offiziellen Prämiendaten des Bundes vergleichen – kostenlos und ohne Anmeldung. Link im Profil.",
+    ctaBildtextEn: "Compare every insurer with the official federal premium data – free, no sign-up. Link in bio."
+  },
+  bofu: {
+    name: "BOFU · Entscheidung", ziel: "Zweifel ausräumen, Wechsel auslösen, Anfrage",
+    ctaVideo: "Kostenlos anfragen · Link im Profil", ctaVideoEn: "Free quote · link in bio",
+    ctaBildtext: "Bereit für den Wechsel? Über den Link im Profil fragen Sie kostenlos und unverbindlich an. Ihre Anfrage geht an einen lizenzierten Versicherungsvermittler.",
+    ctaBildtextEn: "Ready to sign up or switch? Request a free, no-obligation quote via the link in bio. Your request goes to a licensed insurance broker."
+  }
+};
+
+/* Stufe je Format; Stamm-Reels einzeln. */
+export const FORMAT_STUFE = {
+  mythos: "tofu", kantone: "tofu", regionen: "tofu", alter: "tofu",
+  franchise: "mofu", modelle: "mofu", unfall: "mofu", flexibel: "mofu",
+  geschichte: "bofu", einwand: "bofu", countdown: "bofu"
+};
+export const STAMM_STUFE = {
+  "gleiche-leistung": "tofu", "leistungen-gleich": "tofu", "mit-19": "tofu", "treppe-26": "tofu", "neugeborene": "tofu",
+  "familienrabatt": "tofu", "praemienregionen": "tofu", "sparglas": "tofu", "umzug": "tofu",
+  "franchise": "mofu", "drei-modelle": "mofu", "selbstbehalt": "mofu", "unfalldeckung": "mofu", "zusatz-reihenfolge": "mofu",
+  "praemienverbilligung": "mofu", "zwei-fenster": "mofu", "zwei-termine": "mofu",
+  "checkliste-wechsel": "bofu", "eingeschrieben": "bofu", "countdown-november": "bofu", "new-in-switzerland": "bofu"
+};
+export const stufeFuer = (format, param) => (format === "stamm" ? STAMM_STUFE[param] : FORMAT_STUFE[format]) || "mofu";
+
 /* ------------------------------------------------ Einwand-Reihe */
 /* Objection Handling: Hook -> Einwand (Sprechblase) -> Umdeutung -> Beleg
    -> Aufforderung. "beleg" waehlt die Belegszene in formate.js. */

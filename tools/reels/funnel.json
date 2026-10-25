@@ -18,5 +18,15 @@
   "aufbewahrungTage": 14,
   "igHost": "graph.instagram.com",
   "igApiVersion": "v26.0",
-  "igLogin": "instagram"
+  "igLogin": "instagram",
+  "stufen": {
+    "tofu": 0.45,
+    "mofu": 0.35,
+    "bofu": 0.2
+  },
+  "stufenSaison": {
+    "tofu": 0.35,
+    "mofu": 0.35,
+    "bofu": 0.3
+  }
 }

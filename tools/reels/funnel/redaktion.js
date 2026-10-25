@@ -3,8 +3,11 @@
 
    - Anzahl je Tag aus funnel.json ("10-20" wird je Tag ausgewuerfelt,
      deterministisch nach Datum – derselbe Tag ergibt denselben Plan).
-   - Mix: Anteile daten / wissen / saison. Saison nur, wenn gerade eine
-     Frist laeuft (Oktober/November, Februar/Maerz).
+   - Funnel-Mix: Anteile TOFU / MOFU / BOFU ("stufen"); waehrend einer
+     Kuendigungsfrist ("stufenSaison") mehr BOFU, weil dann entschieden
+     wird. Der Countdown eroeffnet den Tag und zaehlt zu BOFU.
+   - Innerhalb einer Stufe: Daten- und Wissens-Reels im Verhaeltnis von
+     "mix" (daten/wissen).
    - Gegen Dubletten: der Verlauf merkt sich je Thema den letzten Tag;
      am laengsten nicht gelaufene Themen kommen zuerst. Stamm-Reels und
      Mythen fruehestens nach "wiederholungStammTage" wieder.
@@ -23,18 +26,16 @@ export function anzahlFuer(datumText, konfig) {
   return a + Math.floor(rnd() * (b - a + 1));
 }
 
-/* Zwei Listen gleichmaessig verzahnen (z. B. 7 Daten-Reels und 4
-   Wissens-Reels -> D D W D D W D W D W ...). */
-function verzahnen(a, b) {
-  const aus = [];
-  let ia = 0, ib = 0;
-  while (ia < a.length || ib < b.length) {
-    const anteilA = a.length ? ia / a.length : 1, anteilB = b.length ? ib / b.length : 1;
-    if (ia < a.length && (ib >= b.length || anteilA <= anteilB)) aus.push(a[ia++]);
-    else aus.push(b[ib++]);
-  }
-  return aus;
+/* Mehrere Listen gleichmaessig ueber den Tag verteilen: jedes Element
+   bekommt seine relative Position in seiner Liste; "spaeter" schiebt eine
+   Liste in Richtung Abend (BOFU: dann wird gehandelt). */
+function verteilen(listen) {
+  const alle = [];
+  listen.forEach(({ liste, spaeter = 0 }, li) => liste.forEach((k, j) => alle.push({ k, pos: spaeter + (1 - spaeter) * ((j + 0.5) / liste.length), li })));
+  return alle.sort((a, b) => a.pos - b.pos || a.li - b.li).map((x) => x.k);
 }
+
+const STUFEN_REIHE = ["bofu", "mofu", "tofu"];
 
 export function auswaehlen(datumText, anzahl, konfig, verlauf = {}) {
   const datum = datumLesen(datumText);
@@ -42,57 +43,62 @@ export function auswaehlen(datumText, anzahl, konfig, verlauf = {}) {
   const alle = kandidaten(datum);
   const tageSeit = (k) => (verlauf[k.schluessel] ? Math.round((datum - datumLesen(verlauf[k.schluessel])) / 86_400_000) : Infinity);
   const laengstHer = (liste) => mischen(liste, rnd).sort((x, y) => tageSeit(y) - tageSeit(x));
-
-  const saison = alle.filter((k) => k.gruppe === "saison");
-  const wissen = laengstHer(alle.filter((k) => k.gruppe === "wissen" && tageSeit(k) >= konfig.wiederholungStammTage));
-  const daten = laengstHer(alle.filter((k) => k.gruppe === "daten"));
-
-  const nSaison = Math.min(saison.length, Math.max(saison.length ? 1 : 0, Math.round(anzahl * konfig.mix.saison)), 2);
-  const nWissen = Math.min(wissen.length, Math.round(anzahl * konfig.mix.wissen));
-  const nDaten = Math.max(0, anzahl - nSaison - nWissen);
-
   const bauen = (k) => { if (k.paket === undefined) k.paket = k.bauen(); return k.paket; };
+  const gesperrt = (k) => k.gruppe === "wissen" && tageSeit(k) < konfig.wiederholungStammTage;
 
-  /* Daten: erst streng (Kanton einmalig, Formate verteilt), dann locker. */
-  const gewaehlt = [];
-  const kantoneHeute = new Set();
-  const jeFormat = {};
-  const formate = new Set(daten.map((k) => k.format)).size || 1;
-  const maxJeFormat = Math.ceil(nDaten / formate) + 1;
-  for (const streng of [true, false]) {
-    for (const k of daten) {
-      if (gewaehlt.length >= nDaten) break;
-      if (gewaehlt.includes(k)) continue;
-      if (streng && (kantoneHeute.has(k.region) || (jeFormat[k.format] || 0) >= maxJeFormat)) continue;
-      if (!bauen(k)) continue;
-      gewaehlt.push(k);
-      kantoneHeute.add(k.region);
-      jeFormat[k.format] = (jeFormat[k.format] || 0) + 1;
+  /* Saison (Countdown) eroeffnet den Tag und zaehlt zu BOFU. */
+  const eroeffnung = alle.filter((k) => k.gruppe === "saison").find((k) => bauen(k)) || null;
+  const anteile = eroeffnung ? konfig.stufenSaison : konfig.stufen;
+  const summe = (anteile.tofu || 0) + (anteile.mofu || 0) + (anteile.bofu || 0) || 1;
+  const ziel = { tofu: Math.round((anzahl * (anteile.tofu || 0)) / summe), mofu: Math.round((anzahl * (anteile.mofu || 0)) / summe) };
+  ziel.bofu = Math.max(0, anzahl - ziel.tofu - ziel.mofu - (eroeffnung ? 1 : 0));
+
+  const wissenAnteil = konfig.mix.wissen / ((konfig.mix.daten + konfig.mix.wissen) || 1);
+  const maxJeFormat = Math.max(2, Math.ceil(anzahl / 8));   // bei 10–16 Reels: jedes Format hoechstens zweimal
+  const kantoneHeute = new Set(), jeFormat = {}, genommen = new Set();
+  const gewaehlt = { tofu: [], mofu: [], bofu: [] };
+  const passt = (k, streng) => !streng || ((!k.region || !kantoneHeute.has(k.region)) && (jeFormat[k.format] || 0) < maxJeFormat);
+  const nimm = (k, stufe) => {
+    gewaehlt[stufe].push(k); genommen.add(k);
+    if (k.region) kantoneHeute.add(k.region);
+    jeFormat[k.format] = (jeFormat[k.format] || 0) + 1;
+  };
+  /* Aus einer Liste bis "soll" nehmen – streng (Kanton einmalig, jedes
+     Format hoechstens maxJeFormat) oder locker. */
+  const fuellen = (liste, soll, stufe, modi = [true]) => {
+    let n = 0;
+    for (const streng of modi) for (const k of liste) {
+      if (n >= soll) return n;
+      if (genommen.has(k) || !passt(k, streng) || !bauen(k)) continue;
+      nimm(k, stufe); n++;
     }
-  }
+    return n;
+  };
 
-  const wissenGewaehlt = [];
-  for (const k of wissen) {
-    if (wissenGewaehlt.length >= nWissen) break;
-    if (bauen(k)) wissenGewaehlt.push(k);
+  for (const stufe of STUFEN_REIHE) {
+    const pool = alle.filter((k) => k.stufe === stufe && k.gruppe !== "saison" && !gesperrt(k));
+    const daten = laengstHer(pool.filter((k) => k.gruppe === "daten"));
+    const wissen = laengstHer(pool.filter((k) => k.gruppe === "wissen"));
+    const sollW = Math.min(wissen.length, Math.round(ziel[stufe] * wissenAnteil));
+    fuellen(wissen, sollW, stufe);
+    fuellen(daten, ziel[stufe] - gewaehlt[stufe].length, stufe);
+    fuellen([...wissen, ...daten], ziel[stufe] - gewaehlt[stufe].length, stufe);            // Rest aus der anderen Gruppe, weiter streng
+    fuellen([...wissen, ...daten], ziel[stufe] - gewaehlt[stufe].length, stufe, [false]);   // erst jetzt locker
   }
-  /* Fehlt etwas (zu wenig Daten-Kandidaten), mit weiteren Wissens-Reels
-     auffuellen – zur Not auch solche, die kuerzlich liefen. */
-  let fehlend = anzahl - nSaison - gewaehlt.length - wissenGewaehlt.length;
+  /* Fehlt dann noch etwas: aus allen Stufen auffuellen, zur Not auch
+     Wissens-Reels, die kuerzlich liefen. */
+  const fehlend = anzahl - (eroeffnung ? 1 : 0) - STUFEN_REIHE.reduce((n, s) => n + gewaehlt[s].length, 0);
   if (fehlend > 0) {
-    for (const k of laengstHer(alle.filter((x) => x.gruppe === "wissen"))) {
-      if (fehlend <= 0) break;
-      if (wissenGewaehlt.includes(k)) continue;
-      if (bauen(k)) { wissenGewaehlt.push(k); fehlend--; }
+    let rest = fehlend;
+    for (const k of laengstHer(alle.filter((x) => x.gruppe !== "saison"))) {
+      if (rest <= 0) break;
+      if (genommen.has(k) || !bauen(k)) continue;
+      nimm(k, k.stufe || "mofu"); rest--;
     }
   }
 
-  const reihe = verzahnen(gewaehlt, wissenGewaehlt);
-  /* Saison: das erste Reel des Tages, ein zweites gegen Abend. */
-  const saisonGewaehlt = saison.slice(0, nSaison).filter((k) => bauen(k));
-  if (saisonGewaehlt[0]) reihe.unshift(saisonGewaehlt[0]);
-  if (saisonGewaehlt[1]) reihe.splice(Math.floor(reihe.length * 0.7), 0, saisonGewaehlt[1]);
-
+  const reihe = verteilen([{ liste: gewaehlt.tofu }, { liste: gewaehlt.mofu }, { liste: gewaehlt.bofu, spaeter: 0.3 }]);
+  if (eroeffnung) reihe.unshift(eroeffnung);
   return reihe.map((k) => k.paket);
 }
 
@@ -126,9 +132,9 @@ export function planErstellen(datumText, konfig, { anzahl = null, verlauf = {} }
   if (warnung) hinweise.push(warnung);
   if (pakete.length < gewuenscht) hinweise.push(`Nur ${pakete.length} von ${gewuenscht} Reels gefunden – zu wenig Kandidaten (Verlauf/Wiederholungssperre).`);
   const reels = pakete.slice(0, zeiten.length).map((p, i) => {
-    const { text, kommentar, warnungen } = bildtextBauen({ ...p.bildtext, sprache: p.sprache, modus: konfig.hashtags });
+    const { text, kommentar, warnungen } = bildtextBauen({ ...p.bildtext, sprache: p.sprache, modus: konfig.hashtags, stufe: p.stufe });
     return {
-      nr: i + 1, format: p.format, rahmen: p.rahmen || null, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
+      nr: i + 1, format: p.format, stufe: p.stufe || null, rahmen: p.rahmen || null, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
       zeit: zeiten[i], status: "geplant", reel: p.reel, bildtext: text, kommentar,
       datei: null, url: null, containerId: null, mediaId: null, veroeffentlicht: null, fehler: null, versuche: 0,
       warnungen: warnungen.length ? warnungen : undefined

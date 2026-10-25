@@ -28,6 +28,16 @@ Erzeugt mit `node test/storyboard.js` am 2026-10-25 – aus demselben Code, der 
 | Claim-Reason-Evidence | Claim → Reason → Evidence → Action | Modelle, Prämienregionen, Stamm: gleiche-leistung, Stamm: drei-modelle, Stamm: praemienregionen, Stamm: leistungen-gleich |
 | Objection Handling | Hook → Objection → Reframe → Proof → CTA | Einwand (neu) |
 
+## Funnel-Stufen
+
+Jedes Reel dient einer Stufe und führt mit seiner Aufforderung in die nächste. Die Redaktion stellt den Tag nach diesen Anteilen zusammen; BOFU-Reels liegen eher am Abend, der Countdown eröffnet den Tag.
+
+| Stufe | Ziel | Aufforderung im Video | Anteil normal | Anteil in der Frist | Formate |
+|---|---|---|---|---|---|
+| TOFU · Aufmerksamkeit | Problem bewusst machen, Reichweite, Follower | Folgen & speichern · @swisspremia | 45 % | 35 % | mythos, kantone, regionen, alter, Stamm: gleiche-leistung, Stamm: leistungen-gleich, Stamm: mit-19, Stamm: treppe-26, Stamm: neugeborene, Stamm: familienrabatt, Stamm: praemienregionen, Stamm: sparglas, Stamm: umzug |
+| MOFU · Abwägen | Optionen verstehen, vergleichen, Vertrauen | In 1 Minute vergleichen · Link im Profil | 35 % | 35 % | franchise, modelle, unfall, flexibel, Stamm: franchise, Stamm: drei-modelle, Stamm: selbstbehalt, Stamm: unfalldeckung, Stamm: zusatz-reihenfolge, Stamm: praemienverbilligung, Stamm: zwei-fenster, Stamm: zwei-termine |
+| BOFU · Entscheidung | Zweifel ausräumen, Wechsel auslösen, Anfrage | Kostenlos anfragen · Link im Profil | 20 % | 30 % | geschichte, einwand, countdown, Stamm: checkliste-wechsel, Stamm: eingeschrieben, Stamm: countdown-november, Stamm: new-in-switzerland |
+
 ## Besetzung
 
 | Figur | Rolle | Merkmale |
@@ -47,6 +57,8 @@ Erzeugt mit `node test/storyboard.js` am 2026-10-25 – aus demselben Code, der 
 
 Je Prämienregion. Lea steht zwischen zwei Türen – die Frage ist der Haken.
 
+**Funnel-Stufe:** MOFU · Abwägen · **Aufforderung:** In 1 Minute vergleichen · Link im Profil
+
 **Rahmen:** Question (Question → Curiosity → Insight → Takeaway)
 
 | # | Schritt | Bild | Text im Bild | Stimme |
@@ -63,6 +75,8 @@ Je Prämienregion. Lea steht zwischen zwei Türen – die Frage ist der Haken.
 ### Modelle
 
 Je Prämienregion. Behauptung zuerst, dann der Grund, dann die Zahlen.
+
+**Funnel-Stufe:** MOFU · Abwägen · **Aufforderung:** In 1 Minute vergleichen · Link im Profil
 
 **Rahmen:** Claim-Reason-Evidence (Claim → Reason → Evidence → Action)
 
@@ -81,6 +95,8 @@ Je Prämienregion. Behauptung zuerst, dann der Grund, dann die Zahlen.
 
 Je Prämienregion. Noah steigt die Treppe der Altersklassen hinauf.
 
+**Funnel-Stufe:** TOFU · Aufmerksamkeit · **Aufforderung:** Folgen & speichern · @swisspremia
+
 **Rahmen:** Problem-Education (Problem → Why It Matters → How to Fix It)
 
 | # | Schritt | Bild | Text im Bild | Stimme |
@@ -96,6 +112,8 @@ Je Prämienregion. Noah steigt die Treppe der Altersklassen hinauf.
 ### Unfalldeckung
 
 Je Prämienregion. Das Problem kennt jede angestellte Person.
+
+**Funnel-Stufe:** MOFU · Abwägen · **Aufforderung:** In 1 Minute vergleichen · Link im Profil
 
 **Rahmen:** Problem-Promise (Problem → Pain → Promise → Proof → CTA)
 
@@ -114,6 +132,8 @@ Je Prämienregion. Das Problem kennt jede angestellte Person.
 
 Je Prämienregion. Vorher, Nachher – und die Brücke dazwischen.
 
+**Funnel-Stufe:** MOFU · Abwägen · **Aufforderung:** In 1 Minute vergleichen · Link im Profil
+
 **Rahmen:** Before-After-Bridge (Before → After → Bridge → CTA)
 
 | # | Schritt | Bild | Text im Bild | Stimme |
@@ -131,6 +151,8 @@ Je Prämienregion. Vorher, Nachher – und die Brücke dazwischen.
 
 Je Kanton mit mehreren Regionen.
 
+**Funnel-Stufe:** TOFU · Aufmerksamkeit · **Aufforderung:** Folgen & speichern · @swisspremia
+
 **Rahmen:** Claim-Reason-Evidence (Claim → Reason → Evidence → Action)
 
 | # | Schritt | Bild | Text im Bild | Stimme |
@@ -147,6 +169,8 @@ Je Kanton mit mehreren Regionen.
 
 Je Kanton.
 
+**Funnel-Stufe:** TOFU · Aufmerksamkeit · **Aufforderung:** Folgen & speichern · @swisspremia
+
 **Rahmen:** AIDA (Attention → Interest → Desire → Action)
 
 | # | Schritt | Bild | Text im Bild | Stimme |
@@ -162,6 +186,8 @@ Je Kanton.
 ### Geschichte (neu)
 
 Je Prämienregion. Lea ist eine Beispielfigur, die Zahlen sind echt.
+
+**Funnel-Stufe:** BOFU · Entscheidung · **Aufforderung:** Kostenlos anfragen · Link im Profil
 
 **Rahmen:** Story (Story → Struggle → Turning Point → Lesson)
 
@@ -180,6 +206,8 @@ Je Prämienregion. Lea ist eine Beispielfigur, die Zahlen sind echt.
 
 Täglich vom 1. Oktober bis 30. November, immer das erste Reel des Tages.
 
+**Funnel-Stufe:** BOFU · Entscheidung · **Aufforderung:** Kostenlos anfragen · Link im Profil
+
 **Rahmen:** HPSCA (Hook → Problem → Agitation → Solution → CTA)
 
 | # | Schritt | Bild | Text im Bild | Stimme |
@@ -197,6 +225,8 @@ Täglich vom 1. Oktober bis 30. November, immer das erste Reel des Tages.
 
 12 Folgen. Beispiel: Folge 4.
 
+**Funnel-Stufe:** TOFU · Aufmerksamkeit · **Aufforderung:** Folgen & speichern · @swisspremia
+
 **Rahmen:** Myth-Busting (Hook → Myth → Truth → Example → CTA)
 
 | # | Schritt | Bild | Text im Bild | Stimme |
@@ -211,6 +241,8 @@ Täglich vom 1. Oktober bis 30. November, immer das erste Reel des Tages.
 ### Einwand (neu)
 
 5 Folgen. Beispiel: Folge 2 mit echten Zahlen.
+
+**Funnel-Stufe:** BOFU · Entscheidung · **Aufforderung:** Kostenlos anfragen · Link im Profil
 
 **Rahmen:** Objection Handling (Hook → Objection → Reframe → Proof → CTA)
 
@@ -228,26 +260,26 @@ Täglich vom 1. Oktober bis 30. November, immer das erste Reel des Tages.
 
 Fertig vertont; Figuren und Fotos ergänzen einzelne Szenen, die Sprechtexte sind unverändert.
 
-| Reel | Rahmen | Figurenszenen | Fotoszenen |
-|---|---|---|---|
-| Zwei Termine | Question | s2: briefkasten | s5: kalender |
-| Gleiche Leistung, anderer Preis | Claim-Reason-Evidence | s6: laptop | s3: praxis |
-| Mit 19 passiert etwas | Problem-Education | s2: torte | s4: jung |
-| Franchise in 10 Sekunden | Question | s2: tueren, s7: laptop | s6: rechner |
-| New in Switzerland | HPSCA | s3: karton | s2: flagge |
-| Der Umzug | Problem-Education | s4: karton | s1: umzug |
-| Countdown zum 30. November | HPSCA | s4: laptop | s2: brief |
-| Eingeschrieben | Problem-Education | s2: briefkasten | – |
-| Der Selbstbehalt | Problem-Education | s1: rechnungen | s4: muenzen |
-| Drei Modelle | Claim-Reason-Evidence | s2: telefon, s4: arzt | s3: arzt |
-| Prämienregionen | Claim-Reason-Evidence | s2: karton | s3: dorf |
-| Familienrabatt | Question | s2: familie | s3: kinder |
-| Neugeborene | Problem-Education | s3: baby | s2: baby |
-| Unfalldeckung | Problem-Promise | s3: laptop | s1: laptop |
-| Prämienverbilligung | Problem-Promise | s1: muenzen | s3: eltern |
-| Die Reihenfolge bei der Zusatzversicherung | Problem-Education | s1: denken | s3: stethoskop |
-| Das Sparglas | Before-After-Bridge | s3: laptop | s2: muenzstapel |
-| Checkliste Kassenwechsel | Problem-Education | s1: zeigen | s3: spital |
-| Die zweite Stufe | Problem-Education | s3: denken | s2: jung |
-| Alles im Gesetz | Claim-Reason-Evidence | s3: schulter | s2: medikamente |
-| Zwei Fenster im Jahr | Question | s2: zeigen | s3: kalender |
+| Reel | Stufe | Rahmen | Figurenszenen | Fotoszenen |
+|---|---|---|---|---|
+| Zwei Termine | MOFU | Question | s2: briefkasten | s5: kalender |
+| Gleiche Leistung, anderer Preis | TOFU | Claim-Reason-Evidence | s6: laptop | s3: praxis |
+| Mit 19 passiert etwas | TOFU | Problem-Education | s2: torte | s4: jung |
+| Franchise in 10 Sekunden | MOFU | Question | s2: tueren, s7: laptop | s6: rechner |
+| New in Switzerland | BOFU | HPSCA | s3: karton | s2: flagge |
+| Der Umzug | TOFU | Problem-Education | s4: karton | s1: umzug |
+| Countdown zum 30. November | BOFU | HPSCA | s4: laptop | s2: brief |
+| Eingeschrieben | BOFU | Problem-Education | s2: briefkasten | – |
+| Der Selbstbehalt | MOFU | Problem-Education | s1: rechnungen | s4: muenzen |
+| Drei Modelle | MOFU | Claim-Reason-Evidence | s2: telefon, s4: arzt | s3: arzt |
+| Prämienregionen | TOFU | Claim-Reason-Evidence | s2: karton | s3: dorf |
+| Familienrabatt | TOFU | Question | s2: familie | s3: kinder |
+| Neugeborene | TOFU | Problem-Education | s3: baby | s2: baby |
+| Unfalldeckung | MOFU | Problem-Promise | s3: laptop | s1: laptop |
+| Prämienverbilligung | MOFU | Problem-Promise | s1: muenzen | s3: eltern |
+| Die Reihenfolge bei der Zusatzversicherung | MOFU | Problem-Education | s1: denken | s3: stethoskop |
+| Das Sparglas | TOFU | Before-After-Bridge | s3: laptop | s2: muenzstapel |
+| Checkliste Kassenwechsel | BOFU | Problem-Education | s1: zeigen | s3: spital |
+| Die zweite Stufe | TOFU | Problem-Education | s3: denken | s2: jung |
+| Alles im Gesetz | TOFU | Claim-Reason-Evidence | s3: schulter | s2: medikamente |
+| Zwei Fenster im Jahr | MOFU | Question | s2: zeigen | s3: kalender |
