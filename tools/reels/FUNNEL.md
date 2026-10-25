@@ -53,6 +53,34 @@ denselben Plan (deterministisch nach Datum).
 `src/reels.js`) und `bildtext` liefert, und ein Eintrag in `DATENFORMATE` oder `kandidaten()`.
 Neue Szenenarten entstehen wie bisher in `src/Grafik.jsx`.
 
+### Bewegung und Fotos (seit 25.10.2026)
+
+Alle Reels, die Stamm-Reels eingeschlossen, laufen über dieselben Bausteine in `src/`:
+
+| Baustein | Wirkung | Datei |
+|---|---|---|
+| Szenenübergänge | Schieben, Wischen, Uhrzeiger, Kreisöffnung, Zoom; je Reel eine feste, abwechslungsreiche Folge | `Reel.jsx` (@remotion/transitions) |
+| Kinetische Schrift | Wörter steigen federnd aus einer Maske, Schlüsselwörter bekommen einen Marker | `Bausteine.jsx` (`Woerter`) |
+| Sprechtempo | Wörter erscheinen über die Szene verteilt, ungefähr im Takt der Stimme | `useSprechschritt` |
+| Kamera | langsamer Zoom mit leichter Neigung über die ganze Szene | `Buehne` |
+| Hintergrund | driftende Farbflächen, rotierende Ringe, aufsteigende Kreuze (Perlin-Rauschen) | `Hintergrund`, `Partikel`, `Ringe` |
+| Zahlen | Ziffern rollen wie ein Zählwerk, Funken beim Aufschlag | `Rollziffern`, `Funken` |
+| Fotos | Unsplash-Bild mit Ken-Burns-Fahrt und dunkler Markenfarb-Schicht | `Fotoebene`, `src/bilder.js` |
+
+**Fotos:** 26 Motive aus Unsplash (Unsplash-Lizenz, kommerziell frei, keine Namensnennung nötig,
+keine Unsplash+-Bilder), Liste mit Kurzbeschreibung in `src/bilder.js`. Die Dateien liegen nicht
+im Repository; `npm run bilder` lädt sie nach `public/bilder/`, `tag.js` und `render.js` tun
+das selbst. Eine Szene bekommt ein Foto mit `bild: "<name>"`; regionale Reels nehmen über
+`kantonBild()` die Stadt ihres Kantons. Fehlt ein Foto (kein Netz), läuft die Szene ohne.
+Das Kalenderbild zeigt «June» und passt nur zu den Juni-/März-Terminen.
+
+**Takt:** Zwei Szenen überlappen sich 12 Frames (`src/takt.js`). Die Stimme läuft getrennt von
+den Bildern ab dem Start ihrer Szene; der Nachhall von 0,5 s ist länger als der Übergang, damit
+sich zwei Sätze nie überlagern.
+
+**Sprechtexte:** Bei einer Szene mit mehr als etwa 100 Zeichen Sprechtext steht das Bild lange.
+Zahlen, die ohnehin im Bild stehen, nicht auch noch vorlesen.
+
 ---
 
 ## 2. Einrichten – einmalig
@@ -267,6 +295,9 @@ tools/reels/
     zustand.js              Plan, Verlauf, Protokoll, Aufräumen
     sprache.js              Zahlwörter, CHF-Format, Datum, Zufall
   test/graph-attrappe.js    Nachbau der Graph API für Tests
+  test/standbilder.js       ein Standbild je Szene als Kontaktbogen (Layoutprüfung)
+  src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
+  src/bilder.js             Unsplash-Motive; funnel/bilder.js lädt sie nach public/bilder/
   plan/                     Tagespläne, Verlauf, Protokoll (nicht im Git)
   out/tag/<Datum>/          gerenderte Videos (nicht im Git)
   public/audio/tag/         Tonspuren der Daten-Reels (nicht im Git)

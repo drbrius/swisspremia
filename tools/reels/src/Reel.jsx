@@ -1,15 +1,25 @@
 import React from "react";
 import { AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
+import { TransitionSeries, linearTiming } from "@remotion/transitions";
+import { slide } from "@remotion/transitions/slide";
+import { wipe } from "@remotion/transitions/wipe";
+import { clockWipe } from "@remotion/transitions/clock-wipe";
 import { MARKE } from "./reels.js";
 import { HINTERGRUND, Kreuz, Wortmarke, chf } from "./Marke.jsx";
-import { Buehne, Ecke, Woerter, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil } from "./Bausteine.jsx";
+import { Buehne, BildKontext, SzenenKontext, useSprechschritt, woerterZaehlen, Ecke, Woerter, Rollziffern, Funken, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil } from "./Bausteine.jsx";
 import { GRAFIK } from "./Grafik.jsx";
+import { UEBERGANG, szenenStarts, gesamtFrames, streuwert } from "./takt.js";
 
 /* ------------------------------------------------------- Textszenen */
 
 const Titel = ({ s, farben }) => {
   const symbol = useFeder(0, { damping: 10, stiffness: 140 });
   const schweb = useSchweben(10, 3.2);
+  /* Woerter im Sprechtempo: ueber die Szene verteilt statt alle auf einmal. */
+  const anzahl = woerterZaehlen(s.text);
+  const schritt = useSprechschritt(anzahl, 6, 4, 12);
+  let vorher = 0;
+  const zeilen = s.text.map((zeile) => { const ab = 6 + vorher * schritt; vorher += woerterZaehlen([zeile]); return ab; });
   return (
     <Buehne farben={farben}>
       {s.symbol && (
@@ -17,11 +27,11 @@ const Titel = ({ s, farben }) => {
       )}
       {s.text.map((zeile, i) => (
         <div key={i} style={{ fontSize: 92, lineHeight: 1.14, fontWeight: 300, letterSpacing: "-0.01em" }}>
-          <Woerter text={zeile} akzent={farben.akzent} ab={6 + i * 11} schritt={4} />
+          <Woerter text={zeile} akzent={farben.akzent} ab={zeilen[i]} schritt={schritt} />
         </div>
       ))}
       {s.klein && (
-        <div style={{ marginTop: 44, fontSize: 36, color: farben.leise, fontWeight: 400, ...useEinblenden(10 + s.text.length * 11 + 8) }}>{s.klein}</div>
+        <div style={{ marginTop: 44, fontSize: 36, color: farben.leise, fontWeight: 400, ...useEinblenden(6 + anzahl * schritt + 4) }}>{s.klein}</div>
       )}
     </Buehne>
   );
@@ -33,9 +43,10 @@ const Zahl = ({ s, farben }) => {
   return (
     <Buehne farben={farben}>
       <Pulsring farbe={farben.akzent} ab={6} />
+      <Funken farbe={farben.akzent} ab={16} radius={380} />
       {s.oben && <div style={{ fontSize: 44, color: farben.leise, marginBottom: 30, ...useEinblenden(0) }}>{s.oben}</div>}
-      <div style={{ fontSize: 360, fontWeight: 600, lineHeight: .95, color: farben.akzent, transform: `translateY(${(1 - fall) * -260 + schweb}px) scale(${0.8 + fall * 0.2})`, opacity: Math.min(1, fall * 1.4) }}>
-        {s.zahl}
+      <div style={{ fontSize: 360, fontWeight: 600, lineHeight: 1, color: farben.akzent, transform: `translateY(${(1 - fall) * -260 + schweb}px) scale(${0.8 + fall * 0.2})`, opacity: Math.min(1, fall * 1.4) }}>
+        <Rollziffern text={s.zahl} ab={2} />
       </div>
       <div style={{ fontSize: 84, fontWeight: 300, marginTop: 24 }}>
         <Woerter text={s.wort} akzent={farben.akzent} ab={12} schritt={4} />
@@ -53,6 +64,7 @@ const Zaehler = ({ s, farben }) => {
   return (
     <Buehne farben={farben}>
       <Ping farbe={farben.akzent} ab={ende - 2} groesse={620} />
+      <Funken farbe={farben.akzent} ab={ende - 2} radius={440} anzahl={14} />
       {s.oben && <div style={{ fontSize: 56, fontWeight: 300, marginBottom: 36, ...useEinblenden(0) }}>{s.oben}</div>}
       <div style={{ fontSize: 230, fontWeight: 600, lineHeight: 1, color: farben.akzent, fontVariantNumeric: "tabular-nums", transform: `scale(${1 + (1 - Math.min(1, ueber)) * 0.12})` }}>
         {s.praefix ? <span style={{ fontSize: 110, fontWeight: 300, marginRight: 24, color: farben.text }}>{s.praefix}</span> : null}
@@ -162,47 +174,77 @@ const Abbinder = ({ s, farben }) => {
 
 const SZENEN = { titel: Titel, zahl: Zahl, zaehler: Zaehler, zwei: Zwei, balken: Balken, schritte: Schritte, abbinder: Abbinder, ...GRAFIK };
 
-/* Szenenuebergang: Die neue Szene gleitet von unten herein und waechst
-   leicht; die alte hebt am Ende ab und verblasst. */
-const Uebergang = ({ frames, children }) => {
-  const frame = useCurrentFrame();
-  const ein = interpolate(frame, [0, 12], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
-  const aus = interpolate(frame, [frames - 10, frames], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
-  return (
-    <AbsoluteFill style={{
-      opacity: ein * (1 - aus),
-      transform: `translateY(${(1 - ein) * 90 - aus * 70}px) scale(${0.97 + ein * 0.03 - aus * 0.02})`
-    }}>
-      {children}
-    </AbsoluteFill>
-  );
-};
+/* --------------------------------------------------- Szenenuebergaenge */
+
+/* Kreisoeffnung: die neue Szene oeffnet sich als wachsender Kreis aus
+   der Mitte, die alte tritt dabei leicht zurueck. */
+const KreisOeffnung = ({ children, presentationDirection, presentationProgress: p }) =>
+  presentationDirection === "exiting"
+    ? <AbsoluteFill style={{ transform: `scale(${1 - p * 0.06})`, filter: `brightness(${1 - p * 0.35})` }}>{children}</AbsoluteFill>
+    : <AbsoluteFill style={{ clipPath: `circle(${p * 118}% at 50% 48%)` }}>{children}</AbsoluteFill>;
+
+/* Zoom: die alte Szene fliegt auf die Kamera zu und verblasst, die neue
+   kommt aus der Tiefe. */
+const ZoomDurch = ({ children, presentationDirection, presentationProgress: p }) =>
+  presentationDirection === "exiting"
+    ? <AbsoluteFill style={{ transform: `scale(${1 + p * 0.4})`, opacity: 1 - p }}>{children}</AbsoluteFill>
+    : <AbsoluteFill style={{ transform: `scale(${0.82 + p * 0.18})`, opacity: p }}>{children}</AbsoluteFill>;
+
+const UEBERGAENGE = [
+  () => slide({ direction: "from-bottom" }),
+  () => wipe({ direction: "from-top-left" }),
+  () => ({ component: KreisOeffnung, props: {} }),
+  () => clockWipe({ width: 1080, height: 1920 }),
+  () => ({ component: ZoomDurch, props: {} }),
+  () => slide({ direction: "from-right" }),
+  () => wipe({ direction: "from-bottom-right" })
+];
+const TAKT = linearTiming({ durationInFrames: UEBERGANG, easing: Easing.inOut(Easing.cubic) });
+
+/* Je Reel eine feste, aber abwechslungsreiche Folge: Startpunkt und
+   Schrittweite aus der Reel-Id. Bei 7 Uebergaengen (Primzahl) und einer
+   Schrittweite von 1 bis 6 kommt jeder vor, bevor sich einer wiederholt,
+   und nie zweimal derselbe hintereinander. */
+function uebergaengeFuer(reel) {
+  const n = UEBERGAENGE.length;
+  const start = Math.floor(streuwert(reel.id) * n);
+  const schritt = 1 + Math.floor(streuwert(reel.id + "#schritt") * (n - 1));
+  return Array.from({ length: Math.max(0, reel.szenen.length - 1) }, (_, i) => UEBERGAENGE[(start + i * schritt) % n]());
+}
 
 /* ------------------------------------------------------------- Reel */
 
 export const Reel = ({ reel, dauern }) => {
   const { fps } = useVideoConfig();
   const d = dauern || reel.szenen.map((s) => ({ frames: Math.ceil(s.dauer * fps), hatTon: false }));
-  const gesamt = d.reduce((a, b) => a + b.frames, 0);
-  let start = 0;
+  const gesamt = gesamtFrames(d);
+  const starts = szenenStarts(d);
+  const uebergaenge = uebergaengeFuer(reel);
+  const teile = [];
+  reel.szenen.forEach((s, i) => {
+    const Szene = SZENEN[s.art];
+    if (!Szene) throw new Error(`Unbekannte Szenenart "${s.art}" in Reel "${reel.id}"`);
+    const farben = s.bild ? HINTERGRUND.foto : HINTERGRUND[s.hintergrund];
+    if (i > 0) teile.push(<TransitionSeries.Transition key={"u" + i} presentation={uebergaenge[i - 1]} timing={TAKT} />);
+    teile.push(
+      <TransitionSeries.Sequence key={s.id} durationInFrames={d[i].frames} name={`${i + 1} ${s.art}${s.bild ? " · " + s.bild : ""}`}>
+        <SzenenKontext.Provider value={{ frames: d[i].frames }}>
+          <BildKontext.Provider value={s.bild || null}>
+            <Szene s={s} farben={farben} />
+            {s.art !== "abbinder" && <Ecke farben={farben} />}
+          </BildKontext.Provider>
+        </SzenenKontext.Provider>
+      </TransitionSeries.Sequence>
+    );
+  });
   return (
     <AbsoluteFill style={{ backgroundColor: MARKE.slate }}>
-      {reel.szenen.map((s, i) => {
-        const von = start;
-        start += d[i].frames;
-        const Szene = SZENEN[s.art];
-        if (!Szene) throw new Error(`Unbekannte Szenenart "${s.art}" in Reel "${reel.id}"`);
-        const farben = HINTERGRUND[s.hintergrund];
-        return (
-          <Sequence key={s.id} from={von} durationInFrames={d[i].frames} name={`${i + 1} ${s.art}`}>
-            <Uebergang frames={d[i].frames}>
-              <Szene s={s} farben={farben} />
-              {s.art !== "abbinder" && <Ecke farben={farben} />}
-            </Uebergang>
-            {d[i].hatTon && <Audio src={staticFile(d[i].datei)} />}
-          </Sequence>
-        );
-      })}
+      <TransitionSeries>{teile}</TransitionSeries>
+      {/* Die Stimme laeuft getrennt von den Bildern, genau ab dem Start
+          ihrer Szene – Uebergaenge verschieben sie nicht. */}
+      {reel.szenen.map((s, i) => d[i].hatTon
+        ? <Sequence key={"ton-" + s.id} from={starts[i]} durationInFrames={d[i].frames} name={`Ton ${i + 1}`}><Audio src={staticFile(d[i].datei)} /></Sequence>
+        : null)}
       <Fortschritt gesamt={gesamt} farbe={MARKE.gold} />
     </AbsoluteFill>
   );

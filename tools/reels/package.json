@@ -11,14 +11,17 @@
     "tag": "node tag.js",
     "posten": "node posten.js",
     "instagram": "node funnel/instagram.js",
-    "attrappe": "node test/graph-attrappe.js"
+    "attrappe": "node test/graph-attrappe.js",
+    "bilder": "node funnel/bilder.js"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.230",
     "@remotion/cli": "4.0.230",
     "@remotion/google-fonts": "4.0.230",
     "@remotion/media-utils": "4.0.230",
+    "@remotion/noise": "4.0.230",
     "@remotion/renderer": "4.0.230",
+    "@remotion/transitions": "4.0.230",
     "@vercel/blob": "^2.8.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",

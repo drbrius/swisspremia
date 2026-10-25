@@ -12,7 +12,9 @@ export const ZONE = { oben: 250, unten: 320, seite: 84 };
 export const HINTERGRUND = {
   petrol: { fläche: MARKE.petrol, text: MARKE.weiss, akzent: MARKE.gold, leise: "rgba(255,255,255,.72)" },
   slate:  { fläche: MARKE.slate,  text: MARKE.weiss, akzent: MARKE.gold, leise: "rgba(255,255,255,.68)" },
-  creme:  { fläche: MARKE.creme,  text: MARKE.slate, akzent: MARKE.petrol, leise: "rgba(33,45,57,.68)" }
+  creme:  { fläche: MARKE.creme,  text: MARKE.slate, akzent: MARKE.petrol, leise: "rgba(33,45,57,.68)" },
+  /* Szenen mit Foto (s.bild): helle Schrift auf abgedunkeltem Bild. */
+  foto:   { fläche: MARKE.slate,  text: MARKE.weiss, akzent: MARKE.gold, leise: "rgba(255,255,255,.82)" }
 };
 
 /* Bildmarke: dieselbe wie auf der Website – Kreuz auf Petrol. */

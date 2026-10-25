@@ -13,10 +13,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { REELS } from "./src/reels.js";
+import { bilderSichern } from "./funnel/bilder.js";
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const NUR = process.argv[2];
 fs.mkdirSync(path.join(HIER, "out"), { recursive: true });
+/* Szenen mit "bild" brauchen die Fotos in public/bilder/. */
+const bilder = await bilderSichern({ melden: console.log });
+console.log(bilder.size + " Fotos bereit.");
 
 /* Der von Remotion mitgelieferte Chrome Headless laesst sich auf diesem
    Rechner nicht starten (spawn EFTYPE – das Projekt liegt in OneDrive,

@@ -3,18 +3,16 @@ import { Composition, staticFile } from "remotion";
 import { getAudioDurationInSeconds } from "@remotion/media-utils";
 import { Reel } from "./Reel.jsx";
 import { REELS } from "./reels.js";
+import { FPS, NACHHALL, gesamtFrames } from "./takt.js";
 
-export const FPS = 30;
+export { FPS };
 export const BREITE = 1080;
 export const HOEHE = 1920;
 
-/* Nachhall nach dem letzten gesprochenen Wort, damit die Szene nicht auf
-   der Silbe schneidet. */
-const NACHHALL = 0.35;
-
-/* Liegt fuer eine Szene eine Tonspur vor, wird sie so lang wie der Ton.
-   Fehlt die Datei (noch kein Schluessel, noch nicht erzeugt), gilt die
-   Mindestdauer – der Reel laesst sich also immer rendern, auch stumm.
+/* Liegt fuer eine Szene eine Tonspur vor, wird sie so lang wie der Ton
+   plus Nachhall (src/takt.js). Fehlt die Datei (noch kein Schluessel,
+   noch nicht erzeugt), gilt die Mindestdauer – der Reel laesst sich also
+   immer rendern, auch stumm.
 
    Die Stamm-Reels aus reels.js lesen ihre Tonspuren aus public/audio/;
    vom Funnel erzeugte Reels bringen einen eigenen Ordner mit
@@ -41,14 +39,11 @@ async function szenenDauern(reel) {
   return dauern;
 }
 
-const mindestFrames = (reel) => Math.ceil(reel.szenen.reduce((s, z) => s + z.dauer, 0) * FPS);
+const mindestFrames = (reel) => gesamtFrames(reel.szenen.map((z) => ({ frames: Math.ceil(z.dauer * FPS) })));
 
 const metadaten = async ({ props }) => {
   const dauern = await szenenDauern(props.reel);
-  return {
-    durationInFrames: dauern.reduce((s, d) => s + d.frames, 0),
-    props: { ...props, dauern }
-  };
+  return { durationInFrames: gesamtFrames(dauern), props: { ...props, dauern } };
 };
 
 export const RemotionRoot = () => (

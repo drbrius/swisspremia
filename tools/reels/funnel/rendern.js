@@ -12,6 +12,7 @@ import path from "node:path";
 import { bundle } from "@remotion/bundler";
 import { renderMedia, renderStill, selectComposition } from "@remotion/renderer";
 import { WURZEL } from "./konfig.js";
+import { szenenStarts } from "../src/takt.js";
 
 export const BROWSER = [
   process.env.REMOTION_BROWSER,
@@ -70,12 +71,11 @@ export async function coverRendern(reel, ziel, anteil = 0.3, { melden = () => {}
   const inputProps = { reel, dauern: null };
   const k = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "error" });
   const dauern = k.props.dauern || [];
+  const starts = szenenStarts(dauern);   // Szenen ueberlappen sich um den Uebergang
   const gesucht = Math.floor(k.durationInFrames * anteil);
   let frame = Math.min(k.durationInFrames - 1, gesucht);
-  let start = 0;
-  for (const d of dauern) {
-    if (gesucht < start + d.frames) { frame = start + Math.floor(d.frames * 0.75); break; }
-    start += d.frames;
+  for (let i = dauern.length - 1; i >= 0; i--) {
+    if (gesucht >= starts[i]) { frame = Math.min(k.durationInFrames - 1, starts[i] + Math.floor(dauern[i].frames * 0.75)); break; }
   }
   fs.mkdirSync(path.dirname(ziel), { recursive: true });
   await renderStill({

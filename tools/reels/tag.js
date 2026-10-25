@@ -22,6 +22,7 @@ import { planErstellen } from "./funnel/redaktion.js";
 import { stimmenErzeugen, StimmeFehler } from "./funnel/stimme.js";
 import { reelRendern, coverRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
 import { hochladen, erreichbar } from "./funnel/ablage.js";
+import { bilderSichern, bilderFiltern } from "./funnel/bilder.js";
 import { datumKurz } from "./funnel/sprache.js";
 import { verbunden } from "./funnel/instagram.js";
 
@@ -94,6 +95,9 @@ if (offen.length && !ohneStimme) {
 
 /* ---------------------------------------------------------- 3 Rendern */
 if (offen.length && !BROWSER) protokoll("Hinweis: kein installierter Chrome/Edge gefunden – Remotion versucht den mitgelieferten Browser.");
+/* Fotos muessen vor dem Buendeln auf der Platte liegen (Remotion kopiert
+   public/ beim Buendeln). Fehlt eines, laeuft die Szene ohne Foto. */
+const bilderBereit = offen.length ? await bilderSichern({ melden: (z) => protokoll(z, { stumm: true }) }) : new Set();
 const tagesOrdner = path.join(AUSGABE_ORDNER, datum);
 for (const r of offen) {
   const name = `${String(r.nr).padStart(2, "0")}-${r.reel.id}.mp4`;
@@ -113,7 +117,7 @@ for (const r of offen) {
       console.log(`  Video   ${name} uebersprungen – Tonspur fehlt (ElevenLabs-Fehler)`);
       continue;
     }
-    const reelMitTon = { ...r.reel, tonVorhanden };
+    const reelMitTon = bilderFiltern({ ...r.reel, tonVorhanden }, bilderBereit);
     let sekunden;
     if (fs.existsSync(ziel)) {
       sekunden = (mp4DauerMs(ziel) || 0) / 1000;
