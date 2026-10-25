@@ -1,0 +1,242 @@
+# Reel-Funnel: täglich 10–20 Reels, automatisch auf Instagram
+
+Stand: 25. Oktober 2026. Zwei Skripte, zwei Aufgaben in der Windows-Aufgabenplanung,
+alles andere ist Konfiguration.
+
+| Schritt | Was passiert | Wer |
+|---|---|---|
+| 05:30 | `tag.js` würfelt die Tagesanzahl (10–20), wählt Themen, schreibt Bildtexte, holt Tonspuren, rendert die MP4, lädt sie in die Ablage, verteilt Sendezeiten über den Tag | Aufgabe «SwissPremia Reels - Tag» |
+| alle 15 Min. | `posten.js` veröffentlicht, was fällig ist: Container anlegen, warten, publizieren | Aufgabe «SwissPremia Reels - Posten» |
+
+Der Stand jedes Reels steht in `plan/<Datum>.json` (`geplant → gerendert → hochgeladen →
+veroeffentlicht`), jedes Ereignis in `plan/protokoll.log`. Beide Skripte lassen sich beliebig
+oft starten – sie machen nur, was noch fehlt.
+
+---
+
+## 1. Woher 10–20 Reels am Tag kommen
+
+Handgeschriebene Skripte reichen für diese Menge nicht. Der Funnel baut die Reels aus drei
+Quellen, alle aus Code in `funnel/formate.js`:
+
+**Daten-Reels (rund die Hälfte).** Sieben Formate rechnen mit den BAG-Prämien der Website
+(`data/praemien.js`) je Prämienregion oder Kanton – 42 Regionen × 5 Formate plus
+Kantonsvergleiche ergeben rund 250 verschiedene Reels mit echten Zahlen:
+
+| Format | Aussage | Beispiel |
+|---|---|---|
+| `franchise` | 300 vs. 2'500 bei derselben Kasse, Ersparnis im Jahr, Faustregel für den Grenzwert | «Kanton Genf: Franchise 2'500 statt 300 spart CHF 1'540» |
+| `modelle` | Standard vs. Hausarzt vs. HMO/Telmed, günstigstes Angebot je Modell | «Vom Standard zum HMO sind es CHF 1'050 im Jahr» |
+| `alter` | Kinder / 19–25 / ab 26, der Sprung mit 26 | «Luzern: Mit 26 steigt die Prämie um CHF 148» |
+| `unfall` | Dasselbe Angebot mit und ohne Unfalldeckung | «Ein Häkchen weniger spart CHF 380» |
+| `flexibel` | Standard/300 vs. günstigstes Modell/2'500 – Sparpotenzial für Gesunde | «Zürich: bis zu CHF 2'590 im Jahr» |
+| `regionen` | Günstigste Region vs. teuerste Region im Kanton | «Bern vs. Langenthal» |
+| `kantone` | Günstigster Kanton, heutiger Kanton, teuerster Kanton | «AI, ZH, GE» |
+
+Die Datei enthält je Modell nur die acht günstigsten Angebote – deshalb vergleichen alle
+Formate *günstigste Angebote* miteinander und behaupten nie etwas über «die teuerste Kasse».
+Kassennamen werden nie genannt. Jeder Bildtext endet mit einer Quellenzeile (Region, Jahr,
+Annahmen, «Beispielrechnung, keine Beratung»).
+
+**Wissens-Reels (rund ein Drittel).** Die 21 Stamm-Reels aus `src/reels.js` (fertige Tonspuren
+in `public/audio/`, keine neuen ElevenLabs-Kosten) und eine Mythen-Reihe mit zwölf Folgen
+(`funnel/themen.js`). Ein Thema läuft frühestens nach 14 Tagen wieder.
+
+**Saison-Reels.** Vom 1. Oktober bis 30. November täglich ein Countdown zum 30. November
+(«Noch 36 Tage»), vom 1. Februar bis 31. März zur zweiten Frist. Immer das erste Reel des Tages.
+
+**Gegen Dubletten:** `plan/verlauf.json` merkt sich je Thema den letzten Tag; am längsten nicht
+gelaufene Themen kommen zuerst, am selben Tag kein Kanton doppelt. Derselbe Tag ergibt immer
+denselben Plan (deterministisch nach Datum).
+
+**Mehr Formate:** eine Funktion in `funnel/formate.js`, die ein Paket mit `reel` (Szenen wie in
+`src/reels.js`) und `bildtext` liefert, und ein Eintrag in `DATENFORMATE` oder `kandidaten()`.
+Neue Szenenarten entstehen wie bisher in `src/Grafik.jsx`.
+
+---
+
+## 2. Einrichten – einmalig
+
+### 2.1 Instagram-Konto verbinden
+
+Voraussetzung: ein Instagram-**Profi-Konto** (Business oder Creator), verknüpft mit der
+Facebook-Seite SwissPremia (Instagram ▸ Einstellungen ▸ Konto ▸ Mit Facebook-Seite verknüpfen).
+
+1. Auf [developers.facebook.com](https://developers.facebook.com) eine App anlegen (Typ
+   «Business»), Produkt **Instagram** hinzufügen. App-Id und App-Secret stehen unter
+   Einstellungen ▸ Allgemein.
+2. Im **Graph API Explorer** die App wählen, als Berechtigungen `instagram_basic`,
+   `instagram_content_publish`, `pages_show_list`, `pages_read_engagement` (für den
+   ersten Kommentar zusätzlich `instagram_manage_comments`) anhaken und ein
+   kurzlebiges Nutzer-Token erzeugen. Solange die App im Entwicklungsmodus ist, funktioniert
+   das nur für Konten, die in der App als Tester/Admin eingetragen sind – für das eigene Konto
+   reicht das.
+3. Im Projektordner `tools/reels`, in PowerShell:
+   ```powershell
+   $env:META_APP_ID = "…"; $env:META_APP_SECRET = "…"
+   node funnel/instagram.js verbinden <kurzlebiges-token>
+   ```
+   Das tauscht das Token in ein langlebiges, sucht die Seite mit dem Instagram-Konto und
+   speichert `IG_USER_ID` und `IG_ACCESS_TOKEN` als Nutzer-Umgebungsvariablen (mit `setx`,
+   das Token erscheint nirgends im Klartext). Ein so gewonnenes Seiten-Token läuft nicht ab.
+4. Neues Fenster öffnen und prüfen:
+   ```powershell
+   node funnel/instagram.js pruefen
+   ```
+   Zeigt Konto, Follower und das Kontingent (`x von 50 in 24 h`).
+
+*Ohne Facebook-Seite* geht der Weg «Instagram API mit Instagram-Login»: in `funnel.json`
+`"igHost": "graph.instagram.com"` setzen, das Token aus dem Business-Login der App mit
+`verbinden` eintauschen; `posten.js` frischt es dann alle 20 Tage selbst auf (gültig 60).
+
+### 2.2 Ablage für die Videos
+
+Instagram lädt das Video von einer öffentlichen URL. Standard ist **Vercel Blob**
+(gleicher Account wie die Website): Vercel ▸ Storage ▸ Blob ▸ Store anlegen (öffentlich) ▸
+Token erzeugen ▸ als `BLOB_READ_WRITE_TOKEN` speichern. 15 Videos × 4 MB × 14 Tage
+Aufbewahrung sind unter einem Gigabyte.
+
+Alternative ohne Vercel: `"ablage": "ordner"` in `funnel.json` plus `videoOrdner` (lokaler
+Pfad, z. B. ein Webserver- oder NAS-Ordner) und `videoBasisUrl` (dessen öffentliche Adresse).
+
+### 2.3 Stimme (optional)
+
+`ELEVENLABS_API_KEY` und `ELEVENLABS_VOICE_ID` wie bisher (Matilda `XrExE9yKIg1WjnnlVkGX`,
+Modell `eleven_multilingual_v2`). Tonspuren der Daten-Reels liegen in `public/audio/tag/`
+und werden über Tage hinweg wiederverwendet: die Reel-Id trägt einen Fingerabdruck des
+Sprechtexts, nur ein geänderter Satz kostet neue Zeichen. Überschlag: ein Daten-Reel hat
+rund 450 Zeichen Sprechtext; alle 250 Kombinationen einmal zu vertonen sind rund 115'000
+Zeichen – danach fast nichts mehr. Ohne Schlüssel oder mit `"stimme": "aus"` wird stumm
+gerendert (Text steht ohnehin im Bild).
+
+### 2.4 Aufgabenplanung
+
+```powershell
+cd C:\Users\info\OneDrive\Dokumente\leads\tools\reels
+.\zeitplan-einrichten.ps1
+```
+
+Fragt alle Schlüssel ab (Enter behält den gespeicherten Wert) und legt die zwei Aufgaben an.
+`-Status` zeigt letzte Läufe und Protokoll, `-Entfernen` löscht beide, `-TagesStart 06:00`
+und `-TaktMinuten 10` ändern die Zeiten.
+
+Der Rechner muss laufen. `WakeToRun` weckt ihn aus dem Energiesparmodus für die
+Tagesproduktion, ein zugeklappter Laptop postet aber nichts. Wer das nicht will, lässt die
+beiden Skripte auf einem kleinen Server oder in einer Cloud-Routine laufen – sie brauchen nur
+Node, einen Chrome und die Umgebungsvariablen.
+
+---
+
+## 3. Bedienung
+
+```powershell
+npm run plan                      # Plan für heute anzeigen (nichts gerendert)
+node tag.js --datum=2026-11-03    # einen Tag vorproduzieren
+node tag.js --anzahl=12 --neu     # heute neu planen mit fester Anzahl
+node tag.js --nur=4               # nur Reel Nr. 4 (z. B. nach Fehler)
+node posten.js --ausfuehrlich     # was wäre jetzt fällig?
+node posten.js --alle             # alles Fällige sofort posten
+node funnel/instagram.js kontingent
+.\zeitplan-einrichten.ps1 -Status
+```
+
+`funnel.json` (kein Geheimnis darin):
+
+| Schlüssel | Standard | Bedeutung |
+|---|---|---|
+| `reelsProTag` | `"10-20"` | feste Zahl oder Spanne, je Tag ausgewürfelt |
+| `postVon` / `postBis` | `07:00` / `21:30` | Sendefenster, lokale Zeit |
+| `mindestabstandMinuten` | `30` | nie zwei Reels näher beieinander |
+| `proTick` | `1` | wie viele fällige Reels ein Lauf von `posten.js` postet |
+| `mix` | daten .5, wissen .35, saison .15 | Anteile je Tag |
+| `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
+| `hashtags` | `bildtext` | `bildtext`, `kommentar` (erster Kommentar) oder `keine` |
+| `stimme` | `auto` | `aus` = immer stumm |
+| `ablage` | `vercel-blob` | oder `ordner` |
+| `aufbewahrungTage` | `14` | danach werden Videos und Pläne gelöscht |
+| `igHost` / `igApiVersion` | `graph.facebook.com` / `v26.0` | API-Endpunkt |
+
+Jeder Wert lässt sich mit einer Umgebungsvariable in Grossbuchstaben übersteuern
+(`REELS_PRO_TAG`, `POST_VON`, …).
+
+---
+
+## 4. Grenzen, die man kennen muss
+
+**Instagram-Kontingent.** Höchstens 50 API-Veröffentlichungen je Konto und 24 Stunden.
+`posten.js` liest das Kontingent vor jedem Lauf und wartet, wenn es erschöpft ist.
+
+**10–20 Reels am Tag sind viel.** Technisch kein Problem, aber weit über dem, was Instagram
+üblicherweise belohnt (ein bis drei Reels am Tag). Mögliche Folgen: sinkende Reichweite je
+Reel, im schlechtesten Fall Einstufung als Spam. Die Anzahl ist bewusst ein Regler
+(`reelsProTag`), nicht fest verdrahtet – mit `"3-5"` läuft derselbe Funnel als Normalbetrieb.
+Empfehlung: zwei Wochen mit `"10-20"` messen (Reichweite, Follower, Klicks auf den Profil-Link),
+dann anhand der Zahlen entscheiden.
+
+**Prämienjahr.** Die Zahlen kommen aus `data/praemien.js` (aktuell Prämien 2026). Für die
+Wechselsaison 2027 die BAG-Dateien laden und `tools/build_data.js` ausführen (README);
+alle Reels nehmen das neue Jahr automatisch in die Quellenzeile auf. Sprechtexte mit
+Zahlen bekommen dann neue Tonspuren – das ist gewollt.
+
+**Entwicklungsmodus der Meta-App.** Posten funktioniert damit nur für das eigene,
+in der App eingetragene Konto. Das reicht hier. Wer die App veröffentlichen will
+(App Review), braucht es für diesen Zweck nicht.
+
+**Kein Nachholen.** Was an einem Tag nicht gepostet wurde (Rechner aus), bleibt im Plan des
+Tages stehen und wird am Folgetag nicht nachgeholt – ein Countdown von gestern wäre falsch.
+`posten.js --datum=<gestern> --alle` holt es bei Bedarf von Hand nach.
+
+**Kosten.** ElevenLabs nach Zeichen (siehe 2.3), Vercel Blob nach Speicher und Transfer
+(Instagram lädt jedes Video einmal). Instagram-API und Remotion sind kostenlos.
+
+---
+
+## 5. Testen ohne Instagram
+
+`test/graph-attrappe.js` spielt die Graph API nach (Container, Status nach zweitem
+Nachfragen `FINISHED`, Publish, Kontingent) und liefert die Videos aus einem Ordner aus:
+
+```powershell
+node test/graph-attrappe.js 8787 C:\Temp\videos        # Fenster 1
+
+$env:IG_HOST = "localhost:8787"; $env:IG_PROTOKOLL = "http"  # Fenster 2
+$env:IG_USER_ID = "17841400000000000"; $env:IG_ACCESS_TOKEN = "test"
+$env:ABLAGE = "ordner"; $env:VIDEO_ORDNER = "C:\Temp\videos"; $env:VIDEO_BASIS_URL = "http://localhost:8787/video"
+node tag.js --anzahl=2 --ohne-stimme
+node posten.js --alle --jetzt=2099-01-01T00:00 --ausfuehrlich
+```
+
+`http://localhost:8787/_protokoll` zeigt jeden Aufruf. Danach `plan\<Datum>.json` löschen,
+sonst gilt der Testplan als Tagesplan.
+
+---
+
+## 6. Dateien
+
+```
+tools/reels/
+  tag.js                    Tagesproduktion (Plan, Stimme, Render, Upload)
+  posten.js                 Veröffentlichen fälliger Reels
+  funnel.json               Einstellungen ohne Geheimnisse
+  zeitplan-einrichten.ps1   Aufgabenplanung + Schlüssel als Nutzer-Umgebungsvariablen
+  funnel/
+    konfig.js               Einstellungen und Geheimnisse (nur Umgebung)
+    daten.js                BAG-Prämien lesen, Regionen benennen
+    formate.js              die Reel-Formate (daten / wissen / saison)
+    themen.js               Bildtexte der Stamm-Reels, Mythen, Hashtags
+    bildtext.js             Caption zusammensetzen
+    redaktion.js            Auswahl, Reihenfolge, Sendezeiten
+    stimme.js               ElevenLabs (gemeinsam mit stimme.js)
+    rendern.js              Remotion programmatisch, MP4-Dauer
+    ablage.js               Vercel Blob oder Ordner
+    instagram.js            Graph API + Kommandozeile (verbinden, pruefen)
+    zustand.js              Plan, Verlauf, Protokoll, Aufräumen
+    sprache.js              Zahlwörter, CHF-Format, Datum, Zufall
+  test/graph-attrappe.js    Nachbau der Graph API für Tests
+  plan/                     Tagespläne, Verlauf, Protokoll (nicht im Git)
+  out/tag/<Datum>/          gerenderte Videos (nicht im Git)
+  public/audio/tag/         Tonspuren der Daten-Reels (nicht im Git)
+```
+
+Die Komposition `tagesreel` in `src/Root.jsx` nimmt jeden Reel als Eingabe entgegen; die
+Stamm-Reels bleiben wie bisher eigene Kompositionen (`npm run render`, `npm run vorschau`).

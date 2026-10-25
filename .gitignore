@@ -6,3 +6,6 @@ tools/*.xlsx
 .env*
 # Reels: gerenderte Videos sind gross und aus dem Code reproduzierbar
 tools/reels/out/
+# Funnel: Tagesplaene, Protokoll und taeglich erzeugte Tonspuren
+tools/reels/plan/
+tools/reels/public/audio/tag/

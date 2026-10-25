@@ -2,16 +2,24 @@
   "name": "swisspremia-reels",
   "private": true,
   "type": "module",
-  "description": "Reels als Code: 9:16, Text im Bild, Stimme aus ElevenLabs. Siehe src/reels.js.",
+  "description": "Reels als Code: 9:16, Text im Bild, Stimme aus ElevenLabs. Funnel: tag.js plant/rendert taeglich, posten.js veroeffentlicht auf Instagram. Siehe FUNNEL.md.",
   "scripts": {
     "vorschau": "remotion studio src/index.jsx",
     "stimme": "node stimme.js",
-    "render": "node render.js"
+    "render": "node render.js",
+    "plan": "node tag.js --nur-plan",
+    "tag": "node tag.js",
+    "posten": "node posten.js",
+    "instagram": "node funnel/instagram.js",
+    "attrappe": "node test/graph-attrappe.js"
   },
   "dependencies": {
+    "@remotion/bundler": "4.0.230",
     "@remotion/cli": "4.0.230",
     "@remotion/google-fonts": "4.0.230",
     "@remotion/media-utils": "4.0.230",
+    "@remotion/renderer": "4.0.230",
+    "@vercel/blob": "^2.8.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remotion": "4.0.230"
