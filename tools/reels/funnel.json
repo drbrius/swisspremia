@@ -4,7 +4,11 @@
   "postBis": "21:30",
   "mindestabstandMinuten": 30,
   "proTick": 1,
-  "mix": { "daten": 0.5, "wissen": 0.35, "saison": 0.15 },
+  "mix": {
+    "daten": 0.5,
+    "wissen": 0.35,
+    "saison": 0.15
+  },
   "wiederholungStammTage": 14,
   "hashtags": "bildtext",
   "stimme": "auto",
@@ -12,6 +16,7 @@
   "videoOrdner": "",
   "videoBasisUrl": "",
   "aufbewahrungTage": 14,
-  "igHost": "graph.facebook.com",
-  "igApiVersion": "v26.0"
+  "igHost": "graph.instagram.com",
+  "igApiVersion": "v26.0",
+  "igLogin": "instagram"
 }
