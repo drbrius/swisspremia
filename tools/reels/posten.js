@@ -63,7 +63,7 @@ for (const r of faellig.slice(0, anzahl)) {
   const kennung = `#${r.nr} ${r.titel} (${r.zeit})`;
   try {
     if (!r.containerId) {
-      r.containerId = await containerErstellen({ videoUrl: r.url, bildtext: r.bildtext, coverMs: r.coverMs ?? null });
+      r.containerId = await containerErstellen({ videoUrl: r.url, bildtext: r.bildtext, coverUrl: r.coverUrl || null, coverMs: r.coverMs ?? null });
       planSpeichern(plan);
       protokoll(`Container fuer ${kennung}: ${r.containerId}`, { stumm: !laut });
     }

@@ -20,7 +20,7 @@ import { KONFIG, WURZEL, AUSGABE_ORDNER, AUDIO_ORDNER, GEHEIM } from "./funnel/k
 import { planLaden, planSpeichern, verlaufLaden, verlaufMerken, protokoll, aufraeumen, argumente } from "./funnel/zustand.js";
 import { planErstellen } from "./funnel/redaktion.js";
 import { stimmenErzeugen, StimmeFehler } from "./funnel/stimme.js";
-import { reelRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
+import { reelRendern, coverRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
 import { hochladen, erreichbar } from "./funnel/ablage.js";
 import { datumKurz } from "./funnel/sprache.js";
 import { verbunden } from "./funnel/instagram.js";
@@ -87,23 +87,28 @@ const tagesOrdner = path.join(AUSGABE_ORDNER, datum);
 for (const r of offen) {
   const name = `${String(r.nr).padStart(2, "0")}-${r.reel.id}.mp4`;
   const ziel = path.join(tagesOrdner, name);
+  const zielCover = ziel.replace(/\.mp4$/, ".jpg");
+  const relativ = (p) => path.relative(WURZEL, p).split(path.sep).join("/");
   try {
+    /* Welche Tonspuren liegen vor? Das erspart dem Browser die Suche
+       nach fehlenden Dateien (und die 404-Meldungen im Protokoll) und
+       sorgt dafuer, dass Video und Titelbild dieselben Szenenlaengen haben. */
+    const audioOrdner = path.join(WURZEL, "public", r.reel.audioOrdner || "audio");
+    const tonVorhanden = r.reel.szenen.filter((s) => fs.existsSync(path.join(audioOrdner, `${r.reel.id}-${s.id}.mp3`))).map((s) => s.id);
+    const reelMitTon = { ...r.reel, tonVorhanden };
     let sekunden;
     if (fs.existsSync(ziel)) {
       sekunden = (mp4DauerMs(ziel) || 0) / 1000;
       console.log(`  Video   ${name} bereits vorhanden`);
     } else {
       process.stdout.write(`  Video   ${name} `);
-      /* Welche Tonspuren liegen vor? Das erspart dem Browser die Suche
-         nach fehlenden Dateien (und die 404-Meldungen im Protokoll). */
-      const audioOrdner = path.join(WURZEL, "public", r.reel.audioOrdner || "audio");
-      const tonVorhanden = r.reel.szenen.filter((s) => fs.existsSync(path.join(audioOrdner, `${r.reel.id}-${s.id}.mp3`))).map((s) => s.id);
-      sekunden = await reelRendern({ ...r.reel, tonVorhanden }, ziel, { melden: (z) => console.log("          " + z), fortschritt: (p) => process.stdout.write(p + "% ") });
+      sekunden = await reelRendern(reelMitTon, ziel, { melden: (z) => console.log("          " + z), fortschritt: (p) => process.stdout.write(p + "% ") });
       console.log(`fertig${tonVorhanden.length ? "" : " (stumm)"}`);
     }
-    r.datei = path.relative(WURZEL, ziel).split(path.sep).join("/");
+    if (!fs.existsSync(zielCover)) r.coverMs = await coverRendern(reelMitTon, zielCover, r.cover || 0.3);
+    r.datei = relativ(ziel);
+    r.coverDatei = relativ(zielCover);
     r.dauerSekunden = Math.round(sekunden * 10) / 10;
-    r.coverMs = Math.round((mp4DauerMs(ziel) || sekunden * 1000) * (r.cover || 0.3));
     r.status = "gerendert";
     r.fehler = null;
     planSpeichern(plan);
@@ -123,7 +128,14 @@ if (!arg["ohne-upload"]) {
       const url = await hochladen(quelle, path.join("reels", datum, path.basename(r.datei)));
       const probe = await erreichbar(url);
       if (!probe.ok) throw new Error(`URL nicht erreichbar (HTTP ${probe.status}${probe.fehler ? ", " + probe.fehler : ""}): ${url}`);
+      let coverUrl = null;
+      if (r.coverDatei && fs.existsSync(path.join(WURZEL, r.coverDatei))) {
+        coverUrl = await hochladen(path.join(WURZEL, r.coverDatei), path.join("reels", datum, path.basename(r.coverDatei)));
+        const probeCover = await erreichbar(coverUrl);
+        if (!probeCover.ok) throw new Error(`Titelbild nicht erreichbar (HTTP ${probeCover.status}): ${coverUrl}`);
+      }
       r.url = url;
+      r.coverUrl = coverUrl;
       r.status = "hochgeladen";
       r.fehler = null;
       planSpeichern(plan);

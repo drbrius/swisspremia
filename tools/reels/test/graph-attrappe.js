@@ -46,7 +46,7 @@ http.createServer(async (req, res) => {
     const datei = path.join(VIDEOS, decodeURIComponent(pfad.slice("/video/".length)));
     if (!datei.startsWith(VIDEOS) || !fs.existsSync(datei)) { res.writeHead(404); return res.end("nicht gefunden"); }
     const groesse = fs.statSync(datei).size;
-    res.writeHead(200, { "Content-Type": "video/mp4", "Content-Length": groesse });
+    res.writeHead(200, { "Content-Type": /\.jpe?g$/i.test(datei) ? "image/jpeg" : "video/mp4", "Content-Length": groesse });
     if (req.method === "HEAD") return res.end();
     return fs.createReadStream(datei).pipe(res);
   }
@@ -74,9 +74,15 @@ http.createServer(async (req, res) => {
       const probe = await fetch(params.video_url, { method: "HEAD" });
       if (!probe.ok) return fehler(res, 400, `Video nicht ladbar: HTTP ${probe.status}`, 9004, 2207052);
     } catch (e) { return fehler(res, 400, "Video nicht ladbar: " + e.message, 9004, 2207052); }
+    if (params.cover_url) {
+      try {
+        const probe = await fetch(params.cover_url, { method: "HEAD" });
+        if (!probe.ok || !/image\/jpeg/.test(probe.headers.get("content-type") || "")) return fehler(res, 400, `Titelbild nicht ladbar oder kein JPEG: HTTP ${probe.status}`, 9004, 2207052);
+      } catch (e) { return fehler(res, 400, "Titelbild nicht ladbar: " + e.message, 9004, 2207052); }
+    }
     /* Ids bleiben unter 2^53, sonst rundet JavaScript. */
     const id = "1789" + String(100000 + zustand.laufnummer++);
-    zustand.container[id] = { status: "IN_PROGRESS", abfragen: 0, caption: params.caption, video_url: params.video_url, thumb_offset: params.thumb_offset, share_to_feed: params.share_to_feed };
+    zustand.container[id] = { status: "IN_PROGRESS", abfragen: 0, caption: params.caption, video_url: params.video_url, cover_url: params.cover_url, thumb_offset: params.thumb_offset, share_to_feed: params.share_to_feed };
     return json(res, { id });
   }
   if (kante === "media_publish" && req.method === "POST") {

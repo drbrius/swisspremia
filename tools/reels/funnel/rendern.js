@@ -10,7 +10,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { bundle } from "@remotion/bundler";
-import { renderMedia, selectComposition } from "@remotion/renderer";
+import { renderMedia, renderStill, selectComposition } from "@remotion/renderer";
 import { WURZEL } from "./konfig.js";
 
 export const BROWSER = [
@@ -54,6 +54,36 @@ export async function reelRendern(reel, ziel, { melden = () => {}, fortschritt =
   });
   fs.renameSync(ziel + ".teil.mp4", ziel);
   return komposition.durationInFrames / komposition.fps;
+}
+
+/* Titelbild als JPEG. Instagram nimmt ohne eigenes Titelbild den ersten
+   Frame – und der ist leer, weil jede Szene erst einblendet (Probelauf
+   vom 25.10.2026; thumb_offset wurde ignoriert). Deshalb ein eigenes Bild,
+   das posten.js als cover_url mitschickt.
+
+   "anteil" waehlt die Szene (die, in der dieser Anteil der Gesamtlaenge
+   liegt); gerendert wird deren Frame bei 75 % – dann ist alles
+   eingeblendet und die Ausblendung noch nicht begonnen.
+   Liefert die Position in Millisekunden (Rueckfall fuer thumb_offset). */
+export async function coverRendern(reel, ziel, anteil = 0.3, { melden = () => {} } = {}) {
+  const url = await buendeln({ melden });
+  const inputProps = { reel, dauern: null };
+  const k = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "error" });
+  const dauern = k.props.dauern || [];
+  const gesucht = Math.floor(k.durationInFrames * anteil);
+  let frame = Math.min(k.durationInFrames - 1, gesucht);
+  let start = 0;
+  for (const d of dauern) {
+    if (gesucht < start + d.frames) { frame = start + Math.floor(d.frames * 0.75); break; }
+    start += d.frames;
+  }
+  fs.mkdirSync(path.dirname(ziel), { recursive: true });
+  await renderStill({
+    composition: k, serveUrl: url, frame, output: ziel + ".teil.jpg", inputProps,
+    imageFormat: "jpeg", jpegQuality: 90, browserExecutable: BROWSER, logLevel: "error"
+  });
+  fs.renameSync(ziel + ".teil.jpg", ziel);
+  return Math.round((frame / k.fps) * 1000);
 }
 
 /* Laenge einer MP4 in Millisekunden – aus dem mvhd-Atom, ohne ffmpeg. */

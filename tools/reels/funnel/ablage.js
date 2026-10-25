@@ -27,8 +27,10 @@ export async function hochladen(datei, pfad) {
   if (KONFIG.ablage === "vercel-blob") {
     if (!GEHEIM.blobToken) throw new AblageFehler("Kein BLOB_READ_WRITE_TOKEN in der Umgebung (Vercel ▸ Storage ▸ Blob ▸ Token). Alternative: ablage=ordner.");
     const { put } = await import("@vercel/blob");
+    const istBild = /\.jpe?g$/i.test(datei);
     const ergebnis = await put(pfad.split(path.sep).join("/"), fs.readFileSync(datei), {
-      access: "public", contentType: "video/mp4", addRandomSuffix: false, allowOverwrite: true, multipart: true, token: GEHEIM.blobToken
+      access: "public", contentType: istBild ? "image/jpeg" : "video/mp4", addRandomSuffix: false, allowOverwrite: true,
+      multipart: !istBild, token: GEHEIM.blobToken
     });
     return ergebnis.url;
   }

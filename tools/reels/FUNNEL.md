@@ -199,6 +199,13 @@ Zahlen bekommen dann neue Tonspuren – das ist gewollt.
 in der App eingetragene Konto. Das reicht hier. Wer die App veröffentlichen will
 (App Review), braucht es für diesen Zweck nicht.
 
+**Titelbild.** Instagram nimmt ohne eigenes Titelbild den ersten Frame, und der ist bei
+unseren Reels leer, weil jede Szene erst einblendet. Die Zeitangabe `thumb_offset` hat Instagram
+im Probelauf vom 25.10.2026 ignoriert. Deshalb rendert `tag.js` je Reel ein JPEG (Szene beim
+Anteil `cover`, Frame bei 75 %), lädt es neben das Video und `posten.js` schickt es als
+`cover_url` mit. Ein bereits veröffentlichtes Reel bekommt sein Titelbild nur noch in der
+Instagram-App (Reel ▸ ⋯ ▸ Bearbeiten ▸ Titelbild bearbeiten).
+
 **Kein Nachholen.** Was an einem Tag nicht gepostet wurde (Rechner aus), bleibt im Plan des
 Tages stehen und wird am Folgetag nicht nachgeholt – ein Countdown von gestern wäre falsch.
 `posten.js --datum=<gestern> --alle` holt es bei Bedarf von Hand nach.

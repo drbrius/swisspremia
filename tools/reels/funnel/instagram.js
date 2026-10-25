@@ -80,10 +80,15 @@ export async function kontingent() {
   return { genutzt: e.quota_usage ?? 0, gesamt: e.config?.quota_total ?? 50, sekunden: e.config?.quota_duration ?? 86400 };
 }
 
-export async function containerErstellen({ videoUrl, bildtext, coverMs = null, teilen = true }) {
+/* coverUrl: eigenes Titelbild (JPEG, oeffentlich). Hat Vorrang vor
+   thumb_offset, das Instagram beim Probelauf ignoriert hat. */
+export async function containerErstellen({ videoUrl, bildtext, coverUrl = null, coverMs = null, teilen = true }) {
   const d = await api(`/${GEHEIM.igUserId}/media`, {
     methode: "POST",
-    params: { media_type: "REELS", video_url: videoUrl, caption: bildtext, share_to_feed: teilen ? "true" : "false", thumb_offset: coverMs }
+    params: {
+      media_type: "REELS", video_url: videoUrl, caption: bildtext, share_to_feed: teilen ? "true" : "false",
+      cover_url: coverUrl || undefined, thumb_offset: coverUrl ? undefined : coverMs
+    }
   });
   return d.id;
 }
