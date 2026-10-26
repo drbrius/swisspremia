@@ -100,7 +100,9 @@ function ratgeberVerweiseEntfernen(inhalt, datei) {
   }
   return inhalt
     .replace(/[ \t]*<a href="\/ratgeber\/">Ratgeber<\/a>\n/g, "")
-    .replace(/[ \t]*<a href="\/kantone\/">Kantone<\/a>\n/g, "");
+    .replace(/[ \t]*<a href="\/kantone\/">Kantone<\/a>\n/g, "")
+    /* Der Kantone-Abschnitt der Startseite samt Kommentar davor. */
+    .replace(/<!-- ============ KANTONE ============[\s\S]*?<\/section>\n\n/, "");
 }
 
 function schriftDerVorlageEntfernen(inhalt) {

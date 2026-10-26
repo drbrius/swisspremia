@@ -477,3 +477,15 @@ a { color: var(--petrol); text-underline-offset: 3px; }
     --hero-bild: url("https://images.unsplash.com/photo-1506785017561-cd70a3c8d1c2?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
   }
 }
+
+/* ===== Kantonsliste auf der Startseite ===== */
+.kantone-liste { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
+.kantone-liste a {
+  padding: 9px 15px; border: 1px solid var(--line); border-radius: 999px; background: #fff;
+  color: var(--slate-tief); text-decoration: none; font-size: .9rem; font-weight: 500; transition: .15s;
+}
+.kantone-liste a:hover { border-color: var(--petrol); color: var(--petrol); }
+@media (max-width: 700px) {
+  .kantone-liste { gap: 8px; }
+  .kantone-liste a { padding: 10px 14px; min-height: 44px; display: inline-flex; align-items: center; }
+}
