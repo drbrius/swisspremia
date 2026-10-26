@@ -1,0 +1,14 @@
+{
+  "name": "swisspremia-board",
+  "private": true,
+  "type": "module",
+  "description": "Performance-Board der Reels: Sendeplan, veroeffentlichte Beitraege, Instagram-Zahlen. Eigene Vercel-Seite mit Login, ohne Build und ohne Abhaengigkeiten. Siehe README.md.",
+  "scripts": {
+    "dev": "node dev.js",
+    "passwort": "node passwort.js",
+    "deploy": "vercel deploy --prod --yes"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

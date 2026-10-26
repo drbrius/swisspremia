@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="light dark">
+  <title>Reels-Board · SwissPremia</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/board.css">
+  <script src="/board.js" defer></script>
+</head>
+<body>
+  <div id="laden" class="laden" aria-live="polite">Board wird geladen …</div>
+
+  <!-- Login: das Board zeigt nichts, bevor /api/stand eine gueltige Sitzung sieht -->
+  <main id="anmeldung" class="anmeldung" hidden>
+    <form id="anmeldeformular" class="karte anmeldekarte" novalidate>
+      <div class="marke"><img src="/favicon.svg" alt="" width="28" height="28"><span>SwissPremia</span></div>
+      <h1>Reels-Board</h1>
+      <p class="leise">Sendeplan und Zahlen der Instagram-Reels. Nur mit Anmeldung.</p>
+      <label class="feld">Benutzername
+        <input name="benutzer" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </label>
+      <label class="feld">Passwort
+        <input name="passwort" type="password" autocomplete="current-password" required>
+      </label>
+      <p id="anmeldemeldung" class="meldung" role="alert"></p>
+      <button class="knopf" type="submit">Anmelden</button>
+    </form>
+  </main>
+
+  <div id="board" hidden>
+    <header class="kopf">
+      <div class="kopf-innen">
+        <div class="marke"><img src="/favicon.svg" alt="" width="28" height="28"><span>Reels-Board</span></div>
+        <span id="konto" class="leise"></span>
+        <span id="abgleich" class="abgleich"></span>
+        <button id="abmelden" class="knopf-leise" type="button">Abmelden</button>
+      </div>
+    </header>
+
+    <div class="inhalt">
+      <div id="banner"></div>
+
+      <div class="filterzeile" role="toolbar" aria-label="Filter">
+        <div class="segmente" id="zeitraum" role="radiogroup" aria-label="Zeitraum">
+          <button type="button" role="radio" data-wert="heute">Heute</button>
+          <button type="button" role="radio" data-wert="7">7 Tage</button>
+          <button type="button" role="radio" data-wert="28">28 Tage</button>
+          <button type="button" role="radio" data-wert="alle">Alle</button>
+        </div>
+        <label class="auswahl">Quelle
+          <select id="quelle">
+            <option value="alle">Alle Beiträge</option>
+            <option value="funnel">Nur Funnel-Reels</option>
+            <option value="hand">Nur von Hand</option>
+          </select>
+        </label>
+      </div>
+
+      <section class="kennzahlen" aria-label="Kennzahlen">
+        <div id="hauptzahl" class="karte hauptzahl"></div>
+        <div id="kacheln" class="kacheln"></div>
+      </section>
+
+      <section class="karte" aria-labelledby="titel-plan">
+        <div class="abschnitt-kopf">
+          <div>
+            <h2 id="titel-plan">Sendeplan</h2>
+            <p id="plan-zusammenfassung" class="leise"></p>
+          </div>
+          <div id="plan-tage" class="tage" role="tablist" aria-label="Tag"></div>
+        </div>
+        <ol id="plan-liste" class="plan-liste"></ol>
+      </section>
+
+      <div class="diagramme">
+        <section class="karte" aria-labelledby="titel-reichweite">
+          <h2 id="titel-reichweite">Erreichte Konten pro Tag</h2>
+          <p class="leise">Ganzes Konto, letzte 28 Tage. Hervorgehoben: gewählter Zeitraum.</p>
+          <div id="reichweite" class="diagramm-rahmen"></div>
+        </section>
+        <section class="karte" aria-labelledby="titel-formate">
+          <h2 id="titel-formate">Aufrufe nach Format</h2>
+          <p class="leise">Durchschnitt je Beitrag im gewählten Zeitraum.</p>
+          <div id="formate" class="formate"></div>
+        </section>
+      </div>
+
+      <section class="karte" aria-labelledby="titel-beitraege">
+        <div class="abschnitt-kopf">
+          <div>
+            <h2 id="titel-beitraege">Veröffentlichte Beiträge</h2>
+            <p id="beitraege-zusammenfassung" class="leise"></p>
+          </div>
+        </div>
+        <div class="tabelle-rahmen">
+          <table id="beitraege" class="tabelle"></table>
+        </div>
+        <div id="beitraege-mehr" class="mehr"></div>
+      </section>
+
+      <section class="karte" aria-labelledby="titel-betrieb">
+        <h2 id="titel-betrieb">Betrieb</h2>
+        <dl id="betrieb" class="betrieb"></dl>
+        <ul id="hinweise" class="hinweise"></ul>
+        <details class="protokoll">
+          <summary>Protokoll (letzte Einträge)</summary>
+          <pre id="protokoll"></pre>
+        </details>
+      </section>
+
+      <p class="fuss leise">Zahlen von Instagram, abgeglichen vom Reels-Rechner alle 30 Minuten. „Aufrufe“ ersetzt seit 2025 die früheren Impressionen.</p>
+    </div>
+  </div>
+
+  <div id="schublade-hintergrund" class="schublade-hintergrund" hidden></div>
+  <aside id="schublade" class="schublade" role="dialog" aria-modal="true" aria-labelledby="schublade-titel" hidden>
+    <button id="schublade-zu" class="schublade-zu" type="button" aria-label="Schliessen">×</button>
+    <div id="schublade-inhalt"></div>
+  </aside>
+
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+</body>
+</html>

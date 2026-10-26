@@ -307,6 +307,7 @@ sonst gilt der Testplan als Tagesplan.
 tools/reels/
   tag.js                    Tagesproduktion (Plan, Stimme, Render, Upload)
   posten.js                 Veröffentlichen fälliger Reels
+  board.js                  Stand für das Performance-Board (siehe Abschnitt 7)
   funnel.json               Einstellungen ohne Geheimnisse
   zeitplan-einrichten.ps1   Aufgabenplanung + Schlüssel als Nutzer-Umgebungsvariablen
   funnel/
@@ -322,6 +323,7 @@ tools/reels/
     instagram.js            Graph API + Kommandozeile (verbinden, pruefen)
     zustand.js              Plan, Verlauf, Protokoll, Aufräumen
     sprache.js              Zahlwörter, CHF-Format, Datum, Zufall
+    board.js                Board-Stand bauen, verschlüsseln, ablegen
   test/graph-attrappe.js    Nachbau der Graph API für Tests
   test/standbilder.js       ein Standbild je Szene als Kontaktbogen (Layoutprüfung)
   src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
@@ -333,3 +335,18 @@ tools/reels/
 
 Die Komposition `tagesreel` in `src/Root.jsx` nimmt jeden Reel als Eingabe entgegen; die
 Stamm-Reels bleiben wie bisher eigene Kompositionen (`npm run render`, `npm run vorschau`).
+
+---
+
+## 7. Performance-Board
+
+https://swisspremia-board.vercel.app – Sendeplan, veröffentlichte Beiträge und ihre Zahlen
+(Aufrufe, Reichweite, Interaktionen, Wiedergabe), Kontozahlen, Aufrufe je Format. Nur mit
+Login. Eine dritte Aufgabe «SwissPremia Reels - Board» führt alle 30 Minuten `node board.js`
+aus: Plan und Instagram-Zahlen lesen, verschlüsselt mit `BOARD_SCHLUESSEL` nach
+`board/stand.json` im Blob-Speicher legen. Das Board entschlüsselt erst nach dem Login.
+`node board.js` postet nichts. Einrichtung, Zugang und Sicherheit: `tools/board/README.md`.
+
+Für die Auswertung nach zwei Wochen (Abschnitt 4) zeigt das Board «Aufrufe nach Format» und
+die Klicks auf den Website-Link – die zwei Zahlen, an denen sich `reelsProTag` und `mix`
+entscheiden lassen.

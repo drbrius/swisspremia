@@ -1,13 +1,16 @@
 ﻿<#
   SwissPremia Reels - Zeitplan einrichten (Windows-Aufgabenplanung)
 
-    .\zeitplan-einrichten.ps1                  Schluessel abfragen, zwei Aufgaben anlegen
+    .\zeitplan-einrichten.ps1                  Schluessel abfragen, drei Aufgaben anlegen
     .\zeitplan-einrichten.ps1 -OhneSchluessel  nur die Aufgaben anlegen/erneuern
     .\zeitplan-einrichten.ps1 -Status          Aufgaben und letzte Laeufe zeigen
-    .\zeitplan-einrichten.ps1 -Entfernen       beide Aufgaben loeschen
+    .\zeitplan-einrichten.ps1 -Entfernen       alle Aufgaben loeschen
+    .\zeitplan-einrichten.ps1 -NurBoard        nur die Board-Aufgabe anlegen/erneuern
 
   Aufgabe 1 "SwissPremia Reels - Tag":    taeglich um -TagesStart (Standard 05:30) node tag.js
   Aufgabe 2 "SwissPremia Reels - Posten": alle -TaktMinuten (Standard 15) node posten.js
+  Aufgabe 3 "SwissPremia Reels - Board":  alle -BoardMinuten (Standard 30) node board.js
+                                          (Stand fuer das Performance-Board, tools/board)
 
   Schluessel und Tokens werden als NUTZER-Umgebungsvariablen gespeichert
   (Systemsteuerung > Umgebungsvariablen), nicht in Dateien: Der Ordner liegt
@@ -22,16 +25,19 @@ param(
   [switch]$Entfernen,
   [switch]$Status,
   [string]$TagesStart = "05:30",
-  [int]$TaktMinuten = 15
+  [int]$TaktMinuten = 15,
+  [switch]$NurBoard,
+  [int]$BoardMinuten = 30
 )
 
 $ErrorActionPreference = "Stop"
 $NameTag = "SwissPremia Reels - Tag"
 $NamePosten = "SwissPremia Reels - Posten"
+$NameBoard = "SwissPremia Reels - Board"
 $Ordner = $PSScriptRoot
 
 if ($Status) {
-  foreach ($n in @($NameTag, $NamePosten)) {
+  foreach ($n in @($NameTag, $NamePosten, $NameBoard)) {
     $t = Get-ScheduledTask -TaskName $n -ErrorAction SilentlyContinue
     if ($null -eq $t) { Write-Host "$n : nicht eingerichtet"; continue }
     $i = $t | Get-ScheduledTaskInfo
@@ -43,7 +49,7 @@ if ($Status) {
 }
 
 if ($Entfernen) {
-  foreach ($n in @($NameTag, $NamePosten)) {
+  foreach ($n in @($NameTag, $NamePosten, $NameBoard)) {
     if (Get-ScheduledTask -TaskName $n -ErrorAction SilentlyContinue) { Unregister-ScheduledTask -TaskName $n -Confirm:$false; Write-Host "Entfernt: $n" }
   }
   exit 0
@@ -59,6 +65,24 @@ function Aktion([string]$skript) {
   New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\wscript.exe" -Argument "`"$Ordner\unsichtbar.vbs`" `"$node`" $skript" -WorkingDirectory $Ordner
 }
 
+# Board: liest Plaene und Instagram-Zahlen und legt den verschluesselten
+# Stand fuer tools/board ab. Postet nichts, braucht BOARD_SCHLUESSEL.
+function BoardAufgabeAnlegen {
+  $einstellungenBoard = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 10) -MultipleInstances IgnoreNew
+  $aktionBoard = Aktion "board.js"
+  $ausloeserBoard = New-ScheduledTaskTrigger -Once -At (Get-Date).Date -RepetitionInterval (New-TimeSpan -Minutes $BoardMinuten)
+  Register-ScheduledTask -TaskName $NameBoard -Action $aktionBoard -Trigger $ausloeserBoard -Settings $einstellungenBoard `
+    -Description "Legt den Stand fuer das Performance-Board ab (tools/reels/board.js)." -Force -ErrorAction Stop | Out-Null
+  Write-Host "Eingerichtet: $NameBoard - alle $BoardMinuten Minuten"
+}
+
+if ($NurBoard) {
+  if (-not [Environment]::GetEnvironmentVariable("BOARD_SCHLUESSEL", "User")) { throw "BOARD_SCHLUESSEL fehlt - zuerst: node board.js schluessel" }
+  BoardAufgabeAnlegen
+  exit 0
+}
+
 if (-not $OhneSchluessel) {
   Write-Host "Schluessel als Nutzer-Umgebungsvariablen speichern. Enter = bestehenden Wert behalten.`n"
   $variablen = @(
@@ -68,7 +92,8 @@ if (-not $OhneSchluessel) {
     @{ Name = "META_APP_ID";           Text = "Meta App-Id (nur fuer instagram.js verbinden)" },
     @{ Name = "META_APP_SECRET";       Text = "Meta App-Secret (nur fuer instagram.js verbinden)" },
     @{ Name = "IG_USER_ID";            Text = "Instagram Konto-Id (setzt instagram.js verbinden selbst)" },
-    @{ Name = "IG_ACCESS_TOKEN";       Text = "Instagram Zugriffstoken (setzt instagram.js verbinden selbst)" }
+    @{ Name = "IG_ACCESS_TOKEN";       Text = "Instagram Zugriffstoken (setzt instagram.js verbinden selbst)" },
+    @{ Name = "BOARD_SCHLUESSEL";      Text = "Board-Schluessel (erzeugt node board.js schluessel; derselbe Wert im Vercel-Projekt)" }
   )
   foreach ($v in $variablen) {
     $alt = [Environment]::GetEnvironmentVariable($v.Name, "User")
@@ -85,16 +110,21 @@ $einstellungen = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStop
 $aktionTag = Aktion "tag.js"
 $ausloeserTag = New-ScheduledTaskTrigger -Daily -At $TagesStart
 Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger $ausloeserTag -Settings $einstellungen `
-  -Description "Plant, vertont, rendert und laedt die Reels des Tages hoch (tools/reels/tag.js)." -Force | Out-Null
+  -Description "Plant, vertont, rendert und laedt die Reels des Tages hoch (tools/reels/tag.js)." -Force -ErrorAction Stop | Out-Null
 Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart"
 
 $einstellungenPosten = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
   -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew
 $aktionPosten = Aktion "posten.js"
-$ausloeserPosten = New-ScheduledTaskTrigger -Once -At (Get-Date).Date -RepetitionInterval (New-TimeSpan -Minutes $TaktMinuten) -RepetitionDuration ([TimeSpan]::MaxValue)
+# Ohne -RepetitionDuration wiederholt Windows unbegrenzt; [TimeSpan]::MaxValue
+# lehnt die Aufgabenplanung als ungueltige Dauer ab (P99999999DT23H59M59S).
+$ausloeserPosten = New-ScheduledTaskTrigger -Once -At (Get-Date).Date -RepetitionInterval (New-TimeSpan -Minutes $TaktMinuten)
 Register-ScheduledTask -TaskName $NamePosten -Action $aktionPosten -Trigger $ausloeserPosten -Settings $einstellungenPosten `
-  -Description "Veroeffentlicht faellige Reels auf Instagram (tools/reels/posten.js)." -Force | Out-Null
+  -Description "Veroeffentlicht faellige Reels auf Instagram (tools/reels/posten.js)." -Force -ErrorAction Stop | Out-Null
 Write-Host "Eingerichtet: $NamePosten - alle $TaktMinuten Minuten"
+
+if ([Environment]::GetEnvironmentVariable("BOARD_SCHLUESSEL", "User")) { BoardAufgabeAnlegen }
+else { Write-Host "Board-Aufgabe uebersprungen: BOARD_SCHLUESSEL fehlt (node board.js schluessel)." }
 
 Write-Host "`nPruefen:  .\zeitplan-einrichten.ps1 -Status"
 Write-Host "Sofort testen:  node tag.js --nur-plan   und   node funnel/instagram.js pruefen  (neues Fenster, damit die Variablen gelten)"
