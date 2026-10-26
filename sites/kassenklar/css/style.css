@@ -489,3 +489,15 @@ a { color: var(--petrol); text-underline-offset: 3px; }
   .kantone-liste { gap: 8px; }
   .kantone-liste a { padding: 10px 14px; min-height: 44px; display: inline-flex; align-items: center; }
 }
+
+/* ===== Navigation zwischen Handy und Desktop =====
+   Mit "Kantone" und "Ratgeber" hat die Kopfzeile sechs Eintraege. Zwischen
+   700 und 980 px passten sie nicht mehr nebeneinander und schoben die Seite
+   98 px ueber den rechten Rand hinaus – unter 700 px blendet die Vorlage die
+   Links ohnehin aus. Hier: engere Abstaende, kleinere Schrift, und "Fragen"
+   (steht ganz unten auf der Seite) faellt in diesem Bereich weg. */
+@media (min-width: 701px) and (max-width: 980px) {
+  .nav { gap: 14px; }
+  .nav a { font-size: .8rem; letter-spacing: 0; }
+  .nav a[href="#fragen"], .nav a[href="/#fragen"] { display: none; }
+}
