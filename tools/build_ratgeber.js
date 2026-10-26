@@ -133,6 +133,7 @@ function kopfzeile() {
     '    </a>\n' +
     '    <nav class="nav">\n' +
     '      <a href="/#rechner">Prämien vergleichen</a>\n' +
+    '      <a href="/kantone/">Kantone</a>\n' +
     '      <a href="/ratgeber/">Ratgeber</a>\n' +
     '      <a href="/#fragen">Fragen</a>\n' +
     '      <a href="/#beratung" class="btn btn-small btn-primary">Kostenlose Beratung</a>\n' +
@@ -324,6 +325,18 @@ function uebersicht() {
     fusszeile();
 }
 
+/* Kantonsseiten aus kantone/ (build_kantone.js) – die Uebersicht zuerst,
+   mit hoher Prioritaet: sie tragen die echten Zahlen. */
+function kantonsSeiten() {
+  var ordner = pfad.join(STAMM, "kantone");
+  if (!fs.existsSync(ordner)) return [];
+  var dateien = fs.readdirSync(ordner).filter(function (f) { return f.endsWith(".html"); }).sort();
+  return dateien.map(function (f) {
+    var ist = f === "index.html";
+    return { loc: BASIS + "/kantone/" + (ist ? "" : f), lastmod: HEUTE, freq: ist ? "weekly" : "monthly", prio: ist ? "0.9" : "0.8" };
+  });
+}
+
 /* ---------------------------------------------------------- Sitemap */
 
 function sitemap() {
@@ -331,7 +344,7 @@ function sitemap() {
     return { loc: BASIS + s.pfad, lastmod: s.lastmod, freq: s.freq, prio: s.prio };
   }).concat(RATGEBER.map(function (r) {
     return { loc: BASIS + "/ratgeber/" + r.slug + ".html", lastmod: HEUTE, freq: "monthly", prio: "0.7" };
-  }));
+  })).concat(kantonsSeiten());
 
   return '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
@@ -359,7 +372,7 @@ function main() {
   fs.writeFileSync(pfad.join(STAMM, "sitemap.xml"), sitemap(), "utf8");
 
   console.log("\n  " + RATGEBER.length + " Ratgeber + Uebersicht  ->  ratgeber/");
-  console.log("  Sitemap: " + (WEITERE_SEITEN.length + RATGEBER.length) + " Seiten\n");
+  console.log("  Sitemap: " + (WEITERE_SEITEN.length + RATGEBER.length + kantonsSeiten().length) + " Seiten\n");
 }
 
 main();

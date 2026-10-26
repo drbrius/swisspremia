@@ -92,13 +92,15 @@ function ratgeberVerweiseEntfernen(inhalt, datei) {
   if (datei.endsWith(".xml")) {
     /* Blockweise statt mit einem Muster ueber mehrere Zeilen – das ist
        lesbar und bricht nicht, wenn sich Einrueckung oder Zeilenenden
-       aendern. */
+       aendern. Gilt ebenso fuer die Kantonsseiten unter /kantone/. */
     return inhalt
       .split("</url>")
-      .filter(function (block) { return block.indexOf("/ratgeber/") === -1; })
+      .filter(function (block) { return block.indexOf("/ratgeber/") === -1 && block.indexOf("/kantone/") === -1; })
       .join("</url>");
   }
-  return inhalt.replace(/[ \t]*<a href="\/ratgeber\/">Ratgeber<\/a>\n/g, "");
+  return inhalt
+    .replace(/[ \t]*<a href="\/ratgeber\/">Ratgeber<\/a>\n/g, "")
+    .replace(/[ \t]*<a href="\/kantone\/">Kantone<\/a>\n/g, "");
 }
 
 function schriftDerVorlageEntfernen(inhalt) {

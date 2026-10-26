@@ -20,15 +20,15 @@
     ],
     "texte": [
       [
-        "<span class=\"eyebrow\">Grundversicherung 2026 · Offizielle BAG-Daten</span>",
+        "<span class=\"eyebrow\">Krankenkassenvergleich 2027 · Offizielle BAG-Daten</span>",
         "<span class=\"eyebrow\">Prämienvergleich Schweiz</span>"
       ],
       [
-        "<h1>Krankenkassen-Prämien vergleichen – <span class=\"accent\">in 1 Minute</span></h1>",
+        "<h1>Krankenkassenvergleich 2027 – <span class=\"accent\">alle Kassen in einer Minute</span></h1>",
         "<h1>Gleiche Leistung.<br><span class=\"accent\">Anderer Preis.</span></h1>"
       ],
       [
-        "Alle 34 Versicherer, alle Prämienregionen, mit den offiziellen Daten des Bundes (BAG&nbsp;/&nbsp;priminfo.admin.ch). Die Leistungen der Grundversicherung sind gesetzlich überall identisch – nur der Preis nicht.",
+        "Der Krankenkassenvergleich für die ganze Schweiz: alle Versicherer, alle Prämienregionen, mit den offiziellen Prämiendaten 2027 des Bundes (BAG&nbsp;/&nbsp;priminfo.admin.ch). Die Leistungen der Grundversicherung sind gesetzlich überall identisch – nur der Preis nicht.",
         "Die Grundversicherung ist per Gesetz bei jeder Kasse dieselbe. Der Preis dafür ist es nicht – je nach Region und Modell liegen Tausende Franken im Jahr dazwischen. Wir zeigen Ihnen den Unterschied mit den offiziellen Zahlen des Bundes."
       ],
       [
@@ -40,7 +40,7 @@
         "<li>Offizielle BAG-Daten, keine Schätzungen</li>"
       ],
       [
-        "<li>Offizielle Prämiendaten 2026 des BAG</li>",
+        "<li>Offizielle Prämiendaten 2027 des BAG</li>",
         "<li>Ohne Anmeldung, ohne Kosten</li>"
       ],
       [
@@ -68,7 +68,7 @@
         "<a href=\"#beratung\" class=\"btn btn-small btn-primary\">Beratung</a>"
       ],
       [
-        "<h2>Ihre Prämie 2026 berechnen",
+        "<h2>Ihre Prämie 2027 berechnen",
         "<h2>Ihre Prämie, in einer Minute"
       ],
       [
@@ -100,6 +100,6 @@
         "photo-1450101499163-c8848c66ca85"
       ]
     ],
-    "beschreibung": "Krankenkassen-Praemien 2026 vergleichen mit den offiziellen Daten des Bundesamts fuer Gesundheit."
+    "beschreibung": "Krankenkassen-Praemien 2027 vergleichen mit den offiziellen Daten des Bundesamts fuer Gesundheit."
   }
 ]

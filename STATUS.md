@@ -262,6 +262,42 @@ beim Ende der Sitzungsantwort abgebrochen. Vor dem Rendern Standbilder mit
 `npx remotion still` pruefen – die Sichtung hat sechs Layoutfehler gefunden, die im Code
 nicht sichtbar waren (Umschlag auf dem Gebaeude, Text auf dem Bogen, Figur in der Stufe).
 
+### Kantonsseiten mit echten Prämientabellen (nur SwissPremia)
+
+Unter `/kantone/` liegt je Kanton eine Seite mit den günstigsten Angeboten je Prämienregion
+(Erwachsene Franchise 300, junge Erwachsene, Kinder Franchise 0), Beispielorten, FAQ mit
+konkreten Zahlen und Article-/FAQPage-/BreadcrumbList-Markup – 26 Seiten plus Übersicht.
+
+```
+node tools/build_kantone.js      # liest data/praemien.js und data/plz.js
+```
+
+Grund: Der Rechner rendert seine Zahlen erst im Browser; Suchmaschinen und Antwortmaschinen
+lesen statisches HTML. Diese Seiten sind der Ort, an dem die Zahlen zitierbar stehen. Kein
+Doorway-Netzwerk: eigene Zahlen, eigene Regionen, eigene Orte je Seite. Der Marken-Generator
+entfernt die Verweise wie bei den Ratgebern. `llms.txt` im Stamm beschreibt die Seite für
+Antwortmaschinen.
+
+### Prämiendaten 2027 – neue Quelle, neuer Modellschnitt
+
+Seit 2027 gibt es das Gesamtverzeichnis auf priminfo nur noch als PDF. Die Daten kommen als
+`Prämien_CH.csv` vom offenen Datenportal (opendata.swiss, Datensatz «health-insurance-premiums»),
+rund 26 MB, 220 000 Zeilen:
+
+```
+node tools/build_data.js <Pfad zur Praemien_CH.csv>
+```
+
+Dazu `tools/regionen-<Jahr>.xlsx` (priminfo, Prämienregionen, Blatt B_NPA) und optional
+`tools/versicherer-*.xlsx` (Namen). Beide brauchen das npm-Paket xlsx: `npm i --no-save xlsx`
+im Stamm, ohne package.json. Die Codes haben sich geändert (`PR_REG_1`, `AKA_03_ERW`,
+`MIT_UNF`, `FRA_06_E_2500`), das Skript kennt sie.
+
+**Das BAG trennt Hausarzt und HMO nicht mehr** – beides ist `PRAXIS`. Die vier Modelle der
+Website sind deshalb neu: Standard, Hausarzt-/HMO, Telmed/digital, flexibel. 32 Versicherer
+statt 34. Die Jahreszahl steht im Datensatz und wird nirgends mehr von Hand gepflegt – ausser
+in Titeln, Descriptions und Texten der HTML-Vorlagen, dort per Suchen/Ersetzen.
+
 ### Der Vorbehalt, der bleibt
 
 20 fast identische Vergleichsseiten sind in Googles Spam-Richtlinien als

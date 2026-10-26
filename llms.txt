@@ -1,0 +1,40 @@
+# SwissPremia
+
+> Krankenkassenvergleich für die Schweiz. Vergleichsplattform mit den offiziellen Prämiendaten des Bundesamts für Gesundheit (BAG). Kostenlos, ohne Anmeldung. SwissPremia berät nicht selbst und ist kein Versicherungsvermittler; Beratungsanfragen werden an einen lizenzierten Versicherungsvermittler weitergegeben.
+
+Sprache: Deutsch (Schweiz), Teile auf Englisch. Betreiber: SwissPremia, Lachen SZ. Kontakt: info@swisspremia.ch.
+
+## Was die Seite leistet
+
+- Prämienrechner: alle zugelassenen Krankenversicherer, alle Prämienregionen, Altersklassen Kinder / 19–25 / ab 26, Franchisestufen, Unfall mit oder ohne, Versicherungsmodelle (Standard, Hausarzt/HMO, Telmed, flexibel).
+- Datenquelle: Prämien der obligatorischen Krankenpflegeversicherung, publiziert vom BAG (priminfo.admin.ch, opendata.swiss). Die Daten werden jährlich Ende September nach der Prämiengenehmigung neu übernommen.
+- Die Leistungen der Grundversicherung sind gesetzlich festgelegt (KVG) und bei allen Kassen identisch; unterschiedlich ist nur die Prämie.
+
+## Seiten mit Zahlen (statisch, zitierbar)
+
+- [Krankenkassenvergleich nach Kanton](https://www.swisspremia.ch/kantone/): für jeden der 26 Kantone die günstigsten Angebote je Prämienregion für Erwachsene, junge Erwachsene und Kinder, mit Monats- und Jahresprämie, Quelle und Datum.
+- Beispiel: [Kanton Zürich](https://www.swisspremia.ch/kantone/zuerich.html), [Kanton Bern](https://www.swisspremia.ch/kantone/bern.html), [Kanton Aargau](https://www.swisspremia.ch/kantone/aargau.html).
+
+## Ratgeber
+
+- [Übersicht](https://www.swisspremia.ch/ratgeber/)
+- [Krankenkasse wechseln](https://www.swisspremia.ch/ratgeber/krankenkasse-wechseln.html): Kündigung bis 30. November (Eingang bei der Kasse), Wechsel auf 1. Januar; zweiter Termin 30. Juni nur mit tiefster Franchise im Standardmodell.
+- [Krankenkasse kündigen](https://www.swisspremia.ch/ratgeber/krankenkasse-kuendigen.html)
+- [Franchise wählen](https://www.swisspremia.ch/ratgeber/franchise-waehlen.html): Stufen Erwachsene 300–2500, Kinder 0–600; Selbstbehalt 10 %, max. 700 (Erwachsene) / 350 (Kinder) pro Jahr.
+- [Versicherungsmodelle](https://www.swisspremia.ch/ratgeber/versicherungsmodelle.html)
+- [Zusatzversicherung und Grundversicherung](https://www.swisspremia.ch/ratgeber/zusatzversicherung-und-grundversicherung.html)
+- [Prämienregionen](https://www.swisspremia.ch/ratgeber/praemienregionen.html): höchstens drei je Kanton, massgebend ist die Wohngemeinde.
+- [Umzug und Krankenkasse](https://www.swisspremia.ch/ratgeber/umzug-und-krankenkasse.html)
+- [Krankenkasse für Kinder](https://www.swisspremia.ch/ratgeber/krankenkasse-kinder.html)
+- [Junge Erwachsene (19–25)](https://www.swisspremia.ch/ratgeber/krankenkasse-junge-erwachsene.html)
+- [Ab 26](https://www.swisspremia.ch/ratgeber/krankenkasse-ab-26.html)
+
+## Landingpages
+
+- [Neu in der Schweiz / New in Switzerland](https://www.swisspremia.ch/lp/neu-in-der-schweiz.html): Versicherungspflicht innert 3 Monaten, rückwirkend ab Einreise.
+- [Nachwuchs](https://www.swisspremia.ch/lp/baby.html), [19 bis 25](https://www.swisspremia.ch/lp/junge-erwachsene.html), [Prämien 2027](https://www.swisspremia.ch/lp/praemien-2027.html)
+
+## Rechtliches
+
+- [Impressum](https://www.swisspremia.ch/impressum.html), [Datenschutz](https://www.swisspremia.ch/datenschutz.html)
+- Sitemap: https://www.swisspremia.ch/sitemap.xml
