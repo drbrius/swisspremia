@@ -2,7 +2,9 @@
 
 Drei Teile: Profile einrichten, Inhalte posten, Anzeigen schalten.
 Der Akquiseplan mit Telefon-Script und Compliance-Rahmen steht in [AKQUISE.md](AKQUISE.md).
-Die Bilddateien liegen im Ordner `marke/`.
+Die Bilddateien liegen im Ordner `marke/`. Die Banner entstehen aus einer Vorlage
+(`node tools/banner/render.js`, siehe Abschnitt «Banner» unten) – Text oder Farbe
+dort ändern, nicht in den PNG.
 
 ---
 
@@ -31,7 +33,8 @@ Du bist eine Person, kein Marketingteam. Vier gepflegte Kanäle schlagen acht ve
   > Unabhängiger Krankenkassen-Vergleich für die Schweiz. Alle Kassen, offizielle Prämiendaten des Bundes, kostenlos und unverbindlich. Beratung auf Deutsch und Englisch.
 - **Impressum und Datenschutzerklärung verlinken** – ohne diesen Link lässt Meta keine Lead Ads zu.
 - **Schaltfläche:** «Mehr dazu» → `https://www.swisspremia.ch`
-- **Bilder:** `facebook-profil-400.png`, `facebook-titelbild-1640x856.png`
+- **Bilder:** `facebook-profil-400.png`, `facebook-titelbild-1640x624.png`
+- **Schreibweise des Seitennamens:** SwissPremia mit grossem P – Facebook übernimmt sonst «Swisspremia» aus der E-Mail-Adresse.
 
 ### Instagram
 
@@ -55,7 +58,8 @@ Du bist eine Person, kein Marketingteam. Vier gepflegte Kanäle schlagen acht ve
   > Schwerpunkt: Neuzuzüger in die Schweiz. Wer hier Wohnsitz nimmt, muss sich innert drei Monaten grundversichern. Wir beraten auf Deutsch und Englisch.
   >
   > Kostenlos und unverbindlich. Wir kontaktieren ausschliesslich Personen, die uns darum gebeten haben.
-- **Bilder:** `linkedin-logo-400.png`, `linkedin-banner-1128x191.png`
+- **Bilder:** `linkedin-logo-400.png`, `linkedin-banner-2256x382.png` (doppelte Auflösung des 1128×191-Formats, LinkedIn rechnet selbst herunter)
+- **Persönliches Profil:** `linkedin-profil-banner-1584x396.png` – wer die Firma vertritt, zeigt sie auch auf dem eigenen Profil.
 
 Der letzte Satz steht bewusst dort. Nach dem Kaltakquise-Verbot ist das ein Unterscheidungsmerkmal, kein Kleingedrucktes.
 
@@ -66,6 +70,25 @@ Der letzte Satz steht bewusst dort. Nach dem Kaltakquise-Verbot ist das ein Unte
 - **Abwesenheitsnotiz:**
   > Danke für Ihre Nachricht. Ich bin gerade in einer Beratung und melde mich spätestens morgen früh.
 - **Bild:** `whatsapp-profil-640.png`
+
+### Banner
+
+Ein Satz, sechs Formate, zwei Varianten: mit Alpensee-Foto (`marke/`) und ohne
+Foto als reiner Verlauf (`marke/ohne-foto/`). Inhalt überall gleich: Wortmarke,
+«Krankenkassen-Prämien vergleichen – in 1 Minute», vier Punkte, Adresse.
+
+| Datei | Plattform | Worauf geachtet wurde |
+|---|---|---|
+| `facebook-titelbild-1640x624.png` | Facebook-Seite | Handy schneidet links und rechts je 265 px ab, Profilbild liegt mittig über der Unterkante – Mitte unten ist frei |
+| `linkedin-banner-2256x382.png` | LinkedIn-Unternehmensseite | Logo liegt links unten über der Kante – die linken 230 px sind frei |
+| `linkedin-profil-banner-1584x396.png` | LinkedIn-Profil | Profilfoto links unten – Inhalt beginnt bei 470 px |
+| `x-header-1500x500.png` | X | Profilbild links unten, oben und unten können je 50 px wegfallen |
+| `youtube-banner-2560x1440.png` | YouTube (falls doch) | Nur die Mitte 1546×423 ist auf allen Geräten sichtbar – alles liegt dort |
+| `og-bild-1200x630.png` | Link-Vorschau | Bild für geteilte Links (`og:image`), wird vollständig gezeigt |
+
+Neu rendern: `node tools/banner/render.js` (alle) oder `node tools/banner/render.js facebook`.
+Braucht Chrome; das Foto wird beim ersten Lauf nach `tools/banner/cache/` geladen.
+Vorlage und Masse: `tools/banner/vorlage.html`.
 
 ---
 

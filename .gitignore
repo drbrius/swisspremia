@@ -9,4 +9,7 @@ tools/reels/out/
 # Funnel: Tagesplaene, Protokoll und taeglich erzeugte Tonspuren
 tools/reels/plan/
 tools/reels/public/audio/tag/
+
+# Banner: Foto wird beim Rendern geladen
+tools/banner/cache/
 tools/reels/public/bilder/

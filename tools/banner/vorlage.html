@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>SwissPremia – Banner-Vorlage</title>
+<!--
+  Eine Vorlage, viele Formate. Aufruf: vorlage.html?format=facebook&variante=foto
+  Formate: facebook, linkedin-firma, linkedin-profil, x, youtube, og
+  Varianten: foto (Alpensee mit Schleier) oder grafik (nur Verlauf)
+  Gerendert wird mit tools/banner/render.js (Chrome headless).
+  Die sicheren Zonen je Plattform stehen als Kommentar bei jedem Format.
+-->
+<link rel="stylesheet" href="figtree.css">
+<style>
+:root {
+  --petrol: #005786;
+  --petrol-dunkel: #00446a;
+  --slate-tief: #212d39;
+  --gold: #ccba89;
+  --gold-dunkel: #b7a06a;
+  --creme: #f4eee4;
+}
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: Figtree, "Segoe UI", system-ui, sans-serif;
+  color: #fff;
+  background: var(--slate-tief);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Buehne ===== */
+.banner {
+  position: relative; overflow: hidden;
+  width: var(--w); height: var(--h);
+  background: linear-gradient(150deg, var(--slate-tief) 0%, var(--petrol-dunkel) 100%);
+}
+.foto {
+  position: absolute; inset: 0;
+  background: url("cache/alpensee.jpg") var(--foto-lage, 50% 55%) / cover no-repeat;
+  display: none;
+}
+.variante-foto .foto { display: block; }
+.schleier {
+  position: absolute; inset: 0;
+  /* Links dunkel, damit die Schrift traegt – rechts durchlaessiger, damit das Foto wirkt */
+  background: linear-gradient(100deg, rgba(33, 45, 57, .95) 0%, rgba(20, 56, 84, .88) 48%, rgba(0, 87, 134, .62) 100%);
+  display: none;
+}
+.variante-foto .schleier { display: block; }
+.kante { position: absolute; left: 0; right: 0; bottom: 0; height: var(--kante, 6px); background: var(--gold); }
+
+/* Dekoration fuer die Variante ohne Foto: zwei grosse, blasse Kreuze rechts */
+.deko { position: absolute; inset: 0; display: none; pointer-events: none; }
+.variante-grafik .deko { display: block; }
+.deko-kreuz {
+  position: absolute; width: var(--d); height: var(--d);
+  border-radius: 22%; background: rgba(255, 255, 255, .045);
+}
+.deko-kreuz::before, .deko-kreuz::after {
+  content: ""; position: absolute; background: rgba(255, 255, 255, .07);
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+}
+.deko-kreuz::before { width: calc(var(--d) * .17); height: calc(var(--d) * .6); }
+.deko-kreuz::after  { width: calc(var(--d) * .6);  height: calc(var(--d) * .17); }
+.deko-1 { --d: var(--deko-gross); right: var(--deko-rechts); top: var(--deko-oben); }
+.deko-2 { --d: calc(var(--deko-gross) * .42); right: calc(var(--deko-rechts) + var(--deko-gross) * .95); top: calc(var(--deko-oben) + var(--deko-gross) * .75); }
+
+/* ===== Inhalt ===== */
+.inhalt {
+  position: absolute; left: var(--links); top: var(--oben); width: var(--breite);
+  display: flex; flex-direction: column; gap: var(--abstand);
+}
+
+.wortmarke { display: flex; align-items: center; gap: calc(var(--kreuz) * .3); }
+.kreuz {
+  width: var(--kreuz); height: var(--kreuz); border-radius: 23%; background: #fff; position: relative; flex: none;
+}
+.kreuz::before, .kreuz::after {
+  content: ""; position: absolute; background: var(--petrol); left: 50%; top: 50%; transform: translate(-50%, -50%);
+}
+.kreuz::before { width: calc(var(--kreuz) * .167); height: calc(var(--kreuz) * .6); }
+.kreuz::after  { width: calc(var(--kreuz) * .6);   height: calc(var(--kreuz) * .167); }
+.name { font-size: var(--name); line-height: 1; letter-spacing: .01em; font-weight: 400; }
+.name strong { font-weight: 700; }
+.claim {
+  margin-top: calc(var(--name) * .28);
+  font-size: calc(var(--name) * .34); font-weight: 600; letter-spacing: .26em;
+  text-transform: uppercase; color: var(--gold); line-height: 1;
+}
+
+.text { display: flex; flex-direction: column; gap: calc(var(--abstand) * .75); }
+h1 {
+  margin: 0; font-weight: 500; font-size: var(--titel); line-height: 1.1; letter-spacing: .005em;
+  max-width: var(--titel-breite); text-wrap: balance;
+}
+h1 .akzent { color: var(--gold); }
+
+.punkte { display: flex; flex-wrap: wrap; gap: calc(var(--punkt) * .5) calc(var(--punkt) * 1.3); margin: 0; padding: 0; list-style: none; }
+.punkte li {
+  position: relative; padding-left: calc(var(--punkt) * 1.35); font-size: var(--punkt); line-height: 1.3;
+  color: rgba(255, 255, 255, .9); white-space: nowrap;
+}
+.punkte li::before {
+  content: ""; position: absolute; left: 0; top: .32em;
+  width: calc(var(--punkt) * .62); height: calc(var(--punkt) * .34);
+  border-left: 2px solid var(--gold); border-bottom: 2px solid var(--gold); transform: rotate(-45deg);
+}
+
+.url {
+  position: absolute; right: var(--url-rechts); bottom: var(--url-unten);
+  background: var(--gold); color: var(--slate-tief);
+  font-size: var(--url); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; line-height: 1;
+  padding: calc(var(--url) * .78) calc(var(--url) * 1.5); border-radius: 999px; white-space: nowrap;
+}
+
+/* =========================================================================
+   Formate. Masse in CSS-Pixeln; render.js setzt bei Bedarf den Skalierungsfaktor.
+   ========================================================================= */
+
+/* Facebook-Seite: 820x312 am Computer, 640x360 am Handy. Datei in doppelter
+   Aufloesung 1640x624. Das Handy schneidet links und rechts je ~265 px ab,
+   das Profilbild liegt heute mittig ueber der Unterkante (ca. 300 px breit,
+   130 px hoch). Sichere Zone: x 300–1340, Mitte unten frei. */
+.format-facebook {
+  --w: 1640px; --h: 624px; --kante: 6px;
+  --links: 300px; --oben: 118px; --breite: 1040px; --abstand: 36px;
+  --kreuz: 62px; --name: 40px; --titel: 60px; --titel-breite: 900px; --punkt: 21px;
+  --url: 19px; --url-rechts: 300px; --url-unten: 66px;
+  --foto-lage: 50% 45%; --deko-gross: 520px; --deko-rechts: 290px; --deko-oben: -60px;
+}
+
+/* LinkedIn-Unternehmensseite: 1128x191, das Logo liegt links unten ueber der
+   Kante (ca. 150 px breit). Sichere Zone: x 230–1090, links unten frei.
+   Hier liegt der Inhalt in einer Reihe statt untereinander. */
+.format-linkedin-firma {
+  --w: 1128px; --h: 191px; --kante: 3px;
+  --links: 236px; --oben: 0; --breite: 600px; --abstand: 12px;
+  --kreuz: 38px; --name: 26px; --titel: 27px; --titel-breite: 360px; --punkt: 12px;
+  --url: 11px;
+  --foto-lage: 50% 58%; --deko-gross: 220px; --deko-rechts: 120px; --deko-oben: -30px;
+}
+.format-linkedin-firma .inhalt { height: 100%; flex-direction: row; align-items: center; gap: 0; }
+.format-linkedin-firma .wortmarke { flex: none; padding-right: 30px; margin-right: 30px; border-right: 1px solid rgba(204, 186, 137, .55); }
+.format-linkedin-firma .text { gap: 9px; flex: 1 1 auto; }
+.format-linkedin-firma .url { right: 40px; bottom: auto; top: 50%; transform: translateY(-50%); }
+
+/* LinkedIn-Profil: 1584x396, Profilfoto links unten (ca. 420 px breit,
+   200 px hoch). Sichere Zone: x 460–1520, y 50–346. */
+.format-linkedin-profil {
+  --w: 1584px; --h: 396px; --kante: 5px;
+  --links: 470px; --oben: 62px; --breite: 800px; --abstand: 26px;
+  --kreuz: 48px; --name: 31px; --titel: 46px; --titel-breite: 760px; --punkt: 17px;
+  --url: 15px; --url-rechts: 64px; --url-unten: 44px;
+  --foto-lage: 50% 55%; --deko-gross: 360px; --deko-rechts: 80px; --deko-oben: -60px;
+}
+
+/* X (Twitter): 1500x500, Profilbild links unten (ca. 260 px breit,
+   140 px hoch), oben und unten koennen je ~50 px wegfallen.
+   Sichere Zone: x 300–1440, y 70–430. */
+.format-x {
+  --w: 1500px; --h: 500px; --kante: 6px;
+  --links: 300px; --oben: 108px; --breite: 1140px; --abstand: 30px;
+  --kreuz: 56px; --name: 36px; --titel: 54px; --titel-breite: 820px; --punkt: 19px;
+  --url: 17px; --url-rechts: 60px; --url-unten: 72px;
+  --foto-lage: 50% 50%; --deko-gross: 440px; --deko-rechts: 60px; --deko-oben: -40px;
+}
+
+/* YouTube: 2560x1440, auf allen Geraeten sichtbar ist nur die Mitte
+   1546x423 (x 507–2053, y 508–931). Alles Wichtige liegt dort. */
+.format-youtube {
+  --w: 2560px; --h: 1440px; --kante: 0px;
+  --links: 540px; --oben: 574px; --breite: 1480px; --abstand: 32px;
+  --kreuz: 64px; --name: 42px; --titel: 64px; --titel-breite: 980px; --punkt: 24px;
+  --url: 20px; --url-rechts: 540px; --url-unten: 540px;
+  --foto-lage: 50% 50%; --deko-gross: 900px; --deko-rechts: 140px; --deko-oben: 60px;
+}
+.format-youtube .kante { display: none; }
+.format-youtube .url { bottom: auto; top: 582px; }
+
+/* Link-Vorschau (Open Graph) 1200x630 fuer geteilte Links. Wird ganz gezeigt. */
+.format-og {
+  --w: 1200px; --h: 630px; --kante: 6px;
+  --links: 84px; --oben: 118px; --breite: 1030px; --abstand: 34px;
+  --kreuz: 60px; --name: 38px; --titel: 58px; --titel-breite: 880px; --punkt: 21px;
+  --url: 18px; --url-rechts: 84px; --url-unten: 66px;
+  --foto-lage: 50% 45%; --deko-gross: 460px; --deko-rechts: 60px; --deko-oben: -40px;
+}
+</style>
+</head>
+<body>
+<div class="banner" id="banner">
+  <div class="foto"></div>
+  <div class="schleier"></div>
+  <div class="deko"><div class="deko-kreuz deko-1"></div><div class="deko-kreuz deko-2"></div></div>
+
+  <div class="inhalt">
+    <div class="wortmarke">
+      <span class="kreuz" aria-hidden="true"></span>
+      <div>
+        <div class="name">Swiss<strong>Premia</strong></div>
+        <div class="claim">Krankenkassen-Vergleich</div>
+      </div>
+    </div>
+    <div class="text">
+      <h1>Krankenkassen-Prämien vergleichen – <span class="akzent">in 1&nbsp;Minute</span></h1>
+      <ul class="punkte">
+        <li>Alle Krankenkassen</li>
+        <li>Offizielle BAG-Prämiendaten</li>
+        <li>Kostenlos &amp; unverbindlich</li>
+        <li>Beratung DE / EN</li>
+      </ul>
+    </div>
+  </div>
+  <div class="url">www.swisspremia.ch</div>
+
+  <div class="kante"></div>
+</div>
+
+<script>
+  // Format und Variante aus der Adresse lesen und als Klassen setzen.
+  const p = new URLSearchParams(location.search);
+  const format = p.get('format') || 'facebook';
+  const variante = p.get('variante') || 'foto';
+  document.getElementById('banner').className = 'banner format-' + format + ' variante-' + variante;
+  // Fuer render.js: meldet, ob Figtree wirklich geladen wurde.
+  document.fonts.ready.then(() => {
+    document.documentElement.setAttribute('data-schrift', document.fonts.check('500 20px Figtree') ? 'figtree' : 'ersatz');
+  });
+</script>
+</body>
+</html>
