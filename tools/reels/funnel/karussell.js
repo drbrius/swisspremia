@@ -31,6 +31,8 @@ const ETIKETT = { fakt: "Fakt des Tages", check: "Mythos-Check", zahl: "Zahl des
 const MODELL_KURZ = ["Standard", "Hausarzt / HMO", "Telmed", "Flex"];
 
 const rund = (n) => Math.round(n);
+/* "in Zürich" bzw. "im Kanton Solothurn" – mit oder ohne Hervorhebung. */
+const im = (r, fett = true) => (r.mehrere ? "in " : "im ") + (fett ? `**${r.name}**` : r.name);
 const jahr = (monatlich) => rund(monatlich * 12);
 const quelle = (region, was) => `Zahlen: ${was}, ${region.beschreibung}, BAG-Prämien ${JAHR}, gerundet. Beispielrechnung, keine Beratung.`;
 const QUELLE_GESETZ = "Grundlage: Krankenversicherungsgesetz (KVG) und Verordnung (KVV). Allgemeine Information, keine Beratung.";
@@ -339,8 +341,8 @@ function zahlFlexibel(r) {
   const immer = ersparnis >= 2200;
   const grenze = immer ? null : Math.round((300 + ersparnis / 0.9) / 50) * 50;
   return {
-    titel: `Sparpotenzial in ${name}`,
-    cover: { zahl: chf(ersparnis), bild: kantonBild(r.kanton, "gipfel"), titel: [`liegen in **${name}** im Jahr zwischen`, "Standard mit Franchise 300 und", `${modell} mit Franchise 2'500.`] },
+    titel: `Sparpotenzial ${im(r, false)}`,
+    cover: { zahl: chf(ersparnis), bild: kantonBild(r.kanton, "gipfel"), titel: [`liegen ${im(r)} im Jahr zwischen`, "Standard mit Franchise 300 und", `${modell} mit Franchise 2'500.`] },
     folien: [
       { art: "balken", hintergrund: "slate", ueber: "Günstigstes Angebot · pro Monat", titel: ["Gleiche Grundversicherung,", "andere Einstellung."],
         balken: [{ label: "Standard · Franchise 300", wert: standard.praemie, text: chf(standard.praemie) }, { label: `${modell} · Franchise 2'500`, wert: sparsam.praemie, text: chf(sparsam.praemie), gold: true }],
@@ -364,8 +366,8 @@ function zahlModelle(r) {
   const best = alternativen[0], diff = jahr(je[0].praemie - best.praemie), name = r.name;
   if (diff < 240) return null;
   return {
-    titel: `Modelle in ${name}`,
-    cover: { zahl: chf(diff), bild: "praxis", titel: ["weniger im Jahr – vom Standard-", `zum ${MODELLE[best.modell]}-Modell in **${name}**.`, "Gleiche Leistungen."] },
+    titel: `Modelle ${im(r, false)}`,
+    cover: { zahl: chf(diff), bild: "praxis", titel: ["weniger im Jahr – vom Standard-", `zum ${MODELLE[best.modell]}-Modell ${im(r)}.`, "Gleiche Leistungen."] },
     folien: [
       { art: "balken", hintergrund: "slate", ueber: "Günstigstes Angebot je Modell · pro Monat", titel: [`${name}:`, "Alternativen zum Standard."],
         balken: [0, 1, 2, 3].filter((m) => je[m]).map((m) => ({ label: MODELL_KURZ[m], wert: je[m].praemie, text: chf(je[m].praemie), gold: m === best.modell })),
@@ -386,8 +388,8 @@ function zahlAlter(r) {
   if (!k || !j || !e || e.praemie <= j.praemie) return null;
   const diff = e.praemie - j.praemie, name = r.name;
   return {
-    titel: `Altersklassen in ${name}`,
-    cover: { zahl: `+ ${chf(diff)}`, bild: "jung", titel: ["im Monat: So viel steigt die", `günstigste Prämie in **${name}**`, "mit 26. Automatisch."] },
+    titel: `Altersklassen ${im(r, false)}`,
+    cover: { zahl: `+ ${chf(diff)}`, bild: "jung", titel: ["im Monat: So viel steigt die", `günstigste Prämie ${im(r)}`, "mit 26. Automatisch."] },
     folien: [
       { art: "balken", hintergrund: "slate", ueber: "Günstigstes Angebot · pro Monat", titel: ["Drei Altersklassen,", "drei Prämien."],
         balken: [{ label: "Kinder (bis 18) · Franchise 0", wert: k.praemie, text: chf(k.praemie) }, { label: "19–25 · Franchise 300", wert: j.praemie, text: chf(j.praemie) }, { label: "ab 26 · Franchise 300", wert: e.praemie, text: chf(e.praemie), gold: true }],
@@ -412,7 +414,7 @@ function zahlFranchise(r) {
   const immer = ersparnis >= 2200;
   const grenze = immer ? null : Math.round((300 + ersparnis / 0.9) / 50) * 50;
   return {
-    titel: `Franchise in ${name}`,
+    titel: `Franchise ${im(r, false)}`,
     cover: { zahl: chf(ersparnis), bild: "rechner", titel: ["Prämie gespart im Jahr – mit", "Franchise 2'500 statt 300, gleiche", `Kasse, gleiches Modell, **${name}**.`] },
     folien: [
       { art: "balken", hintergrund: "slate", ueber: "Dasselbe Angebot · pro Monat", titel: ["Franchise 300", "oder 2'500?"],
