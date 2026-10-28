@@ -8,7 +8,8 @@
      Franchise 300 ... 2500 (Erwachsene), 0 ... 600 (Kinder)
      Unfall   M mit, O ohne Unfalldeckung
    Jeder Eintrag: [versichererNr, modell, praemieProMonat], aufsteigend.
-   Modell: 0 Standard, 1 Hausarzt, 2 HMO, 3 Telmed/weitere.
+   Modell (Einteilung der BAG-Daten seit 2027, tools/build_data.js):
+     0 Standard, 1 Hausarzt/HMO (BAG "PRAXIS"), 2 Telmed/digital, 3 Flex.
 
    WICHTIG: Die Datei enthaelt je Modell nur die acht guenstigsten Angebote.
    Aussagen ueber "die teuerste Kasse" sind daraus NICHT ableitbar – alle
@@ -19,7 +20,8 @@ import path from "node:path";
 import vm from "node:vm";
 import { PROJEKT } from "./konfig.js";
 
-export const MODELLE = ["Standard", "Hausarzt", "HMO", "Telmed"];
+/* Kurznamen fuer Bild und Stimme; Index = Modell in den Daten (s. oben). */
+export const MODELLE = ["Standard", "Hausarzt", "Telmed", "Flex"];
 export const KANTONE = {
   AG: "Aargau", AI: "Appenzell Innerrhoden", AR: "Appenzell Ausserrhoden", BE: "Bern", BL: "Basel-Landschaft", BS: "Basel-Stadt",
   FR: "Freiburg", GE: "Genf", GL: "Glarus", GR: "Graubünden", JU: "Jura", LU: "Luzern", NE: "Neuenburg", NW: "Nidwalden",

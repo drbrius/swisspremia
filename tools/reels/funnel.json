@@ -10,6 +10,8 @@
     "saison": 0.15
   },
   "wiederholungStammTage": 14,
+  "karussellsProTag": 2,
+  "karussellAbstandMinuten": 20,
   "hashtags": "bildtext",
   "stimme": "auto",
   "ablage": "vercel-blob",

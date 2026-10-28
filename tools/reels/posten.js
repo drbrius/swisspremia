@@ -9,6 +9,7 @@
        node posten.js --ausfuehrlich       auch melden, wenn nichts zu tun ist
 
    Je Reel: Container anlegen (Instagram laedt das Video von der URL),
+   je Karussell: ein Container je Folie, dann der Sammel-Container;
    warten bis FINISHED, veroeffentlichen, Hashtags ggf. als ersten
    Kommentar. Fehler werden bis zu dreimal wiederholt, dann aufgegeben.
    Das Kontingent (50 je 24 h) wird vor jedem Lauf gelesen.
@@ -18,7 +19,7 @@ import path from "node:path";
 import { KONFIG, PLAN_ORDNER } from "./funnel/konfig.js";
 import { planLaden, planSpeichern, protokoll, argumente } from "./funnel/zustand.js";
 import { datumKurz, datumLesen } from "./funnel/sprache.js";
-import { verbunden, kontingent, containerErstellen, fertigWarten, veroeffentlichen, kommentieren, permalink, tokenAuffrischen, istInstagramLogin, InstagramFehler } from "./funnel/instagram.js";
+import { verbunden, kontingent, containerErstellen, karussellContainerErstellen, fertigWarten, veroeffentlichen, kommentieren, permalink, tokenAuffrischen, istInstagramLogin, InstagramFehler } from "./funnel/instagram.js";
 
 const arg = argumente();
 const jetzt = arg.jetzt ? new Date(arg.jetzt) : new Date();
@@ -32,7 +33,7 @@ const plan = planLaden(datum);
 if (!plan) { if (laut) console.log(`Kein Plan fuer ${datum} – tag.js ist noch nicht gelaufen.`); process.exit(0); }
 
 const faellig = plan.reels
-  .filter((r) => (r.status === "hochgeladen" || r.status === "fehler") && r.url && zeitpunkt(datum, r.zeit) <= jetzt)
+  .filter((r) => (r.status === "hochgeladen" || r.status === "fehler") && (r.url || (r.bildUrls && r.bildUrls.length)) && zeitpunkt(datum, r.zeit) <= jetzt)
   .sort((a, b) => a.zeit.localeCompare(b.zeit));
 if (!faellig.length) { if (laut) console.log(`Nichts faellig (${datum}, ${jetzt.toTimeString().slice(0, 5)}).`); process.exit(0); }
 
@@ -63,7 +64,10 @@ for (const r of faellig.slice(0, anzahl)) {
   const kennung = `#${r.nr} ${r.titel} (${r.zeit})`;
   try {
     if (!r.containerId) {
-      r.containerId = await containerErstellen({ videoUrl: r.url, bildtext: r.bildtext, coverUrl: r.coverUrl || null, coverMs: r.coverMs ?? null });
+      /* Karussell: Bilder als Kinder, dann der Sammel-Container; Reel: Video. */
+      r.containerId = r.typ === "karussell"
+        ? await karussellContainerErstellen({ bildUrls: r.bildUrls, bildtext: r.bildtext, altTexte: r.altTexte || [], melden: (z) => laut && console.log("  " + z) })
+        : await containerErstellen({ videoUrl: r.url, bildtext: r.bildtext, coverUrl: r.coverUrl || null, coverMs: r.coverMs ?? null });
       planSpeichern(plan);
       protokoll(`Container fuer ${kennung}: ${r.containerId}`, { stumm: !laut });
     }

@@ -262,6 +262,15 @@ beim Ende der Sitzungsantwort abgebrochen. Vor dem Rendern Standbilder mit
 `npx remotion still` pruefen – die Sichtung hat sechs Layoutfehler gefunden, die im Code
 nicht sichtbar waren (Umschlag auf dem Gebaeude, Text auf dem Bogen, Figur in der Stufe).
 
+**Karussells (28.10.2026): zwei Bild-Beitraege je Tag zusaetzlich zu den Reels.** Vier
+Formate in `tools/reels/funnel/karussell.js` – Fakt des Tages (20 KVG-Fakten), Mythos-Check
+(die zwoelf Mythen mit Stempel), Zahl des Tages (eine Zahl aus den BAG-Praemien je Region)
+und Kanton-Steckbrief (Tabelle je Kanton) –, Folien-Design in `src/Karussell.jsx`
+(1080 × 1350, Fraunces als Serife neben Figtree, Unsplash-Fotos als 4:5-Zuschnitt). Gleiche
+Kette wie die Reels: Planeintrag mit `typ: "karussell"`, Rendern als JPEG, Upload je Folie,
+Veroeffentlichung als CAROUSEL ueber `posten.js`. Sichtpruefung mit `npm run karussell`.
+Doku in `tools/reels/FUNNEL.md`, Abschnitt «Karussells».
+
 ### Kantonsseiten mit echten Prämientabellen (nur SwissPremia)
 
 Unter `/kantone/` liegt je Kanton eine Seite mit den günstigsten Angeboten je Prämienregion
@@ -297,6 +306,11 @@ im Stamm, ohne package.json. Die Codes haben sich geändert (`PR_REG_1`, `AKA_03
 Website sind deshalb neu: Standard, Hausarzt-/HMO, Telmed/digital, flexibel. 32 Versicherer
 statt 34. Die Jahreszahl steht im Datensatz und wird nirgends mehr von Hand gepflegt – ausser
 in Titeln, Descriptions und Texten der HTML-Vorlagen, dort per Suchen/Ersetzen.
+
+Der Reel-Funnel liest dieselbe Datei: `tools/reels/funnel/daten.js` kennt die Modelle seit
+28.10.2026 als Standard, Hausarzt (= Hausarzt/HMO), Telmed, Flex – vorher stand dort noch
+die alte Reihenfolge mit HMO an dritter Stelle, was Telmed-Angebote als HMO beschriftet
+haette.
 
 ### Der Vorbehalt, der bleibt
 

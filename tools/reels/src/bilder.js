@@ -40,6 +40,8 @@ export const BILDER = {
 };
 
 export const bildDatei = (name) => `bilder/${name}.jpg`;
+/* 4:5-Zuschnitt fuer die Karussell-Folien (src/Karussell.jsx). */
+export const bildDateiKarussell = (name) => `bilder/${name}-k.jpg`;
 
 /* Foto je Kanton fuer regionale Reels; sonst Schweiz allgemein. */
 export const KANTON_BILD = { ZH: "zuerich", BE: "bern", GE: "genf", TI: "lugano", VD: "lausanne", GR: "bahn" };

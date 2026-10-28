@@ -1,12 +1,13 @@
 # Reel-Funnel: täglich 10–20 Reels, automatisch auf Instagram
 
-Stand: 25. Oktober 2026. Zwei Skripte, zwei Aufgaben in der Windows-Aufgabenplanung,
-alles andere ist Konfiguration.
+Stand: 28. Oktober 2026. Zwei Skripte, zwei Aufgaben in der Windows-Aufgabenplanung,
+alles andere ist Konfiguration. Seit 28.10.2026 kommen zu den Reels täglich zwei
+Bild-Karussells dazu (Abschnitt «Karussells»).
 
 | Schritt | Was passiert | Wer |
 |---|---|---|
-| 05:30 | `tag.js` würfelt die Tagesanzahl (10–20), wählt Themen, schreibt Bildtexte, holt Tonspuren, rendert die MP4, lädt sie in die Ablage, verteilt Sendezeiten über den Tag | Aufgabe «SwissPremia Reels - Tag» |
-| alle 15 Min. | `posten.js` veröffentlicht, was fällig ist: Container anlegen, warten, publizieren | Aufgabe «SwissPremia Reels - Posten» |
+| 05:30 | `tag.js` würfelt die Tagesanzahl (10–20), wählt Themen, schreibt Bildtexte, holt Tonspuren, rendert die MP4, lädt sie in die Ablage, verteilt Sendezeiten über den Tag; dazu zwei Karussells (Folien als JPEG) | Aufgabe «SwissPremia Reels - Tag» |
+| alle 15 Min. | `posten.js` veröffentlicht, was fällig ist: Container anlegen, warten, publizieren – Reels und Karussells | Aufgabe «SwissPremia Reels - Posten» |
 
 Der Stand jedes Reels steht in `plan/<Datum>.json` (`geplant → gerendert → hochgeladen →
 veroeffentlicht`), jedes Ereignis in `plan/protokoll.log`. Beide Skripte lassen sich beliebig
@@ -52,6 +53,40 @@ denselben Plan (deterministisch nach Datum).
 **Mehr Formate:** eine Funktion in `funnel/formate.js`, die ein Paket mit `reel` (Szenen wie in
 `src/reels.js`) und `bildtext` liefert, und ein Eintrag in `DATENFORMATE` oder `kandidaten()`.
 Neue Szenenarten entstehen wie bisher in `src/Grafik.jsx`.
+
+### Karussells (seit 28.10.2026)
+
+Zusätzlich zu den Reels postet der Funnel täglich zwei Bild-Karussells (`karussellsProTag`),
+Hochformat 4:5 (1080 × 1350), vier bis sechs Folien, ohne Stimme. Sie liegen zwischen den
+Reels (ein Drittel und zwei Drittel des Sendefensters, mindestens `karussellAbstandMinuten`
+zu jedem anderen Beitrag) und laufen über dieselbe Kette: Planeintrag mit `typ: "karussell"`
+in `plan/<Datum>.json`, Rendern mit Remotion (`karussellRendern`, eine Browser-Sitzung je
+Karussell), Upload jeder Folie in die Ablage, Veröffentlichung über `posten.js` (je Folie ein
+Container mit `is_carousel_item`, dann ein `CAROUSEL`-Container mit `children`, dann
+`media_publish`; zählt als eine Veröffentlichung im Kontingent; jede Folie bekommt einen
+Alt-Text).
+
+Vier Formate in `funnel/karussell.js`, je zwei je Gruppe, im Tageswechsel – an jedem Tag ein
+Wissens- und ein Daten-Karussell:
+
+| Format | Stil | Inhalt | Folien |
+|---|---|---|---|
+| `fakt` | Fakt des Tages – redaktionell, Serifenschrift (Fraunces), grosses Foto, Fotokarten | 20 Fakten aus dem KVG (`FAKTEN`): Titelfolie, eine Zahl, zwei Textfolien mit Merksatz, Abbinder | 4–5 |
+| `check` | Mythos-Check – Sprechblase, Polaroid, Stempel «Stimmt nicht» | die zwölf Mythen aus `themen.js` | 4 |
+| `zahl` | Zahl des Tages – plakativ, fette Zahl, schräg angeschnittenes Foto, Aufkleber | eine Zahl aus den BAG-Prämien je Prämienregion, vier Varianten im Wechsel (Sparpotenzial, Modelle, Altersklassen, Franchise) mit Balken | 5 |
+| `steckbrief` | Kanton-Steckbrief – Foto mit Karte, Tabelle | je Kanton: günstigstes Angebot je Region und Modell, Kinder und junge Erwachsene, Sparpotenzial | 5 |
+
+Die Folien sind eine eigene Komposition `karussell` in `src/Karussell.jsx` (eine Folie je
+Frame, fps 1). Folienarten: `cover`, `text`, `zahl`, `balken`, `liste`, `tabelle`,
+`stempel`, `cta`. Fotos sind dieselben Unsplash-Motive wie bei den Reels, zusätzlich als
+4:5-Zuschnitt (`public/bilder/<name>-k.jpg`, lädt `npm run bilder`). Regeln wie bei den
+Reels: keine Kassennamen, nur günstigste Angebote, Quellenzeile im Bildtext. Verlauf und
+Sperrfrist wie bei den Reels (`plan/verlauf.json`, Schlüssel `fakt|leistung`,
+`zahl|ZH1` …); ein Kanton, der heute schon ein Reel hat, wird möglichst gemieden.
+
+Sichtprüfung vor dem ersten Posten: `npm run karussell` rendert je Format ein Karussell nach
+`out/karussell-probe/` (mit `index.html` als Kontaktbogen). Das Board zeigt Karussells mit
+4:5-Vorschau und allen Folien in der Schublade.
 
 ### Bewegung und Fotos (seit 25.10.2026)
 
@@ -215,6 +250,8 @@ npm run plan                      # Plan für heute anzeigen (nichts gerendert)
 node tag.js --datum=2026-11-03    # einen Tag vorproduzieren
 node tag.js --anzahl=12 --neu     # heute neu planen mit fester Anzahl
 node tag.js --nur=4               # nur Reel Nr. 4 (z. B. nach Fehler)
+node tag.js --ohne-karussells     # heute keine Karussells planen
+npm run karussell                 # je Format ein Karussell rendern (out/karussell-probe)
 node posten.js --ausfuehrlich     # was wäre jetzt fällig?
 node posten.js --alle             # alles Fällige sofort posten
 node funnel/instagram.js kontingent
@@ -233,6 +270,8 @@ node funnel/instagram.js kontingent
 | `stufenSaison` | tofu .35, mofu .35, bofu .3 | Funnel-Mix, solange eine Kündigungsfrist läuft |
 | `mix` | daten .5, wissen .35 | innerhalb einer Stufe: Daten- zu Wissens-Reels |
 | `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
+| `karussellsProTag` | `2` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine) |
+| `karussellAbstandMinuten` | `20` | Mindestabstand eines Karussells zu jedem anderen Beitrag |
 | `hashtags` | `bildtext` | `bildtext`, `kommentar` (erster Kommentar) oder `keine` |
 | `stimme` | `auto` | `aus` = immer stumm |
 | `ablage` | `vercel-blob` | oder `ordner` |
@@ -314,6 +353,7 @@ tools/reels/
     konfig.js               Einstellungen und Geheimnisse (nur Umgebung)
     daten.js                BAG-Prämien lesen, Regionen benennen
     formate.js              die Reel-Formate (daten / wissen / saison)
+    karussell.js            die vier Karussell-Formate, Fakten-Bank, Auswahl und Sendezeiten
     themen.js               Bildtexte der Stamm-Reels, Mythen, Hashtags
     bildtext.js             Caption zusammensetzen
     redaktion.js            Auswahl, Reihenfolge, Sendezeiten
@@ -326,10 +366,12 @@ tools/reels/
     board.js                Board-Stand bauen, verschlüsseln, ablegen
   test/graph-attrappe.js    Nachbau der Graph API für Tests
   test/standbilder.js       ein Standbild je Szene als Kontaktbogen (Layoutprüfung)
+  test/karussell-probe.js   je Format ein Karussell als JPEG-Folien plus Kontaktbogen
+  src/Karussell.jsx         Folien-Design der Karussells (Komposition «karussell», 1080 × 1350)
   src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
   src/bilder.js             Unsplash-Motive; funnel/bilder.js lädt sie nach public/bilder/
   plan/                     Tagespläne, Verlauf, Protokoll (nicht im Git)
-  out/tag/<Datum>/          gerenderte Videos (nicht im Git)
+  out/tag/<Datum>/          gerenderte Videos und Karussell-Ordner mit Folien (nicht im Git)
   public/audio/tag/         Tonspuren der Daten-Reels (nicht im Git)
 ```
 

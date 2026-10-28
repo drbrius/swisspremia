@@ -58,7 +58,7 @@ export function planReels() {
         datum: plan.datum, nr: r.nr, zeit: r.zeit, titel: r.titel, format: r.format, gruppe: r.gruppe, sprache: r.sprache,
         status: r.status, fehler: r.fehler || null, versuche: r.versuche || 0,
         mediaId: r.mediaId || null, permalink: r.permalink || null, veroeffentlicht: r.veroeffentlicht || null,
-        cover: r.coverUrl || null, video: r.url || null, dauer: r.dauerSekunden || null,
+        typ: r.typ || "reel", cover: r.coverUrl || null, video: r.url || null, bilder: r.bildUrls || null, dauer: r.dauerSekunden || null,
         text: gekuerzt(r.bildtext, 900)
       });
     }
@@ -71,7 +71,7 @@ function archivAktualisieren(reels) {
   const archiv = lesen(ARCHIV, {});
   for (const r of reels) {
     if (!r.mediaId) continue;
-    archiv[r.mediaId] = { datum: r.datum, nr: r.nr, zeit: r.zeit, titel: r.titel, format: r.format, gruppe: r.gruppe, cover: r.cover, video: r.video, dauer: r.dauer };
+    archiv[r.mediaId] = { datum: r.datum, nr: r.nr, zeit: r.zeit, titel: r.titel, format: r.format, gruppe: r.gruppe, typ: r.typ, cover: r.cover, video: r.video, bilder: r.bilder || null, dauer: r.dauer };
   }
   schreiben(ARCHIV, archiv);
   return archiv;

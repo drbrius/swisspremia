@@ -93,6 +93,31 @@ export async function containerErstellen({ videoUrl, bildtext, coverUrl = null, 
   return d.id;
 }
 
+/* Karussell (2–10 Bilder, JPEG, 4:5 bis 1.91:1): je Bild ein Container mit
+   is_carousel_item, dann ein CAROUSEL-Container mit den Kindern – der wird
+   wie ein Reel veroeffentlicht (fertigWarten, veroeffentlichen). alt_text
+   ist der Bildbeschrieb fuer Screenreader; lehnt die API den Parameter ab,
+   wird das Bild ohne ihn angelegt. */
+export async function karussellContainerErstellen({ bildUrls, bildtext, altTexte = [], melden = () => {} }) {
+  if (!bildUrls || bildUrls.length < 2 || bildUrls.length > 10) throw new InstagramFehler(`Ein Karussell braucht 2 bis 10 Bilder (${bildUrls ? bildUrls.length : 0}).`);
+  const kinder = [];
+  for (const [i, url] of bildUrls.entries()) {
+    const params = { image_url: url, is_carousel_item: "true" };
+    const alt = altTexte[i] ? String(altTexte[i]).slice(0, 1000) : null;
+    let d;
+    try { d = await api(`/${GEHEIM.igUserId}/media`, { methode: "POST", params: alt ? { ...params, alt_text: alt } : params }); }
+    catch (e) {
+      if (!alt || !/alt_text/i.test(e.message)) throw e;
+      d = await api(`/${GEHEIM.igUserId}/media`, { methode: "POST", params });
+    }
+    kinder.push(d.id);
+    melden(`Folie ${i + 1}/${bildUrls.length}: Container ${d.id}`);
+  }
+  for (const id of kinder) await fertigWarten(id, { maxSekunden: 240, intervallSekunden: 5, melden });
+  const d = await api(`/${GEHEIM.igUserId}/media`, { methode: "POST", params: { media_type: "CAROUSEL", children: kinder.join(","), caption: bildtext } });
+  return d.id;
+}
+
 export async function containerStatus(containerId) {
   return api(`/${containerId}`, { params: { fields: "status_code,status" } });
 }

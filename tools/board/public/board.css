@@ -295,3 +295,7 @@ button, input, select { font: inherit; color: inherit; }
   .balken-zeile { grid-template-columns: 88px minmax(0, 1fr) auto; }
   #konto { display: none; }
 }
+
+/* Karussell-Folien in der Schublade */
+.folien { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 8px; }
+.folie { width: 132px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; flex: none; background: #223; }

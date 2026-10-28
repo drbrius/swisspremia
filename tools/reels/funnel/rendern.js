@@ -10,7 +10,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { bundle } from "@remotion/bundler";
-import { renderMedia, renderStill, selectComposition } from "@remotion/renderer";
+import { renderMedia, renderStill, renderFrames, selectComposition } from "@remotion/renderer";
 import { WURZEL } from "./konfig.js";
 import { szenenStarts } from "../src/takt.js";
 
@@ -84,6 +84,35 @@ export async function coverRendern(reel, ziel, anteil = 0.3, { melden = () => {}
   });
   fs.renameSync(ziel + ".teil.jpg", ziel);
   return Math.round((frame / k.fps) * 1000);
+}
+
+/* Karussell: jede Folie als JPEG (1080 x 1350) nach "ordner" – eine
+   Browser-Sitzung fuer alle Folien (renderFrames). Dateien 01.jpg, 02.jpg …
+   in Folienreihenfolge; liefert die Pfade. Instagram verlangt JPEG, 4:5 bis
+   1.91:1, hoechstens 8 MB je Bild. */
+export async function karussellRendern(karussell, ordner, { melden = () => {} } = {}) {
+  const url = await buendeln({ melden });
+  const inputProps = { karussell };
+  const k = await selectComposition({ serveUrl: url, id: "karussell", inputProps, browserExecutable: BROWSER, logLevel: "warn" });
+  const teil = ordner + ".teil";
+  fs.rmSync(teil, { recursive: true, force: true });
+  fs.mkdirSync(teil, { recursive: true });
+  await renderFrames({
+    composition: k, serveUrl: url, inputProps, outputDir: teil, imageFormat: "jpeg", jpegQuality: 92,
+    frameRange: [0, k.durationInFrames - 1], concurrency: 1, browserExecutable: BROWSER, logLevel: "warn",
+    onStart: () => {}, onFrameUpdate: () => {}
+  });
+  const gerendert = fs.readdirSync(teil).filter((n) => /^element-\d+\.jpe?g$/i.test(n)).sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]));
+  if (gerendert.length !== k.durationInFrames) throw new Error(`Karussell ${karussell.id}: ${gerendert.length} von ${k.durationInFrames} Folien gerendert.`);
+  fs.rmSync(ordner, { recursive: true, force: true });
+  fs.mkdirSync(ordner, { recursive: true });
+  const dateien = gerendert.map((n, i) => {
+    const ziel = path.join(ordner, `${String(i + 1).padStart(2, "0")}.jpg`);
+    fs.renameSync(path.join(teil, n), ziel);
+    return ziel;
+  });
+  fs.rmSync(teil, { recursive: true, force: true });
+  return dateien;
 }
 
 /* Laenge einer MP4 in Millisekunden – aus dem mvhd-Atom, ohne ffmpeg. */

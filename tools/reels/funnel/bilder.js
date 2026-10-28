@@ -12,31 +12,45 @@
 import fs from "node:fs";
 import path from "node:path";
 import { WURZEL } from "./konfig.js";
-import { BILDER, bildDatei } from "../src/bilder.js";
+import { BILDER, bildDatei, bildDateiKarussell } from "../src/bilder.js";
 
 const ORDNER = path.join(WURZEL, "public");
+
+/* Zwei Zuschnitte je Motiv: Hochformat 9:16 fuer die Reels (mit Reserve
+   fuer die Ken-Burns-Bewegung) und 4:5 fuer die Karussell-Folien. */
+const VARIANTEN = [[bildDatei, "w=1296&h=2304"], [bildDateiKarussell, "w=1080&h=1350"]];
 
 export async function bilderSichern({ neu = false, melden = () => {} } = {}) {
   const bereit = new Set();
   fs.mkdirSync(path.join(ORDNER, "bilder"), { recursive: true });
   for (const [name, id] of Object.entries(BILDER)) {
-    const ziel = path.join(ORDNER, bildDatei(name));
-    if (!neu && fs.existsSync(ziel) && fs.statSync(ziel).size > 10_000) { bereit.add(name); continue; }
-    try {
-      const r = await fetch(`https://images.unsplash.com/${id}?w=1296&h=2304&fit=crop&crop=entropy&q=80&fm=jpg`);
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      if (!/image\/jpe?g/.test(r.headers.get("content-type") || "")) throw new Error("kein JPEG: " + r.headers.get("content-type"));
-      const daten = Buffer.from(await r.arrayBuffer());
-      fs.writeFileSync(ziel + ".teil", daten);
-      fs.renameSync(ziel + ".teil", ziel);
-      bereit.add(name);
-      melden(`Bild ${name.padEnd(12)} ${(daten.length / 1024).toFixed(0)} KB`);
-    } catch (e) {
-      melden(`Bild ${name} nicht geladen: ${e.message}`);
+    for (const [dateiVon, masse] of VARIANTEN) {
+      const ziel = path.join(ORDNER, dateiVon(name));
+      const fuerReel = dateiVon === bildDatei;
+      if (!neu && fs.existsSync(ziel) && fs.statSync(ziel).size > 10_000) { if (fuerReel) bereit.add(name); continue; }
+      try {
+        const r = await fetch(`https://images.unsplash.com/${id}?${masse}&fit=crop&crop=entropy&q=80&fm=jpg`);
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        if (!/image\/jpe?g/.test(r.headers.get("content-type") || "")) throw new Error("kein JPEG: " + r.headers.get("content-type"));
+        const daten = Buffer.from(await r.arrayBuffer());
+        fs.writeFileSync(ziel + ".teil", daten);
+        fs.renameSync(ziel + ".teil", ziel);
+        if (fuerReel) bereit.add(name);
+        melden(`Bild ${path.basename(ziel).padEnd(16)} ${(daten.length / 1024).toFixed(0)} KB`);
+      } catch (e) {
+        melden(`Bild ${path.basename(ziel)} nicht geladen: ${e.message}`);
+      }
     }
   }
   return bereit;
 }
+
+/* Karussell: liegt der 4:5-Zuschnitt vor? Folien ohne Foto rendern, wenn nicht. */
+export const karussellBildBereit = (name) => fs.existsSync(path.join(ORDNER, bildDateiKarussell(name)));
+export const karussellBilderFiltern = (k) => ({
+  ...k,
+  folien: k.folien.map((f) => (f.bild && !karussellBildBereit(f.bild) ? { ...f, bild: undefined } : f))
+});
 
 /* Szenen, deren Foto fehlt, ohne Foto rendern. */
 export const bilderFiltern = (reel, bereit) => ({

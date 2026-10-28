@@ -5,6 +5,7 @@ import { Reel } from "./Reel.jsx";
 import { REELS } from "./reels.js";
 import { FPS, NACHHALL, gesamtFrames } from "./takt.js";
 import { Modellblatt } from "./Modellblatt.jsx";
+import { Karussell, KARUSSELL_BEISPIEL, KARUSSELL_BREITE, KARUSSELL_HOEHE } from "./Karussell.jsx";
 
 export { FPS };
 export const BREITE = 1080;
@@ -76,6 +77,20 @@ export const RemotionRoot = () => (
       durationInFrames={mindestFrames(REELS[0])}
       defaultProps={{ reel: REELS[0], dauern: null }}
       calculateMetadata={metadaten}
+    />
+
+    {/* Karussell-Folien fuer Instagram (1080 x 1350): eine Folie je Frame,
+        fps 1, Laenge = Anzahl Folien. Der Funnel gibt das Karussell als
+        Eingabe (inputProps.karussell) und rendert jeden Frame als JPEG. */}
+    <Composition
+      id="karussell"
+      component={Karussell}
+      width={KARUSSELL_BREITE}
+      height={KARUSSELL_HOEHE}
+      fps={1}
+      durationInFrames={KARUSSELL_BEISPIEL.folien.length}
+      defaultProps={{ karussell: KARUSSELL_BEISPIEL }}
+      calculateMetadata={({ props }) => ({ durationInFrames: Math.max(1, props.karussell.folien.length) })}
     />
 
     {/* Kontrollblatt der Figuren (Standbild): npx remotion still src/index.jsx modellblatt out/modellblatt.png */}

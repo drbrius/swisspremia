@@ -10,6 +10,7 @@
        node tag.js --ohne-upload           lokal lassen (kein Blob-Token noetig)
        node tag.js --nur=3                 nur Reel Nr. 3 des Plans bearbeiten
        node tag.js --nachschub             heute noch Reels bis Fensterende anhaengen (--nachschub=2: hoechstens 2)
+       node tag.js --ohne-karussells       heute keine Karussells planen (sonst karussellsProTag aus funnel.json)
 
    Jeder Schritt merkt sich seinen Stand im Plan (plan/<datum>.json); ein
    zweiter Lauf am selben Tag macht nur, was noch fehlt. Das Posten
@@ -21,9 +22,10 @@ import { KONFIG, WURZEL, AUSGABE_ORDNER, AUDIO_ORDNER, GEHEIM } from "./funnel/k
 import { planLaden, planSpeichern, verlaufLaden, verlaufMerken, protokoll, aufraeumen, argumente } from "./funnel/zustand.js";
 import { planErstellen, nachschubPlanen } from "./funnel/redaktion.js";
 import { stimmenErzeugen, StimmeFehler } from "./funnel/stimme.js";
-import { reelRendern, coverRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
+import { reelRendern, coverRendern, karussellRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
 import { hochladen, erreichbar } from "./funnel/ablage.js";
-import { bilderSichern, bilderFiltern } from "./funnel/bilder.js";
+import { bilderSichern, bilderFiltern, karussellBilderFiltern } from "./funnel/bilder.js";
+import { karussellsPlanen } from "./funnel/karussell.js";
 import { datumKurz } from "./funnel/sprache.js";
 import { verbunden } from "./funnel/instagram.js";
 
@@ -59,10 +61,23 @@ if (!plan) {
 }
 for (const h of plan.hinweise || []) protokoll("Hinweis: " + h);
 
+/* Karussells (Bild-Beitraege, funnel/karussell.js): karussellsProTag je Tag,
+   zwischen die Reels gelegt. Fehlen sie im Plan – aelterer Plan oder
+   --neu –, werden sie hier ergaenzt; --ohne-karussells laesst sie weg. */
+if (!arg["ohne-karussells"]) {
+  const neu = karussellsPlanen(plan, KONFIG, { verlauf: verlaufLaden() });
+  if (neu.length) {
+    plan.reels.push(...neu);
+    planSpeichern(plan);
+    verlaufMerken(neu.map((r) => r.schluessel), datum);
+    protokoll(`Karussells ${datum}: ${neu.map((r) => `${r.titel} (${r.zeit})`).join(", ")}.`);
+  }
+}
+
 console.log("");
-console.log(" Nr  Zeit   Status          Gruppe  Format     Titel");
+console.log(" Nr  Zeit   Status          Art      Format      Titel");
 for (const r of plan.reels) {
-  console.log(` ${String(r.nr).padStart(2)}  ${r.zeit}  ${r.status.padEnd(15)} ${r.gruppe.padEnd(7)} ${r.format.padEnd(10)} ${r.titel}${r.warnungen ? "   ! " + r.warnungen.join(" ") : ""}`);
+  console.log(` ${String(r.nr).padStart(2)}  ${r.zeit}  ${r.status.padEnd(15)} ${(r.typ === "karussell" ? "Karuss." : r.gruppe).padEnd(8)} ${r.format.padEnd(11)} ${r.titel}${r.warnungen ? "   ! " + r.warnungen.join(" ") : ""}`);
 }
 console.log("");
 if (arg["nur-plan"]) {
@@ -71,7 +86,9 @@ if (arg["nur-plan"]) {
 }
 
 const auswahl = plan.reels.filter((r) => !nurNr || r.nr === nurNr);
-const offen = auswahl.filter((r) => r.status === "geplant");
+const offenAlle = auswahl.filter((r) => r.status === "geplant");
+const offen = offenAlle.filter((r) => r.typ !== "karussell");             // Reels: Stimme + Video
+const offenKarussells = offenAlle.filter((r) => r.typ === "karussell");   // Karussells: nur Folien
 
 /* ---------------------------------------------------------- 2 Stimme */
 /* Ist ein Schluessel gespeichert, aber ElevenLabs lehnt ab (falscher
@@ -110,7 +127,7 @@ if (offen.length && !ohneStimme) {
 if (offen.length && !BROWSER) protokoll("Hinweis: kein installierter Chrome/Edge gefunden – Remotion versucht den mitgelieferten Browser.");
 /* Fotos muessen vor dem Buendeln auf der Platte liegen (Remotion kopiert
    public/ beim Buendeln). Fehlt eines, laeuft die Szene ohne Foto. */
-const bilderBereit = offen.length ? await bilderSichern({ melden: (z) => protokoll(z, { stumm: true }) }) : new Set();
+const bilderBereit = offenAlle.length ? await bilderSichern({ melden: (z) => protokoll(z, { stumm: true }) }) : new Set();
 const tagesOrdner = path.join(AUSGABE_ORDNER, datum);
 for (const r of offen) {
   const name = `${String(r.nr).padStart(2, "0")}-${r.reel.id}.mp4`;
@@ -155,6 +172,35 @@ for (const r of offen) {
   }
 }
 
+/* ------------------------------------------------ 3b Karussells rendern */
+/* Keine Stimme, kein Video: jede Folie ein JPEG in einem eigenen Ordner. */
+for (const r of offenKarussells) {
+  const ordner = path.join(tagesOrdner, `${String(r.nr).padStart(2, "0")}-${r.karussell.id}`);
+  const relativ = (p) => path.relative(WURZEL, p).split(path.sep).join("/");
+  try {
+    let dateien;
+    const vorhanden = fs.existsSync(ordner) ? fs.readdirSync(ordner).filter((n) => /^\d\d\.jpg$/.test(n)).sort() : [];
+    if (vorhanden.length === r.karussell.folien.length) {
+      dateien = vorhanden.map((n) => path.join(ordner, n));
+      console.log(`  Folien  #${r.nr} ${r.titel} bereits vorhanden (${dateien.length})`);
+    } else {
+      process.stdout.write(`  Folien  #${r.nr} ${r.titel} `);
+      dateien = await karussellRendern(karussellBilderFiltern(r.karussell), ordner, { melden: (z) => console.log("          " + z) });
+      console.log(`${dateien.length} Folien fertig`);
+    }
+    r.dateien = dateien.map(relativ);
+    r.coverDatei = r.dateien[0];
+    r.status = "gerendert";
+    r.fehler = null;
+    planSpeichern(plan);
+    protokoll(`Gerendert #${r.nr} ${r.titel} (${dateien.length} Folien)`, { stumm: true });
+  } catch (e) {
+    r.fehler = "Render: " + (e.message || String(e)).split("\n")[0];
+    planSpeichern(plan);
+    protokoll(`FEHLER Render #${r.nr} ${r.titel}: ${r.fehler}`);
+  }
+}
+
 /* -------------------------------------------------------- 4 Hochladen */
 if (!arg["ohne-upload"]) {
   for (const r of auswahl.filter((x) => x.status === "gerendert")) {
@@ -164,6 +210,24 @@ if (!arg["ohne-upload"]) {
          kann nicht die alte Fassung aus dem CDN-Zwischenspeicher laden. */
       const kennung = (datei) => Math.round(fs.statSync(datei).mtimeMs).toString(36).slice(-6);
       const ablageName = (datei) => path.basename(datei).replace(/(\.\w+)$/, `-${kennung(datei)}$1`);
+      /* Karussell: jede Folie einzeln hochladen; Instagram holt sie von den URLs. */
+      if (r.typ === "karussell") {
+        const urls = [];
+        for (const d of r.dateien) {
+          const q = path.join(WURZEL, d);
+          const u = await hochladen(q, path.join("reels", datum, `${String(r.nr).padStart(2, "0")}-${r.karussell.id}`, ablageName(q)));
+          const probe = await erreichbar(u);
+          if (!probe.ok) throw new Error(`Folie nicht erreichbar (HTTP ${probe.status}${probe.fehler ? ", " + probe.fehler : ""}): ${u}`);
+          urls.push(u);
+        }
+        r.bildUrls = urls;
+        r.coverUrl = urls[0];
+        r.status = "hochgeladen";
+        r.fehler = null;
+        planSpeichern(plan);
+        console.log(`  Ablage  #${r.nr} ${urls.length} Folien, ${urls[0]}`);
+        continue;
+      }
       const quelle = path.join(WURZEL, r.datei);
       const url = await hochladen(quelle, path.join("reels", datum, ablageName(quelle)));
       const probe = await erreichbar(url);

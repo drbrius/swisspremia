@@ -36,6 +36,8 @@ const STANDARD = {
   stufen: { tofu: 0.45, mofu: 0.35, bofu: 0.2 },     // Funnel-Mix im Normalbetrieb
   stufenSaison: { tofu: 0.35, mofu: 0.35, bofu: 0.3 }, // waehrend einer Kuendigungsfrist (Countdown laeuft)
   wiederholungStammTage: 14,       // ein Stamm-Reel fruehestens nach so vielen Tagen erneut
+  karussellsProTag: 2,             // Bild-Karussells je Tag, zusaetzlich zu den Reels (0 = keine)
+  karussellAbstandMinuten: 20,     // Mindestabstand eines Karussells zu jedem anderen Beitrag
   hashtags: "bildtext",            // bildtext | kommentar | keine
   stimme: "auto",                  // auto (wenn Schluessel da) | aus
   ablage: "vercel-blob",           // vercel-blob | ordner
@@ -59,7 +61,8 @@ const UMGEBUNG = {
   reelsProTag: "REELS_PRO_TAG", postVon: "POST_VON", postBis: "POST_BIS", mindestabstandMinuten: "MINDESTABSTAND_MINUTEN",
   proTick: "PRO_TICK", hashtags: "HASHTAGS", stimme: "STIMME", ablage: "ABLAGE", videoOrdner: "VIDEO_ORDNER",
   videoBasisUrl: "VIDEO_BASIS_URL", aufbewahrungTage: "AUFBEWAHRUNG_TAGE", igHost: "IG_HOST", igApiVersion: "IG_API_VERSION",
-  igProtokoll: "IG_PROTOKOLL", igLogin: "IG_LOGIN", wiederholungStammTage: "WIEDERHOLUNG_STAMM_TAGE"
+  igProtokoll: "IG_PROTOKOLL", igLogin: "IG_LOGIN", wiederholungStammTage: "WIEDERHOLUNG_STAMM_TAGE",
+  karussellsProTag: "KARUSSELLS_PRO_TAG", karussellAbstandMinuten: "KARUSSELL_ABSTAND_MINUTEN"
 };
 
 function zusammenfuehren() {

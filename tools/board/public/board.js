@@ -14,7 +14,9 @@ const ABGLEICH_ALT_MIN = 75;   // danach Warnung: laeuft der Rechner?
 
 const FORMATE = {
   franchise: "Franchise", modelle: "Modelle", alter: "Alter", unfall: "Unfall", flexibel: "Sparpotenzial",
-  regionen: "Regionen", kantone: "Kantone", countdown: "Countdown", mythos: "Mythen", stamm: "Stamm-Reels", hand: "Von Hand"
+  regionen: "Regionen", kantone: "Kantone", countdown: "Countdown", mythos: "Mythen", stamm: "Stamm-Reels", hand: "Von Hand",
+  /* Karussells (Bild-Beitraege, tools/reels/funnel/karussell.js) */
+  fakt: "Fakt des Tages", check: "Mythos-Check", zahl: "Zahl des Tages", steckbrief: "Kanton-Steckbrief"
 };
 const STATUS = {
   geplant: { text: "Geplant", art: "neutral", symbol: "○" },
@@ -335,7 +337,7 @@ function planZeichnen() {
       onclick: () => schubladePlan(r), onkeydown: (ev) => { if (ev.key === "Enter") schubladePlan(r); }
     },
       el("span", { class: "zeit", text: r.zeit }),
-      daumen(m?.bild || r.cover, true),
+      daumen(m?.bild || r.cover, r.typ !== "karussell"),
       el("div", { class: "titelzelle" },
         el("div", { class: "titel", text: r.titel }),
         el("div", { class: "unter" }, el("span", { class: "chip", text: FORMATE[r.format] || r.format }), r.fehler ? el("span", { class: "fehlertext", text: r.fehler }) : r === naechstes ? "als Nächstes" : "")),
@@ -546,7 +548,9 @@ function schubladePlan(r) {
     el("p", { class: "leise", text: `Geplant ${tagText(r.datum)}, ${r.zeit} Uhr` + (r.dauer ? ` · ${String(r.dauer).replace(".", ",")} s` : "") }),
     el("p", {}, statusPille(r.statusAnzeige)),
     r.fehler ? el("p", { class: "fehlertext", text: `Fehler (Versuch ${r.versuche || 1}): ${r.fehler}` }) : null,
-    medienAnzeige(r.video, r.cover, true) || el("p", { class: "leer", text: "Noch nicht gerendert." }),
+    r.bilder && r.bilder.length
+      ? el("div", { class: "folien" }, ...r.bilder.map((u, i) => el("img", { class: "folie", src: u, alt: `Folie ${i + 1}`, loading: "lazy", referrerpolicy: "no-referrer" })))
+      : medienAnzeige(r.video, r.cover, r.typ !== "karussell") || el("p", { class: "leer", text: "Noch nicht gerendert." }),
     instagramLink(r.permalink),
     r.text ? el("div", { class: "bildtext", text: r.text }) : null
   ]);

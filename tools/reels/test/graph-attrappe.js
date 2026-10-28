@@ -1,7 +1,9 @@
 /* =========================================================================
    Attrappe der Instagram Graph API – zum Testen von posten.js ohne
    echtes Konto. Spielt die drei Schritte (Container, Status, Publish)
-   nach, zaehlt das Kontingent und liefert Videos aus einem Ordner aus.
+   nach – fuer Reels (video_url) und Karussells (is_carousel_item,
+   CAROUSEL mit children) –, zaehlt das Kontingent und liefert Videos und
+   Bilder aus einem Ordner aus.
 
        node test/graph-attrappe.js 8787 C:/pfad/zu/videos
 
@@ -67,7 +69,29 @@ http.createServer(async (req, res) => {
   if (knoten === "debug_token") return json(res, { data: { type: "PAGE", is_valid: true, expires_at: 0, scopes: ["instagram_basic", "instagram_content_publish"] } });
 
   if (kante === "media" && req.method === "POST") {
-    if (params.media_type !== "REELS") return fehler(res, 400, "media_type muss REELS sein", 100);
+    /* Ids bleiben unter 2^53, sonst rundet JavaScript. */
+    const neuerContainer = (daten) => { const id = "1789" + String(100000 + zustand.laufnummer++); zustand.container[id] = { status: "IN_PROGRESS", abfragen: 0, ...daten }; return id; };
+    const bildPruefen = async (url) => {
+      const probe = await fetch(url, { method: "HEAD" });
+      if (!probe.ok || !/image\/jpeg/.test(probe.headers.get("content-type") || "")) throw new Error(`HTTP ${probe.status}, ${probe.headers.get("content-type")}`);
+    };
+    /* Karussell-Kind: ein Bild (JPEG), spaeter Teil eines CAROUSEL-Containers. */
+    if (params.is_carousel_item === "true") {
+      if (!params.image_url) return fehler(res, 400, "image_url fehlt", 100);
+      try { await bildPruefen(params.image_url); } catch (e) { return fehler(res, 400, "Bild nicht ladbar oder kein JPEG: " + e.message, 9004, 2207052); }
+      return json(res, { id: neuerContainer({ art: "kind", image_url: params.image_url, alt_text: params.alt_text }) });
+    }
+    if (params.media_type === "CAROUSEL") {
+      const kinder = String(params.children || "").split(",").filter(Boolean);
+      if (kinder.length < 2 || kinder.length > 10) return fehler(res, 400, "children: 2 bis 10 Container noetig", 100);
+      for (const k of kinder) {
+        const c = zustand.container[k];
+        if (!c || c.art !== "kind") return fehler(res, 400, "Unbekanntes Kind " + k, 100);
+        if (c.status !== "FINISHED") return fehler(res, 400, `Kind ${k} ist noch ${c.status}`, 9007, 2207027);
+      }
+      return json(res, { id: neuerContainer({ art: "karussell", children: kinder, caption: params.caption }) });
+    }
+    if (params.media_type !== "REELS") return fehler(res, 400, "media_type muss REELS oder CAROUSEL sein", 100);
     if (!params.video_url) return fehler(res, 400, "video_url fehlt", 100);
     /* Wie Instagram: das Video muss abrufbar sein. */
     try {
@@ -80,10 +104,7 @@ http.createServer(async (req, res) => {
         if (!probe.ok || !/image\/jpeg/.test(probe.headers.get("content-type") || "")) return fehler(res, 400, `Titelbild nicht ladbar oder kein JPEG: HTTP ${probe.status}`, 9004, 2207052);
       } catch (e) { return fehler(res, 400, "Titelbild nicht ladbar: " + e.message, 9004, 2207052); }
     }
-    /* Ids bleiben unter 2^53, sonst rundet JavaScript. */
-    const id = "1789" + String(100000 + zustand.laufnummer++);
-    zustand.container[id] = { status: "IN_PROGRESS", abfragen: 0, caption: params.caption, video_url: params.video_url, cover_url: params.cover_url, thumb_offset: params.thumb_offset, share_to_feed: params.share_to_feed };
-    return json(res, { id });
+    return json(res, { id: neuerContainer({ art: "reel", caption: params.caption, video_url: params.video_url, cover_url: params.cover_url, thumb_offset: params.thumb_offset, share_to_feed: params.share_to_feed }) });
   }
   if (kante === "media_publish" && req.method === "POST") {
     const c = zustand.container[params.creation_id];
@@ -92,7 +113,7 @@ http.createServer(async (req, res) => {
     const quota = zustand.medien.filter((x) => Date.now() - x.zeit < 86_400_000).length;
     if (quota >= 50) return fehler(res, 400, "Application request limit reached", 4, 2207051);
     const id = "1795" + String(100000 + zustand.laufnummer++);
-    zustand.medien.push({ id, zeit: Date.now(), container: params.creation_id, caption: c.caption });
+    zustand.medien.push({ id, zeit: Date.now(), container: params.creation_id, caption: c.caption, art: c.art });
     return json(res, { id });
   }
   if (kante === "content_publishing_limit") {
@@ -109,7 +130,8 @@ http.createServer(async (req, res) => {
     if (c.abfragen >= 2) c.status = "FINISHED";   // beim zweiten Nachfragen fertig
     return json(res, { id: knoten, status_code: c.status, status: c.status === "FINISHED" ? "Finished: Media has been uploaded and it is ready to be published." : "In Progress" });
   }
-  if (!kante && zustand.medien.some((x) => x.id === knoten)) return json(res, { id: knoten, permalink: `https://www.instagram.com/reel/attrappe-${knoten.slice(-5)}/` });
+  const medium = !kante && zustand.medien.find((x) => x.id === knoten);
+  if (medium) return json(res, { id: knoten, permalink: `https://www.instagram.com/${medium.art === "karussell" ? "p" : "reel"}/attrappe-${knoten.slice(-5)}/` });
   if (!kante) return json(res, { id: knoten, username: "attrappe", name: "Attrappe", followers_count: 0, media_count: zustand.medien.length });
 
   return fehler(res, 404, "Unbekannte Kante " + kante, 803);
