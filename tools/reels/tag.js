@@ -21,7 +21,7 @@ import path from "node:path";
 import { KONFIG, WURZEL, AUSGABE_ORDNER, AUDIO_ORDNER, GEHEIM } from "./funnel/konfig.js";
 import { planLaden, planSpeichern, verlaufLaden, verlaufMerken, protokoll, aufraeumen, argumente } from "./funnel/zustand.js";
 import { planErstellen, nachschubPlanen } from "./funnel/redaktion.js";
-import { stimmenErzeugen, StimmeFehler } from "./funnel/stimme.js";
+import { stimmenErzeugen, stimmenwechselPruefen, StimmeFehler } from "./funnel/stimme.js";
 import { reelRendern, coverRendern, karussellRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
 import { hochladen, erreichbar } from "./funnel/ablage.js";
 import { bilderSichern, bilderFiltern, karussellBilderFiltern } from "./funnel/bilder.js";
@@ -96,6 +96,11 @@ const offenKarussells = offenAlle.filter((r) => r.typ === "karussell");   // Kar
    stumm gerendert, sondern bleiben "geplant" mit Fehler – sonst gingen
    unbemerkt stumme Reels online. Ohne Schluessel (bewusst stumm) wird
    wie bisher ohne Ton gerendert. */
+/* Andere Stimme konfiguriert (ELEVENLABS_VOICE_ID)? Dann duerfen die alten
+   Tonspuren nicht mehr in neue Videos – sie wandern ins Archiv, neue
+   entstehen unten. Gilt auch fuer --ohne-stimme. */
+for (const ordner of [path.join(WURZEL, "public", "audio"), path.join(WURZEL, "public", AUDIO_ORDNER)]) stimmenwechselPruefen(ordner, { melden: (z) => protokoll(z) });
+
 let stimmeKaputt = null;
 if (offen.length && !ohneStimme) {
   const gruppen = new Map();   // Audio-Ordner -> Reels

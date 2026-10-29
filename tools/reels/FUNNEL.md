@@ -207,8 +207,28 @@ Pfad, z. B. ein Webserver- oder NAS-Ordner) und `videoBasisUrl` (dessen öffentl
 
 ### 2.3 Stimme (optional)
 
-`ELEVENLABS_API_KEY` und `ELEVENLABS_VOICE_ID` wie bisher (Matilda `XrExE9yKIg1WjnnlVkGX`,
-Modell `eleven_multilingual_v2`). Tonspuren der Daten-Reels liegen in `public/audio/tag/`
+`ELEVENLABS_API_KEY` und `ELEVENLABS_VOICE_ID` (Modell `eleven_multilingual_v2`). Die Stimme soll
+eine **deutsche** sein: Matilda (`XrExE9yKIg1WjnnlVkGX`), mit der die Reels bis Oktober 2026 vertont
+wurden, ist englisch und spricht deutsche Wörter mit Akzent. Eine deutsche Stimme kommt aus der
+Voice Library – zwei Wege:
+
+1. Im ElevenLabs-Konto: Voices ▸ Library ▸ Sprache «German» ▸ Stimme anhören ▸ «Add to my voices»
+   ▸ Voice-ID kopieren ▸ `setx ELEVENLABS_VOICE_ID <id>` (neues Fenster danach).
+2. Mit einem Schlüssel, der *Voices lesen und schreiben* darf: `node funnel/stimme.js suchen de`
+   (meistgenutzte deutsche Stimmen mit Hörprobe-Link), `node funnel/stimme.js hinzufuegen
+   <Besitzer> <voice_id> "Name"`, dann `setx` wie oben. `node funnel/stimme.js probe <id>
+   "Satz"` schreibt eine Hörprobe nach `out/`.
+
+**Was beim Wechsel passiert:** Jeder Audio-Ordner trägt in `stimme.json`, mit welcher Stimme er
+vertont wurde. Weicht `ELEVENLABS_VOICE_ID` davon ab, verschiebt der nächste Lauf (tag.js,
+`npm run stimme`, `node funnel/stimme.js stand`) alle Tonspuren nach `public/audio-alt/<alte
+Stimme>/` und erzeugt sie neu – zwei Stimmen mischen sich nie. Bis die neuen Tonspuren da sind,
+werden die betroffenen Reels nicht gerendert (Reels ohne Stimme sind unerwünscht). Kosten: die 21
+Stamm-Reels brauchen rund 10 000 Zeichen, alle 326 Tages-Kandidaten einmalig rund 130 000; danach
+kostet fast nur noch der tägliche Countdown (~400). Der Gratisplan (10 000 Zeichen/Monat) reicht
+dafür nicht.
+
+Tonspuren der Daten-Reels liegen in `public/audio/tag/`
 und werden über Tage hinweg wiederverwendet: die Reel-Id trägt einen Fingerabdruck des
 Sprechtexts, nur ein geänderter Satz kostet neue Zeichen. Überschlag: ein Daten-Reel hat
 rund 450 Zeichen Sprechtext; alle 250 Kombinationen einmal zu vertonen sind rund 115'000
