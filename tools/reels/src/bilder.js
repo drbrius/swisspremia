@@ -36,7 +36,17 @@ export const BILDER = {
   laptop: "photo-1587614382231-d1590f0039e7",       // Frau mit Laptop
   muenzen: "photo-1583902340377-052b7159b97b",      // Glas mit Muenzen
   muenzstapel: "photo-1583902340370-6a3fc847d373",  // Muenzstapel
-  rechner: "photo-1642043175009-5997b3a078d8"       // Taschenrechner auf Rechnungen
+  rechner: "photo-1642043175009-5997b3a078d8",      // Taschenrechner auf Rechnungen
+  /* Seit 29.10.2026, vor allem fuer die Karussells: mehr Menschen. */
+  familie: "photo-1770196567087-b59ba06aef12",      // Familie Hand in Hand ueber einen Huegel
+  mutter: "photo-1539920951450-2b2d59cff66d",       // Frau mit Kind im Wald
+  senioren: "photo-1790451933031-992d6722258e",     // aelteres Paar, Haendchen haltend
+  apotheke: "photo-1657551734497-30a09e6567bc",     // Apotheker im weissen Kittel
+  sprechstunde: "photo-1659989693434-727c2b1b8367", // Arzt im Gespraech mit Patientin
+  buero: "photo-1615891081220-9116de3e1afd",        // laechelnde Frau am Laptop
+  studium: "photo-1517971129774-8a2b38fa128e",      // Frau schreibt in ein Heft
+  luzern: "photo-1785981058087-17ad3695897f",       // Kapellbruecke Luzern
+  unterschrift: "photo-1763729805496-b5dbf7f00c79"  // Hand unterschreibt ein Dokument
 };
 
 export const bildDatei = (name) => `bilder/${name}.jpg`;
@@ -44,5 +54,5 @@ export const bildDatei = (name) => `bilder/${name}.jpg`;
 export const bildDateiKarussell = (name) => `bilder/${name}-k.jpg`;
 
 /* Foto je Kanton fuer regionale Reels; sonst Schweiz allgemein. */
-export const KANTON_BILD = { ZH: "zuerich", BE: "bern", GE: "genf", TI: "lugano", VD: "lausanne", GR: "bahn" };
+export const KANTON_BILD = { ZH: "zuerich", BE: "bern", GE: "genf", TI: "lugano", VD: "lausanne", GR: "bahn", LU: "luzern" };
 export const kantonBild = (kanton, ersatz = "alpen") => KANTON_BILD[kanton] || ersatz;

@@ -51,7 +51,7 @@ export function datumAnzeige(datumText) {
    allgemeines KVG-Wissen ohne Zahlen aus den Praemiendaten. */
 export const FAKTEN = [
   {
-    id: "leistung", titel: "Gleiche Leistung", bild: "praxis", bild2: "arzt", hashtags: [],
+    id: "leistung", titel: "Gleiche Leistung", bild: "praxis", bild2: "sprechstunde", hashtags: [],
     cover: ["Die Grundversicherung", "leistet bei **jeder Kasse**", "exakt dasselbe."], unten: "Unterschiedlich ist nur der Preis.",
     zahl: { ueber: "Ein Katalog für alle", zahl: "1", einheit: "Leistungskatalog – für jede Kasse derselbe", text: "Was die Grundversicherung bezahlt, steht im Krankenversicherungsgesetz. Keine Kasse darf mehr leisten, keine weniger." },
     folien: [
@@ -71,7 +71,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Am 30. November muss die Kündigung bei der Krankenkasse liegen – der Poststempel zählt nicht."
   },
   {
-    id: "zweiter-termin", titel: "Der zweite Termin", bild: "kalender", bild2: "laptop", hashtags: ["wechsel", "franchise"],
+    id: "zweiter-termin", titel: "Der zweite Termin", bild: "kalender", bild2: "buero", hashtags: ["wechsel", "franchise"],
     cover: ["Es gibt einen **zweiten**", "**Termin** zum Wechseln.", "Fast niemand kennt ihn."],
     zahl: { ueber: "Zweite Frist", zahl: "31. März", einheit: "Kündigung für den Wechsel per 1. Juli", text: "Wer die tiefste Franchise im Standardmodell hat, kann auch auf Mitte Jahr wechseln. Die Kündigung muss bis Ende März bei der Kasse liegen." },
     folien: [
@@ -91,7 +91,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Erwachsene wählen zwischen sechs Franchisen, von 300 bis 2'500 Franken. Die Mitte ist oft die schlechteste Wahl."
   },
   {
-    id: "selbstbehalt", titel: "Der Selbstbehalt", bild: "medikamente", bild2: "rechner", hashtags: ["franchise"],
+    id: "selbstbehalt", titel: "Der Selbstbehalt", bild: "medikamente", bild2: "apotheke", hashtags: ["franchise"],
     cover: ["Über der Franchise", "zahlen Sie **10 Prozent**", "selbst – bis 700 Franken", "im Jahr."],
     zahl: { ueber: "Selbstbehalt", zahl: "CHF 700", einheit: "höchstens pro Jahr (Kinder: 350)", text: "Erst die Franchise, dann 10 Prozent der weiteren Kosten – bis zu dieser Grenze. Dazu kommen 15 Franken pro Spitaltag." },
     folien: [
@@ -101,7 +101,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Mit der Franchise ist es nicht getan. Darüber zahlen Sie 10 Prozent Selbstbehalt – bis 700 Franken im Jahr."
   },
   {
-    id: "altersklassen", titel: "Drei Altersklassen", bild: "jung", bild2: "kinder", hashtags: ["alter"],
+    id: "altersklassen", titel: "Drei Altersklassen", bild: "jung", bild2: "studium", hashtags: ["alter"],
     cover: ["Drei Altersklassen,", "zwei Sprünge:", "mit **19** und mit **26**."],
     zahl: { ueber: "Altersklassen", zahl: "3", einheit: "Kinder bis 18 · junge Erwachsene 19–25 · ab 26", text: "Für jede Klasse gilt eine eigene Prämie. Der Wechsel passiert automatisch – und meist, ohne dass jemand nachrechnet." },
     folien: [
@@ -111,7 +111,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Es gibt drei Altersklassen – und zwei Prämiensprünge, mit 19 und mit 26. Beide passieren automatisch."
   },
   {
-    id: "aufnahmepflicht", titel: "Aufnahmepflicht", bild: "arzt", bild2: "stethoskop", hashtags: ["wechsel", "zusatz"],
+    id: "aufnahmepflicht", titel: "Aufnahmepflicht", bild: "sprechstunde", bild2: "arzt", hashtags: ["wechsel", "zusatz"],
     cover: ["In der Grundversicherung", "muss **jede Kasse**", "Sie nehmen."],
     zahl: { ueber: "Aufnahmepflicht", zahl: "0", einheit: "Gesundheitsfragen", text: "Alter, Vorerkrankung, Schwangerschaft: Nichts davon darf eine Kasse abfragen oder berücksichtigen. Das gilt für jede Kasse und jedes Modell." },
     folien: [
@@ -141,7 +141,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Neu in der Schweiz? Drei Monate Zeit für die Krankenkasse – rechtzeitig angemeldet, gilt die Deckung ab Tag eins."
   },
   {
-    id: "unfall", titel: "Unfalldeckung", bild: "laptop", bild2: "gipfel", hashtags: ["unfall"],
+    id: "unfall", titel: "Unfalldeckung", bild: "buero", bild2: "gipfel", hashtags: ["unfall"],
     cover: ["Angestellt ab", "**8 Stunden** pro Woche?", "Dann zahlen Sie den", "Unfall vielleicht doppelt."],
     zahl: { ueber: "Unfallversicherung", zahl: "8 Std.", einheit: "pro Woche – ab dann versichert der Arbeitgeber", text: "Berufs- und Nichtberufsunfälle laufen dann über die Unfallversicherung des Arbeitgebers. Die Unfalldeckung der Krankenkasse brauchen Sie nicht mehr." },
     folien: [
@@ -151,7 +151,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Angestellt ab 8 Stunden pro Woche? Dann versichert der Arbeitgeber den Unfall – und die Kasse muss es nicht mehr."
   },
   {
-    id: "regionen", titel: "Prämienregionen", bild: "dorf", bild2: "bahn", hashtags: ["regionen"],
+    id: "regionen", titel: "Prämienregionen", bild: "dorf", bild2: "luzern", hashtags: ["regionen"],
     cover: ["Bis zu **drei**", "**Prämienregionen**", "pro Kanton. Ihre", "Gemeinde entscheidet."],
     zahl: { ueber: "Prämienregionen", zahl: "3", einheit: "höchstens pro Kanton", text: "Gleiche Kasse, gleiches Modell, andere Gemeinde: andere Prämie. Region 1 ist meist die Stadt und die teuerste." },
     folien: [
@@ -161,7 +161,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Ein Kanton hat bis zu drei Prämienregionen. Gleiche Kasse, gleiches Modell – andere Gemeinde, andere Prämie."
   },
   {
-    id: "verbilligung", titel: "Prämienverbilligung", bild: "muenzen", bild2: "laptop", hashtags: ["verbilligung"],
+    id: "verbilligung", titel: "Prämienverbilligung", bild: "muenzen", bild2: "unterschrift", hashtags: ["verbilligung"],
     cover: ["Prämienverbilligung", "gibt es in vielen", "Kantonen **nur auf**", "**Antrag**."],
     folien: [
       { ueber: "Der Kanton zahlt mit", titel: "Ein Anspruch, kein Geschenk.", text: "Wer in bescheidenen wirtschaftlichen Verhältnissen lebt, hat Anspruch auf eine Verbilligung. Die Regeln, Grenzen und Fristen legt jeder Kanton selbst fest." },
@@ -170,7 +170,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Prämienverbilligung gibt es in vielen Kantonen nur auf Antrag. Wer nichts tut, bekommt nichts."
   },
   {
-    id: "zwei-vertraege", titel: "Zwei Verträge", bild: "stethoskop", bild2: "praxis", hashtags: ["zusatz"],
+    id: "zwei-vertraege", titel: "Zwei Verträge", bild: "unterschrift", bild2: "praxis", hashtags: ["zusatz"],
     cover: ["Grund- und Zusatz-", "versicherung sind", "**zwei Verträge**.", "Sie lassen sich trennen."],
     zahl: { ueber: "Zwei Verträge", zahl: "2", einheit: "Verträge, zwei Kündigungen, zwei Fristen", text: "Die Grundversicherung ist gesetzlich geregelt, die Zusatzversicherung ein privater Vertrag. Beide dürfen bei verschiedenen Kassen sein." },
     folien: [
@@ -199,7 +199,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Hausarzt, HMO und Telmed sind günstiger als das Standardmodell – bei identischen Leistungen."
   },
   {
-    id: "spitaltag", titel: "Der Spitalbeitrag", bild: "spital", bild2: "stethoskop", hashtags: ["franchise"],
+    id: "spitaltag", titel: "Der Spitalbeitrag", bild: "spital", bild2: "senioren", hashtags: ["franchise"],
     cover: ["Im Spital zahlen Sie", "**15 Franken** pro Tag", "dazu – neben Franchise", "und Selbstbehalt."],
     zahl: { ueber: "Spitalbeitrag", zahl: "CHF 15", einheit: "pro Spitaltag, Erwachsene", text: "Der dritte Teil der Kostenbeteiligung. Er ist nicht begrenzt – er fällt für jeden Tag im Spital an." },
     folien: [
@@ -209,7 +209,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Im Spital zahlen Erwachsene 15 Franken pro Tag selbst – zusätzlich zu Franchise und Selbstbehalt, bei jeder Kasse."
   },
   {
-    id: "franchise-aendern", titel: "Franchise ändern", bild: "kalender", bild2: "rechner", hashtags: ["franchise", "modelle"],
+    id: "franchise-aendern", titel: "Franchise ändern", bild: "kalender", bild2: "buero", hashtags: ["franchise", "modelle"],
     cover: ["Die Franchise ändern Sie", "**ohne Kassenwechsel** –", "jedes Jahr."],
     folien: [
       { ueber: "Die Frist", titel: "Meldung bis 30. November.", text: "Die neue Franchise gilt ab 1. Januar – nach oben wie nach unten. Eine Meldung an die Kasse bis Ende November reicht." },
@@ -218,7 +218,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Um die Franchise zu ändern, müssen Sie die Kasse nicht wechseln. Das geht jedes Jahr – Meldung bis 30. November."
   },
   {
-    id: "faktoren", titel: "Fünf Faktoren", bild: "gipfel", bild2: "laptop", hashtags: [],
+    id: "faktoren", titel: "Fünf Faktoren", bild: "familie", bild2: "laptop", hashtags: [],
     cover: ["Fünf Dinge bestimmen", "Ihre Prämie. Ihre", "**Gesundheit** ist", "keines davon."],
     zahl: { ueber: "Was die Prämie bestimmt", zahl: "5", einheit: "Wohnort · Alter · Franchise · Modell · Unfalldeckung", text: "Mehr nicht. Drei der fünf wählen Sie selbst: Franchise, Modell und ob die Unfalldeckung dabei ist." },
     folien: [
@@ -237,7 +237,7 @@ export const FAKTEN = [
     aufhaenger: "Fakt: Der Kassenwechsel kostet nichts. Die alte Kasse darf weder eine Gebühr verlangen noch die Franchise nachfordern."
   },
   {
-    id: "kinder-kasse", titel: "Kinder und Kasse", bild: "kinder", bild2: "eltern", hashtags: ["familie"],
+    id: "kinder-kasse", titel: "Kinder und Kasse", bild: "kinder", bild2: "mutter", hashtags: ["familie"],
     cover: ["Kinder dürfen bei einer", "**anderen Kasse** sein", "als die Eltern."],
     folien: [
       { ueber: "Eigene Tarife", titel: "Kinderprämien sind eigene Tarife.", text: "Die Rangfolge der Kassen ist bei Kindern anders als bei Erwachsenen. Mehrere Kinder bei einer günstigen Kasse: Das summiert sich im Jahr." },
@@ -250,7 +250,7 @@ export const FAKTEN = [
 /* Foto je Mythos (Reihenfolge wie MYTHEN in themen.js), eines fuer den
    Titel und ein zweites fuer die Folie danach. */
 const CHECK_BILD = ["rechner", "muenzstapel", "stethoskop", "brief", "kalender", "laptop", "praxis", "muenzen", "kinder", "arzt", "eltern", "flagge"];
-const CHECK_BILD2 = ["laptop", "praxis", "arzt", "kalender", "umzug", "rechner", "stethoskop", "brief", "eltern", "spital", "baby", "bahn"];
+const CHECK_BILD2 = ["buero", "praxis", "sprechstunde", "kalender", "umzug", "rechner", "stethoskop", "brief", "familie", "senioren", "mutter", "luzern"];
 
 /* ---------------------------------------------------------- Paket bauen */
 
