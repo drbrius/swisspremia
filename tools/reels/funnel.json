@@ -12,6 +12,7 @@
   "wiederholungStammTage": 14,
   "karussellsProTag": 2,
   "karussellAbstandMinuten": 20,
+  "nachholenTage": 1,
   "hashtags": "bildtext",
   "stimme": "auto",
   "ablage": "vercel-blob",

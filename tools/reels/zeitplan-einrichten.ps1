@@ -108,10 +108,16 @@ $einstellungen = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStop
   -ExecutionTimeLimit (New-TimeSpan -Hours 3) -MultipleInstances IgnoreNew -RestartCount 2 -RestartInterval (New-TimeSpan -Minutes 10)
 
 $aktionTag = Aktion "tag.js"
+# Taeglich um $TagesStart - und zusaetzlich drei Minuten nach jeder Anmeldung:
+# War der Rechner um $TagesStart aus, laeuft die Tagesproduktion beim naechsten
+# Einschalten (tag.js ist wiederanlaufbar; existiert der Plan schon, macht es
+# nur, was noch fehlt). Am 28. und 29.10.2026 war das der Fall.
 $ausloeserTag = New-ScheduledTaskTrigger -Daily -At $TagesStart
-Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger $ausloeserTag -Settings $einstellungen `
-  -Description "Plant, vertont, rendert und laedt die Reels des Tages hoch (tools/reels/tag.js)." -Force -ErrorAction Stop | Out-Null
-Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart"
+$ausloeserAnmeldung = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
+$ausloeserAnmeldung.Delay = "PT3M"
+Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger @($ausloeserTag, $ausloeserAnmeldung) -Settings $einstellungen `
+  -Description "Plant, vertont, rendert und laedt die Reels und Karussells des Tages hoch (tools/reels/tag.js)." -Force -ErrorAction Stop | Out-Null
+Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart und 3 Minuten nach der Anmeldung"
 
 $einstellungenPosten = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
   -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew

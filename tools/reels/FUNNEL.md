@@ -7,7 +7,7 @@ Bild-Karussells dazu (Abschnitt «Karussells»).
 | Schritt | Was passiert | Wer |
 |---|---|---|
 | 05:30 | `tag.js` würfelt die Tagesanzahl (10–20), wählt Themen, schreibt Bildtexte, holt Tonspuren, rendert die MP4, lädt sie in die Ablage, verteilt Sendezeiten über den Tag; dazu zwei Karussells (Folien als JPEG) | Aufgabe «SwissPremia Reels - Tag» |
-| alle 15 Min. | `posten.js` veröffentlicht, was fällig ist: Container anlegen, warten, publizieren – Reels und Karussells | Aufgabe «SwissPremia Reels - Posten» |
+| alle 15 Min. | `posten.js` veröffentlicht, was fällig ist: Container anlegen, warten, publizieren – Reels und Karussells; was am Vortag liegen blieb (Rechner aus), wird nachgeholt | Aufgabe «SwissPremia Reels - Posten» |
 
 Der Stand jedes Reels steht in `plan/<Datum>.json` (`geplant → gerendert → hochgeladen →
 veroeffentlicht`), jedes Ereignis in `plan/protokoll.log`. Beide Skripte lassen sich beliebig
@@ -237,7 +237,10 @@ Fragt alle Schlüssel ab (Enter behält den gespeicherten Wert) und legt die zwe
 und `-TaktMinuten 10` ändern die Zeiten.
 
 Der Rechner muss laufen. `WakeToRun` weckt ihn aus dem Energiesparmodus für die
-Tagesproduktion, ein zugeklappter Laptop postet aber nichts. Wer das nicht will, lässt die
+Tagesproduktion, ein zugeklappter Laptop postet aber nichts. War er um 05:30 ganz aus, läuft
+die Tagesproduktion drei Minuten nach der nächsten Anmeldung (zweiter Auslöser der Aufgabe
+«Tag», seit 29.10.2026); Beiträge, die am Vorabend liegen blieben, holt `posten.js` nach
+(`nachholenTage`). Wer das nicht will, lässt die
 beiden Skripte auf einem kleinen Server oder in einer Cloud-Routine laufen – sie brauchen nur
 Node, einen Chrome und die Umgebungsvariablen.
 
@@ -272,6 +275,7 @@ node funnel/instagram.js kontingent
 | `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
 | `karussellsProTag` | `2` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine) |
 | `karussellAbstandMinuten` | `20` | Mindestabstand eines Karussells zu jedem anderen Beitrag |
+| `nachholenTage` | `1` | `posten.js` holt liegen gebliebene Beiträge so vieler Vortage nach (Countdown-Reels ausgenommen) |
 | `hashtags` | `bildtext` | `bildtext`, `kommentar` (erster Kommentar) oder `keine` |
 | `stimme` | `auto` | `aus` = immer stumm |
 | `ablage` | `vercel-blob` | oder `ordner` |

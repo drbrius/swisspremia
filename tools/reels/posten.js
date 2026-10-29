@@ -13,6 +13,11 @@
    warten bis FINISHED, veroeffentlichen, Hashtags ggf. als ersten
    Kommentar. Fehler werden bis zu dreimal wiederholt, dann aufgegeben.
    Das Kontingent (50 je 24 h) wird vor jedem Lauf gelesen.
+
+   War der Rechner aus, als ein Beitrag faellig war, holt der naechste Lauf
+   ihn nach: Plaene der letzten "nachholenTage" (funnel.json, Standard 1)
+   werden mitgelesen. Saison-Reels (Countdown "noch N Tage") werden nicht
+   nachgeholt – ihre Zahl stimmt am naechsten Tag nicht mehr.
    ========================================================================= */
 import fs from "node:fs";
 import path from "node:path";
@@ -29,12 +34,18 @@ const laut = Boolean(arg.ausfuehrlich);
 
 const zeitpunkt = (tag, hhmm) => { const d = datumLesen(tag); const [h, m] = hhmm.split(":").map(Number); d.setHours(h, m, 0, 0); return d; };
 
-const plan = planLaden(datum);
-if (!plan) { if (laut) console.log(`Kein Plan fuer ${datum} – tag.js ist noch nicht gelaufen.`); process.exit(0); }
+/* Heutiger Plan plus die Vortage (nachholenTage) – mit --datum nur dieser. */
+const tage = [datum];
+if (!arg.datum) for (let i = 1; i <= (Number(KONFIG.nachholenTage) || 0); i++) { const d = datumLesen(datum); d.setDate(d.getDate() - i); tage.push(datumKurz(d)); }
+const plaene = tage.map((t) => planLaden(t)).filter(Boolean);
+if (!plaene.length) { if (laut) console.log(`Kein Plan fuer ${datum} – tag.js ist noch nicht gelaufen.`); process.exit(0); }
 
-const faellig = plan.reels
-  .filter((r) => (r.status === "hochgeladen" || r.status === "fehler") && (r.url || (r.bildUrls && r.bildUrls.length)) && zeitpunkt(datum, r.zeit) <= jetzt)
-  .sort((a, b) => a.zeit.localeCompare(b.zeit));
+const bereit = (r) => (r.status === "hochgeladen" || r.status === "fehler") && (r.url || (r.bildUrls && r.bildUrls.length));
+const faellig = plaene
+  .flatMap((plan) => plan.reels
+    .filter((r) => bereit(r) && zeitpunkt(plan.datum, r.zeit) <= jetzt && (plan.datum === datum || r.gruppe !== "saison"))
+    .map((r) => ({ r, plan })))
+  .sort((a, b) => zeitpunkt(a.plan.datum, a.r.zeit) - zeitpunkt(b.plan.datum, b.r.zeit));
 if (!faellig.length) { if (laut) console.log(`Nichts faellig (${datum}, ${jetzt.toTimeString().slice(0, 5)}).`); process.exit(0); }
 
 if (!verbunden()) { protokoll(`${faellig.length} Reels faellig, aber Instagram ist nicht verbunden (IG_USER_ID / IG_ACCESS_TOKEN). Siehe FUNNEL.md.`); process.exit(2); }
@@ -60,8 +71,8 @@ if (!arg["ohne-kontingent"]) {
 }
 
 const anzahl = arg.alle ? faellig.length : Math.max(1, Number(KONFIG.proTick) || 1);
-for (const r of faellig.slice(0, anzahl)) {
-  const kennung = `#${r.nr} ${r.titel} (${r.zeit})`;
+for (const { r, plan } of faellig.slice(0, anzahl)) {
+  const kennung = `#${r.nr} ${r.titel} (${plan.datum === datum ? r.zeit : plan.datum + " " + r.zeit + ", nachgeholt"})`;
   try {
     if (!r.containerId) {
       /* Karussell: Bilder als Kinder, dann der Sammel-Container; Reel: Video. */
