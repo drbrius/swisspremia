@@ -207,26 +207,27 @@ Pfad, z. B. ein Webserver- oder NAS-Ordner) und `videoBasisUrl` (dessen öffentl
 
 ### 2.3 Stimme (optional)
 
-`ELEVENLABS_API_KEY` und `ELEVENLABS_VOICE_ID` (Modell `eleven_multilingual_v2`). Die Stimme soll
-eine **deutsche** sein: Matilda (`XrExE9yKIg1WjnnlVkGX`), mit der die Reels bis Oktober 2026 vertont
-wurden, ist englisch und spricht deutsche Wörter mit Akzent. Eine deutsche Stimme kommt aus der
-Voice Library – zwei Wege:
+`ELEVENLABS_API_KEY` und `ELEVENLABS_VOICE_ID` (Modell `eleven_multilingual_v2`). Seit 1.11.2026 spricht
+**Leonie** (`uvysWDLbKpA4XvpD3GI6`), eine deutsche Stimme aus der Voice Library: klar, Studioqualität,
+für Sachtexte. Matilda (`XrExE9yKIg1WjnnlVkGX`), mit der die Reels bis Oktober 2026 vertont wurden, ist
+englisch und spricht deutsche Wörter mit Akzent.
 
-1. Im ElevenLabs-Konto: Voices ▸ Library ▸ Sprache «German» ▸ Stimme anhören ▸ «Add to my voices»
-   ▸ Voice-ID kopieren ▸ `setx ELEVENLABS_VOICE_ID <id>` (neues Fenster danach).
-2. Mit einem Schlüssel, der *Voices lesen und schreiben* darf: `node funnel/stimme.js suchen de`
-   (meistgenutzte deutsche Stimmen mit Hörprobe-Link), `node funnel/stimme.js hinzufuegen
-   <Besitzer> <voice_id> "Name"`, dann `setx` wie oben. `node funnel/stimme.js probe <id>
-   "Satz"` schreibt eine Hörprobe nach `out/`.
+Library-Stimmen lassen sich direkt über ihre ID ansprechen, ohne sie ins Konto zu übernehmen und
+ohne `voices_read`-Berechtigung des Schlüssels. Die IDs der beliebten deutschen Stimmen stehen im
+Quelltext von https://elevenlabs.io/text-to-speech/german (z. B. Ava `AnvlJBAqSLDzEevYr9Ap`,
+jung und freundlich; Otto `FTNCalFNG5bRnkkaP5Ug`, ruhig, männlich; Thomas Schendel
+`Fghah4fztZORbiKfIGAs`, Erklärvideos). Wechseln: `setx ELEVENLABS_VOICE_ID <id>`, neues Fenster,
+`npm run stimme`. `node funnel/stimme.js probe <id> "Satz"` schreibt eine Hörprobe nach `out/`;
+`suchen` und `hinzufuegen` brauchen einen Schlüssel mit Voices-Berechtigung.
 
 **Was beim Wechsel passiert:** Jeder Audio-Ordner trägt in `stimme.json`, mit welcher Stimme er
 vertont wurde. Weicht `ELEVENLABS_VOICE_ID` davon ab, verschiebt der nächste Lauf (tag.js,
 `npm run stimme`, `node funnel/stimme.js stand`) alle Tonspuren nach `public/audio-alt/<alte
 Stimme>/` und erzeugt sie neu – zwei Stimmen mischen sich nie. Bis die neuen Tonspuren da sind,
 werden die betroffenen Reels nicht gerendert (Reels ohne Stimme sind unerwünscht). Kosten: die 21
-Stamm-Reels brauchen rund 10 000 Zeichen, alle 326 Tages-Kandidaten einmalig rund 130 000; danach
-kostet fast nur noch der tägliche Countdown (~400). Der Gratisplan (10 000 Zeichen/Monat) reicht
-dafür nicht.
+Stamm-Reels brauchen rund 6 200 Zeichen, alle 326 Tages-Kandidaten einmalig rund 130 000; danach
+kostet fast nur noch der tägliche Countdown (~400). Der Gratisplan (10 000 Zeichen/Monat, Reset am
+Monatsersten) reicht für die Stamm-Reels und einige Countdown-Tage, nicht für die Daten-Reels.
 
 Tonspuren der Daten-Reels liegen in `public/audio/tag/`
 und werden über Tage hinweg wiederverwendet: die Reel-Id trägt einen Fingerabdruck des

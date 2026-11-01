@@ -25,7 +25,7 @@ function Lesen([string]$text) {
 function Testen([string]$art, [string]$wert) {
   $env:SP_TESTWERT = $wert
   $env:SP_STIMME = [Environment]::GetEnvironmentVariable("ELEVENLABS_VOICE_ID", "User")
-  if (-not $env:SP_STIMME) { $env:SP_STIMME = "XrExE9yKIg1WjnnlVkGX" }
+  if (-not $env:SP_STIMME) { $env:SP_STIMME = "uvysWDLbKpA4XvpD3GI6" }   # Leonie (deutsch), nur fuer den Testsatz
   if ($art -eq "elevenlabs") {
     $js = 'const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + process.env.SP_STIMME + "?output_format=mp3_44100_128", { method: "POST", headers: { "xi-api-key": process.env.SP_TESTWERT, "Content-Type": "application/json" }, body: JSON.stringify({ text: "Test.", model_id: "eleven_multilingual_v2" }) }); console.log(r.ok ? "ok" : "HTTP " + r.status + " " + (await r.text()).slice(0, 120));'
   } else {

@@ -8,11 +8,14 @@
 
    Welche Stimme in einem Audio-Ordner liegt, steht in <ordner>/stimme.json.
    Aendert sich ELEVENLABS_VOICE_ID, wandern die alten Tonspuren nach
-   <ordner>-alt/<alte Stimme>/ und werden beim naechsten Lauf neu erzeugt –
+   public/audio-alt/<Ordner>/<alte Stimme>/ und werden beim naechsten Lauf neu erzeugt –
    so mischen sich nie zwei Stimmen, und ein Wechsel ist ein Eintrag in der
    Umgebung (setx ELEVENLABS_VOICE_ID <id>).
 
-   Kommandozeile (Schluessel braucht dafuer voices_read bzw. voices_write):
+   Library-Stimmen (elevenlabs.io/text-to-speech/german) sprechen direkt ueber
+   ihre ID – ohne Uebernahme ins Konto. Seit 1.11.2026: Leonie uvysWDLbKpA4XvpD3GI6.
+
+   Kommandozeile (suchen/hinzufuegen brauchen voices_read bzw. voices_write):
      node funnel/stimme.js suchen [de] [--weiblich|--maennlich] [--suche=Wort]
                                        deutsche Stimmen der Voice Library
      node funnel/stimme.js hinzufuegen <besitzer> <voice_id> [Name]
@@ -113,7 +116,8 @@ function markerSchreiben(ordner, stimme, modell) {
 const mp3Dateien = (ordner) => (fs.existsSync(ordner) ? fs.readdirSync(ordner).filter((n) => n.endsWith(".mp3")) : []);
 
 /* Hat sich die Stimme gegenueber dem Ordner geaendert? Dann die alten
-   Tonspuren ins Archiv verschieben (<ordner>-alt/<alte Stimme>/), damit sie
+   Tonspuren ins Archiv verschieben (public/audio-alt/<Ordner>/<alte Stimme>/,
+   vom Repository ausgenommen), damit sie
    nie mehr in ein Video geraten; neue entstehen beim naechsten
    stimmenErzeugen. Ohne Marker gilt der Bestand als von der konfigurierten
    Stimme (Bestand vor dem 29.10.2026: Matilda) und bekommt den Marker. */
@@ -127,7 +131,8 @@ export function stimmenwechselPruefen(ordner, { melden = () => {} } = {}) {
     return { gewechselt: false, bestand: vorhanden.length };
   }
   if (m.stimme === stimme) return { gewechselt: false, bestand: vorhanden.length };
-  const ziel = path.join(path.dirname(ordner), path.basename(ordner) + "-alt", m.stimme);
+  const oeffentlich = path.join(WURZEL, "public");
+  const ziel = path.join(oeffentlich, "audio-alt", path.relative(oeffentlich, ordner), m.stimme);
   fs.mkdirSync(ziel, { recursive: true });
   for (const n of vorhanden) fs.renameSync(path.join(ordner, n), path.join(ziel, n));
   markerSchreiben(ordner, stimme, GEHEIM.elevenlabsModel);
@@ -207,7 +212,7 @@ if (alsSkript) {
         console.log(`${v.id}  ${v.name.padEnd(22)} ${(v.geschlecht || "").padEnd(7)} ${(v.alter || "").padEnd(12)} ${(v.akzent || v.locale || "").padEnd(14)} ${String(v.genutzt).padStart(6)}x  ${v.beschreibung}`);
         console.log(`    Besitzer ${v.besitzer}${v.vorschau ? "  Hoerprobe " + v.vorschau : ""}`);
       }
-      console.log("\nUebernehmen:  node funnel/stimme.js hinzufuegen <Besitzer> <voice_id> \"Name\"   – danach: setx ELEVENLABS_VOICE_ID <voice_id>");
+      console.log("\nVerwenden:  setx ELEVENLABS_VOICE_ID <voice_id>   (Library-Stimmen gehen direkt; hinzufuegen ist optional)");
     } else if (befehl === "hinzufuegen") {
       const [besitzer, id, name] = werte;
       if (!besitzer || !id) throw new StimmeFehler("Aufruf: node funnel/stimme.js hinzufuegen <besitzer> <voice_id> [Name]");

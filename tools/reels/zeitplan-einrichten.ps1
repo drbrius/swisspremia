@@ -87,7 +87,7 @@ if (-not $OhneSchluessel) {
   Write-Host "Schluessel als Nutzer-Umgebungsvariablen speichern. Enter = bestehenden Wert behalten.`n"
   $variablen = @(
     @{ Name = "ELEVENLABS_API_KEY";    Text = "ElevenLabs API-Schluessel (Stimme; leer = stumm rendern)" },
-    @{ Name = "ELEVENLABS_VOICE_ID";   Text = "ElevenLabs Voice-Id einer deutschen Stimme (node funnel/stimme.js suchen de; Matilda XrExE9yKIg1WjnnlVkGX ist englisch)" },
+    @{ Name = "ELEVENLABS_VOICE_ID";   Text = "ElevenLabs Voice-Id einer deutschen Stimme (Leonie uvysWDLbKpA4XvpD3GI6; Matilda XrExE9yKIg1WjnnlVkGX ist englisch)" },
     @{ Name = "BLOB_READ_WRITE_TOKEN"; Text = "Vercel Blob Token (Ablage der Videos)" },
     @{ Name = "META_APP_ID";           Text = "Meta App-Id (nur fuer instagram.js verbinden)" },
     @{ Name = "META_APP_SECRET";       Text = "Meta App-Secret (nur fuer instagram.js verbinden)" },
