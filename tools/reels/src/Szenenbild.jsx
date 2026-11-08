@@ -196,7 +196,8 @@ const Tueren = ({ f }) => {
       <Tuer x={240} titel={f.links} klein={f.linksKlein} an={rechts ? 99999 : t3} ab={0} />
       <Tuer x={840} titel={f.rechts} klein={f.rechtsKlein} an={rechts ? t3 : 99999} ab={4} />
       <Figur wer={f.wer || "lea"} x={540} y={BODEN} pose={pose} skala={0.92} />
-      <Fragezeichen x={540} y={70} ab={14} />
+      {/* Neben dem Kopf statt darueber: als Titelbild (erste Szene) ragte es in die Textzeilen. */}
+      <Fragezeichen x={668} y={128} ab={14} />
       <Stern x={rechts ? 900 : 180} y={200} ab={t3 + 4} />
     </>
   );

@@ -21,7 +21,14 @@ const HIER = path.dirname(fileURLToPath(import.meta.url));
 const NUR = process.argv[2];
 
 try {
-  const { erzeugt, uebersprungen } = await stimmenErzeugen(REELS, { ordner: path.join(HIER, "public", "audio"), nur: NUR, melden: (z) => console.log("  " + z) });
+  /* Je Audio-Ordner (audio, audio/en) mit dessen Stimme. */
+  const gruppen = new Map();
+  for (const r of REELS) { const o = path.join(HIER, "public", r.audioOrdner || "audio"); if (!gruppen.has(o)) gruppen.set(o, []); gruppen.get(o).push(r); }
+  let erzeugt = 0, uebersprungen = 0;
+  for (const [ordner, reels] of gruppen) {
+    const e = await stimmenErzeugen(reels, { ordner, nur: NUR, melden: (z) => console.log("  " + z) });
+    erzeugt += e.erzeugt; uebersprungen += e.uebersprungen;
+  }
   console.log(`\n${erzeugt} Tonspuren erzeugt, ${uebersprungen} bereits vorhanden.\n`);
 } catch (e) {
   /* Kein process.exit() mitten in einer laufenden Anfrage – das laesst

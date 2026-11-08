@@ -263,9 +263,10 @@ die Tagesproduktion drei Minuten nach der nächsten Anmeldung (zweiter Auslöser
 «Tag», seit 29.10.2026) und in jedem Fall nochmals um 12:30 (dritter Auslöser, seit 8.11.2026:
 `tag.js` macht dann nur, was im Plan noch fehlt, etwa Renders, die am Netz scheiterten).
 Beiträge, die am Vorabend liegen blieben, holt `posten.js` nach (`nachholenTage`), hält dabei
-aber den Mindestabstand ein und lässt aus, was am selben Tag mehr als `verfallMinuten` zu spät
-wäre (Status `verfallen`, Thema wieder frei) – sonst gingen nach einer Pause des Rechners alle
-liegen gebliebenen Beiträge im 15-Minuten-Takt raus. Wer das nicht will, lässt die
+aber den Mindestabstand ein und postet nach `postBis` nichts mehr – sonst gingen nach einer Pause
+des Rechners alle liegen gebliebenen Beiträge im 15-Minuten-Takt raus, bis Mitternacht. Seit
+8.11.2026 startet die Tagesproduktion zudem drei Minuten nach dem Entsperren (Laptop aus dem
+Standby), nicht nur nach einer Anmeldung. Wer das nicht will, lässt die
 beiden Skripte auf einem kleinen Server oder in einer Cloud-Routine laufen – sie brauchen nur
 Node, einen Chrome und die Umgebungsvariablen.
 
@@ -290,7 +291,7 @@ node funnel/instagram.js kontingent
 
 | Schlüssel | Standard | Bedeutung |
 |---|---|---|
-| `reelsProTag` | `"10-20"` | feste Zahl oder Spanne, je Tag ausgewürfelt |
+| `reelsProTag` | `"10-14"` | feste Zahl oder Spanne, je Tag ausgewürfelt (bis 8.11.2026 `"10-20"`, siehe Auswertung) |
 | `postVon` / `postBis` | `07:00` / `21:30` | Sendefenster, lokale Zeit |
 | `mindestabstandMinuten` | `30` | nie zwei Reels näher beieinander |
 | `proTick` | `1` | wie viele fällige Reels ein Lauf von `posten.js` postet |
@@ -298,10 +299,13 @@ node funnel/instagram.js kontingent
 | `stufenSaison` | tofu .35, mofu .35, bofu .3 | Funnel-Mix, solange eine Kündigungsfrist läuft |
 | `mix` | daten .5, wissen .35 | innerhalb einer Stufe: Daten- zu Wissens-Reels |
 | `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
-| `karussellsProTag` | `2` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine) |
+| `karussellsProTag` | `1` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine; Karussells erreichen fast nur Follower) |
+| `formateAus` | `["modelle", "kantone"]` | Formate, die die Redaktion nicht einplant (beide fielen in der Erstverteilung fast immer durch) |
+| `maxJeFormat` | `2` | höchstens so viele Reels eines Formats je Tag, auch beim Auffüllen (Stamm-Reels ausgenommen) |
+| `hashtagsMax` | `5` | höchstens so viele Hashtags je Beitrag (drei feste, Kanton, Thema) |
 | `karussellAbstandMinuten` | `20` | Mindestabstand eines Karussells zu jedem anderen Beitrag |
 | `nachholenTage` | `1` | `posten.js` holt liegen gebliebene Beiträge so vieler Vortage nach (Countdown-Reels ausgenommen) |
-| `verfallMinuten` | `360` | `posten.js` lässt einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (Status `verfallen`, Thema wieder frei; `0` = nie). Zusätzlich hält `posten.js` auch beim Nachholen den `mindestabstandMinuten` zum zuletzt veröffentlichten Beitrag ein. |
+| `verfallMinuten` | `0` | `posten.js` lässt einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (Status `verfallen`, Thema wieder frei; `0` = nie, Standard: verspätete Reels liefen in den Daten nicht schlechter). Unabhängig davon hält `posten.js` auch beim Nachholen den `mindestabstandMinuten` zum zuletzt veröffentlichten Beitrag ein und postet nach `postBis` nichts mehr – der Rest geht am nächsten Morgen raus. |
 | `hashtags` | `bildtext` | `bildtext`, `kommentar` (erster Kommentar) oder `keine` |
 | `stimme` | `auto` | `aus` = immer stumm |
 | `ablage` | `vercel-blob` | oder `ordner` |
@@ -343,8 +347,9 @@ Instagram-App (Reel ▸ ⋯ ▸ Bearbeiten ▸ Titelbild bearbeiten).
 
 **Nachholen mit Mass.** Was an einem Tag nicht gepostet wurde (Rechner aus), holt `posten.js`
 am Folgetag nach (`nachholenTage`), ausser Countdown-Reels – ein Countdown von gestern wäre
-falsch. Am selben Tag gilt `verfallMinuten`: Was mehr als sechs Stunden zu spät wäre, wird
-ausgelassen. `posten.js --datum=<gestern> --alle` holt bei Bedarf alles von Hand nach.
+falsch. Am selben Tag gilt `verfallMinuten`: Was mehr als so viele Minuten zu spät wäre, wird
+ausgelassen, falls `verfallMinuten` gesetzt ist (Standard `0`: nie). `posten.js --datum=<gestern> --alle`
+holt bei Bedarf alles von Hand nach.
 
 **Zwei Prozesse, ein Plan.** `tag.js` und `posten.js` schreiben denselben Tagesplan. Seit
 8.11.2026 gleicht `planSpeichern` vor jedem Schreiben mit der Datei ab und behält je Reel die
@@ -416,7 +421,37 @@ Stamm-Reels bleiben wie bisher eigene Kompositionen (`npm run render`, `npm run 
 
 ---
 
-## 7. Performance-Board
+## 7. Auswertung vom 8.11.2026 und was daraus folgte
+
+90 Beiträge (71 Reels, 19 Karussells) bis 8.11.2026, ausgewertet nach Format, Stufe, Zeit, Anzahl
+und Produktion; Datensatz und Bericht im Artifact «SwissPremia Instagram-Bilanz». Kernbefunde:
+
+- **Reels laufen in einer festen Erstverteilung** an Nicht-Follower (Median rund 115 Views, kein
+  Reel über 190). Am stärksten hängt die Reichweite mit der Sehdauer der ersten Sekunden zusammen.
+- **Formate**: Countdown, Altersklassen und Unfalldeckung wurden immer verteilt; «Modelle» und
+  «Kantone im Vergleich» fast nie. Karussells erreichen im Mittel drei bis vier Konten.
+- **Anzahl**: Bis etwa 12 Reels je Tag hält die Leistung je Reel; der Einbruch an den 20er-Tagen
+  geht vor allem auf die schwachen Formate zurück, die der Planer nachschob.
+- **Zeitpunkt**: Keine belastbare Wirkung von Stunde oder Wochentag; der Abend war vor allem
+  unbedient (Rechner aus). Verspätete und nachgeholte Reels liefen nicht schlechter.
+- **Handlung**: In 28 Tagen 46 Profilbesuche und 1 Website-Klick; fast alle Kommentare kamen von
+  den manuellen Beiträgen aus dem Umfeld.
+
+Umgesetzt: `reelsProTag` 10–14, `karussellsProTag` 1, `formateAus`, `maxJeFormat`, Hook-Text
+ab dem ersten Bild (`useHook` in Bausteine.jsx), Titelbild aus der ersten Szene mit Ort,
+Hook-Test A/B für «Altersklassen» (Feld `hook` im Plan und im Board-Archiv), Leas Geschichte
+mit Betrag im ersten Satz, Aufruf als zweiter Absatz im Bildtext, Ecke «swisspremia.ch · Link im
+Profil», fünf Hashtags, nie gesendete Themen wieder frei (`verlaufBereinigen`), Plan-Abgleich
+gegen Doppelposts, Abstand beim Nachholen, nachts kein Posten, Render-Wiederholung, Mittags- und
+Entsperr-Auslöser, englische Reels mit englischer Stimme (`audio/en`, `ELEVENLABS_VOICE_ID_EN`).
+
+Offen und nur von Hand möglich: Bio auf 2027 und Frist, Profil-Link mit UTM, drei Beiträge
+anheften, Kommentare beantworten, Stories mit Link-Sticker, den doppelten Countdown vom 8.11.
+löschen. Grössere Schritte: Veröffentlichen aus der Cloud statt vom Laptop, Messung auf der Website.
+
+---
+
+## 8. Performance-Board
 
 https://swisspremia-board.vercel.app – Sendeplan, veröffentlichte Beiträge und ihre Zahlen
 (Aufrufe, Reichweite, Interaktionen, Wiedergabe), Kontozahlen, Aufrufe je Format. Nur mit

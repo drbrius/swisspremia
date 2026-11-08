@@ -116,6 +116,7 @@ export const REELS = [
     id: "new-in-switzerland",
     titel: "New in Switzerland",
     sprache: "en",
+    audioOrdner: "audio/en",   // englische Stimme (funnel/stimme.js, ELEVENLABS_VOICE_ID_EN)
     szenen: [
       { id: "s1", art: "zahl", hintergrund: "slate", zahl: "90", wort: "days", oben: "Welcome to Switzerland.", dauer: 2.8,
         stimme: "Welcome to Switzerland. Your ninety days start now." },

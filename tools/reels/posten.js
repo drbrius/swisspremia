@@ -23,13 +23,15 @@
    in einer Stunde, 8.11.: Rueckstand im 15-Minuten-Takt):
    - Abstand: nie ein Beitrag frueher als "mindestabstandMinuten" nach dem
      zuletzt veroeffentlichten – auch beim Nachholen.
-   - Verfall: ein Beitrag des Tages, der "verfallMinuten" nach seiner
-     Sendezeit noch nicht raus ist, wird ausgelassen ("verfallen"); sein
-     Thema wird im Verlauf freigegeben und kommt bald wieder dran.
+   - Verfall (Standard aus): ein Beitrag des Tages, der "verfallMinuten"
+     nach seiner Sendezeit noch nicht raus ist, wird ausgelassen
+     ("verfallen"); sein Thema wird im Verlauf freigegeben. Aus, weil
+     verspaetete und nachgeholte Reels in den Daten nicht schlechter liefen.
+   - Nachts nicht: nach postBis und vor postVon wird nichts veroeffentlicht.
    ========================================================================= */
 import fs from "node:fs";
 import path from "node:path";
-import { KONFIG, PLAN_ORDNER } from "./funnel/konfig.js";
+import { KONFIG, PLAN_ORDNER, minuten } from "./funnel/konfig.js";
 import { planLaden, planSpeichern, verlaufVergessen, protokoll, argumente } from "./funnel/zustand.js";
 import { datumKurz, datumLesen } from "./funnel/sprache.js";
 import { verbunden, kontingent, containerErstellen, karussellContainerErstellen, fertigWarten, veroeffentlichen, kommentieren, permalink, tokenAuffrischen, istInstagramLogin, InstagramFehler } from "./funnel/instagram.js";
@@ -70,6 +72,17 @@ if (verfall > 0) {
   faellig = faellig.filter(({ r }) => r.status !== "verfallen");
 }
 if (!faellig.length) { if (laut) console.log(`Nichts faellig (${datum}, ${jetzt.toTimeString().slice(0, 5)}).`); process.exit(0); }
+
+/* Nachts nicht: nach postBis (plus 15 Min Toleranz) und vor postVon bleibt
+   Liegengebliebenes liegen und geht am naechsten Morgen raus (nachholenTage) –
+   statt um Mitternacht im Takt. */
+{
+  const m = jetzt.getHours() * 60 + jetzt.getMinutes();
+  if (!arg.alle && !arg.jetzt && (m > minuten(KONFIG.postBis) + 15 || m < minuten(KONFIG.postVon))) {
+    if (laut) console.log(`Ausserhalb des Sendefensters ${KONFIG.postVon}–${KONFIG.postBis}.`);
+    process.exit(0);
+  }
+}
 
 /* Abstand zum zuletzt veroeffentlichten Beitrag (ueber alle gelesenen Plaene);
    fuenf Minuten Toleranz, weil der 15-Minuten-Takt nie genau trifft. */
@@ -127,14 +140,19 @@ for (const { r, plan } of faellig.slice(0, anzahl)) {
       catch (e) { protokoll(`Kommentar nicht moeglich (${e.message}) – Hashtags fehlen bei ${kennung}.`); }
     }
   } catch (e) {
-    r.versuche = (r.versuche || 0) + 1;
-    r.fehler = (e.message || String(e)).split("\n")[0];
+    /* Netz weg (typisch nach dem Aufwachen des Laptops, 3.11.2026): zaehlt
+       nicht als Versuch – sonst waere ein Beitrag nach drei "fetch failed"
+       aufgegeben, ohne dass Instagram je erreicht wurde. */
+    const netz = !(e instanceof InstagramFehler) && /fetch failed|ENOTFOUND|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENETUNREACH|socket hang up/i.test(String(e && e.message));
+    if (!netz) r.versuche = (r.versuche || 0) + 1;
+    r.fehler = (netz ? "Netz nicht erreichbar (zaehlt nicht): " : "") + (e.message || String(e)).split("\n")[0];
     /* Ein verunglueckter Container ist verbraucht – beim naechsten Mal
        einen neuen anlegen. Laeuft die Verarbeitung nur noch, bleibt er. */
     if (e instanceof InstagramFehler && (e.statusCode === "ERROR" || e.statusCode === "EXPIRED" || e.status === 400)) r.containerId = null;
     r.status = r.versuche >= 3 ? "aufgegeben" : "fehler";
     planSpeichern(plan);
-    protokoll(`FEHLER ${kennung}, Versuch ${r.versuche}: ${r.fehler}${r.status === "aufgegeben" ? " – aufgegeben." : ""}`);
+    protokoll(`FEHLER ${kennung}, Versuch ${r.versuche || 0}: ${r.fehler}${r.status === "aufgegeben" ? " – aufgegeben." : ""}`);
+    if (netz) break;   // ohne Netz nicht die naechsten Beitraege versuchen
     if (e.code === 190) { protokoll("Token ungueltig oder abgelaufen – neu verbinden: node funnel/instagram.js verbinden <token>"); break; }
   }
 }

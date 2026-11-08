@@ -40,7 +40,8 @@ const STUFEN_REIHE = ["bofu", "mofu", "tofu"];
 export function auswaehlen(datumText, anzahl, konfig, verlauf = {}) {
   const datum = datumLesen(datumText);
   const rnd = zufall("auswahl|" + datumText);
-  const alle = kandidaten(datum);
+  const aus = new Set(konfig.formateAus || []);
+  const alle = kandidaten(datum).filter((k) => !aus.has(k.format));
   const tageSeit = (k) => (verlauf[k.schluessel] ? Math.round((datum - datumLesen(verlauf[k.schluessel])) / 86_400_000) : Infinity);
   const laengstHer = (liste) => mischen(liste, rnd).sort((x, y) => tageSeit(y) - tageSeit(x));
   const bauen = (k) => { if (k.paket === undefined) k.paket = k.bauen(); return k.paket; };
@@ -54,10 +55,15 @@ export function auswaehlen(datumText, anzahl, konfig, verlauf = {}) {
   ziel.bofu = Math.max(0, anzahl - ziel.tofu - ziel.mofu - (eroeffnung ? 1 : 0));
 
   const wissenAnteil = konfig.mix.wissen / ((konfig.mix.daten + konfig.mix.wissen) || 1);
-  const maxJeFormat = Math.max(2, Math.ceil(anzahl / 8));   // bei 10–16 Reels: jedes Format hoechstens zweimal
+  /* Formatgrenze gilt immer – auch beim lockeren Auffuellen. Vorher fuellte
+     der Planer bei 20 Reels mit allem auf, was frei war (8.11.2026: 5x Leas
+     Geschichte, 3x Kantone, 2x Modelle); lieber ein Reel weniger als dasselbe
+     Motiv fuenfmal. Stamm-Reels sind je ein eigenes Motiv und zaehlen nicht. */
+  const maxJeFormat = Number(konfig.maxJeFormat) || Math.max(2, Math.ceil(anzahl / 8));
   const kantoneHeute = new Set(), jeFormat = {}, genommen = new Set();
   const gewaehlt = { tofu: [], mofu: [], bofu: [] };
-  const passt = (k, streng) => !streng || ((!k.region || !kantoneHeute.has(k.region)) && (jeFormat[k.format] || 0) < maxJeFormat);
+  const formatFrei = (k) => k.format === "stamm" || (jeFormat[k.format] || 0) < maxJeFormat;
+  const passt = (k, streng) => formatFrei(k) && (!streng || !k.region || !kantoneHeute.has(k.region));
   const nimm = (k, stufe) => {
     gewaehlt[stufe].push(k); genommen.add(k);
     if (k.region) kantoneHeute.add(k.region);
@@ -92,7 +98,7 @@ export function auswaehlen(datumText, anzahl, konfig, verlauf = {}) {
     let rest = fehlend;
     for (const k of laengstHer(alle.filter((x) => x.gruppe !== "saison"))) {
       if (rest <= 0) break;
-      if (genommen.has(k) || !bauen(k)) continue;
+      if (genommen.has(k) || !formatFrei(k) || !bauen(k)) continue;
       nimm(k, k.stufe || "mofu"); rest--;
     }
   }
@@ -127,7 +133,7 @@ export function zeitfenster(datumText, n, konfig) {
 function eintrag(p, nr, zeit, konfig) {
   const { text, kommentar, warnungen } = bildtextBauen({ ...p.bildtext, sprache: p.sprache, modus: konfig.hashtags, stufe: p.stufe });
   return {
-    nr, format: p.format, stufe: p.stufe || null, rahmen: p.rahmen || null, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
+    nr, format: p.format, stufe: p.stufe || null, rahmen: p.rahmen || null, hook: p.hook || undefined, gruppe: p.gruppe, schluessel: p.schluessel, titel: p.titel, sprache: p.sprache, cover: p.cover,
     zeit, status: "geplant", reel: p.reel, bildtext: text, kommentar,
     datei: null, url: null, containerId: null, mediaId: null, veroeffentlicht: null, fehler: null, versuche: 0,
     warnungen: warnungen.length ? warnungen : undefined

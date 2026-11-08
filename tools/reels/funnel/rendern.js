@@ -14,6 +14,25 @@ import { renderMedia, renderStill, renderFrames, selectComposition } from "@remo
 import { WURZEL } from "./konfig.js";
 import { szenenStarts } from "../src/takt.js";
 
+
+/* Browser-Zeitlimit (Remotion-Standard 30 s). Am 8.11.2026 scheiterten drei
+   Renders an "Timed out after 30000 while setting up the headless browser"
+   und "NetworkError" – eine Stoerung von 51 Sekunden. */
+export const BROWSER_TIMEOUT = 120_000;
+
+/* Voruebergehende Fehler (Browser-Start, Netz) ein- bis zweimal wiederholen,
+   mit Pause; alles andere sofort weiterreichen. */
+const VORUEBERGEHEND = /Timed out|NetworkError|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up|Target closed|spawn/i;
+export async function mitWiederholung(fn, { versuche = 3, pauseMs = 45_000, melden = () => {} } = {}) {
+  for (let i = 1; ; i++) {
+    try { return await fn(); }
+    catch (e) {
+      if (i >= versuche || !VORUEBERGEHEND.test(String(e && e.message))) throw e;
+      melden(`voruebergehender Fehler (${String(e.message).split("\n")[0].slice(0, 120)}) – neuer Versuch ${i + 1}/${versuche} in ${Math.round(pauseMs / 1000)} s`);
+      await new Promise((r) => setTimeout(r, pauseMs));
+    }
+  }
+}
 export const BROWSER = [
   process.env.REMOTION_BROWSER,
   "C:/Program Files/Google/Chrome/Application/chrome.exe",
@@ -43,9 +62,10 @@ export async function reelRendern(reel, ziel, { melden = () => {}, fortschritt =
   const url = await buendeln({ melden });
   fs.mkdirSync(path.dirname(ziel), { recursive: true });
   const inputProps = { reel, dauern: null };
-  const komposition = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "warn" });
+  const komposition = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "warn", timeoutInMilliseconds: BROWSER_TIMEOUT });
   let letzter = -1;
   await renderMedia({
+    timeoutInMilliseconds: BROWSER_TIMEOUT,
     composition: komposition, serveUrl: url, codec: "h264", crf: 18, outputLocation: ziel + ".teil.mp4", inputProps,
     browserExecutable: BROWSER, logLevel: "warn",
     onProgress: ({ progress }) => {
@@ -69,7 +89,7 @@ export async function reelRendern(reel, ziel, { melden = () => {}, fortschritt =
 export async function coverRendern(reel, ziel, anteil = 0.3, { melden = () => {} } = {}) {
   const url = await buendeln({ melden });
   const inputProps = { reel, dauern: null };
-  const k = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "error" });
+  const k = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "error", timeoutInMilliseconds: BROWSER_TIMEOUT });
   const dauern = k.props.dauern || [];
   const starts = szenenStarts(dauern);   // Szenen ueberlappen sich um den Uebergang
   const gesucht = Math.floor(k.durationInFrames * anteil);
@@ -79,6 +99,7 @@ export async function coverRendern(reel, ziel, anteil = 0.3, { melden = () => {}
   }
   fs.mkdirSync(path.dirname(ziel), { recursive: true });
   await renderStill({
+    timeoutInMilliseconds: BROWSER_TIMEOUT,
     composition: k, serveUrl: url, frame, output: ziel + ".teil.jpg", inputProps,
     imageFormat: "jpeg", jpegQuality: 90, browserExecutable: BROWSER, logLevel: "error"
   });
@@ -93,11 +114,12 @@ export async function coverRendern(reel, ziel, anteil = 0.3, { melden = () => {}
 export async function karussellRendern(karussell, ordner, { melden = () => {} } = {}) {
   const url = await buendeln({ melden });
   const inputProps = { karussell };
-  const k = await selectComposition({ serveUrl: url, id: "karussell", inputProps, browserExecutable: BROWSER, logLevel: "warn" });
+  const k = await selectComposition({ serveUrl: url, id: "karussell", inputProps, browserExecutable: BROWSER, logLevel: "warn", timeoutInMilliseconds: BROWSER_TIMEOUT });
   const teil = ordner + ".teil";
   fs.rmSync(teil, { recursive: true, force: true });
   fs.mkdirSync(teil, { recursive: true });
   await renderFrames({
+    timeoutInMilliseconds: BROWSER_TIMEOUT,
     composition: k, serveUrl: url, inputProps, outputDir: teil, imageFormat: "jpeg", jpegQuality: 92,
     frameRange: [0, k.durationInFrames - 1], concurrency: 1, browserExecutable: BROWSER, logLevel: "warn",
     onStart: () => {}, onFrameUpdate: () => {}

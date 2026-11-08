@@ -106,6 +106,11 @@ export async function stimmeProbe(stimme, text, datei) {
 
 /* ------------------------------------------------ Stimme je Audio-Ordner */
 
+/* Ordner, die auf "en" enden (audio/en, audio/tag/en), sprechen englisch –
+   mit ELEVENLABS_VOICE_ID_EN; alle anderen mit ELEVENLABS_VOICE_ID. */
+export const istEnglischerOrdner = (ordner) => path.basename(ordner) === "en";
+export const stimmeFuerOrdner = (ordner) => (istEnglischerOrdner(ordner) ? GEHEIM.elevenlabsVoiceEn : GEHEIM.elevenlabsVoice);
+
 export function stimmeImOrdner(ordner) {
   try { return JSON.parse(fs.readFileSync(path.join(ordner, MARKER), "utf8")); } catch (e) { return null; }
 }
@@ -122,7 +127,7 @@ const mp3Dateien = (ordner) => (fs.existsSync(ordner) ? fs.readdirSync(ordner).f
    stimmenErzeugen. Ohne Marker gilt der Bestand als von der konfigurierten
    Stimme (Bestand vor dem 29.10.2026: Matilda) und bekommt den Marker. */
 export function stimmenwechselPruefen(ordner, { melden = () => {} } = {}) {
-  const stimme = GEHEIM.elevenlabsVoice;
+  const stimme = stimmeFuerOrdner(ordner);
   if (!stimme) return { gewechselt: false };
   const vorhanden = mp3Dateien(ordner);
   const m = stimmeImOrdner(ordner);
@@ -152,7 +157,7 @@ export function fehlendeTonspuren(reels, ordner) {
    Liefert { erzeugt, uebersprungen, zeichen }. Wirft StimmeFehler, wenn
    der Schluessel fehlt und etwas zu erzeugen waere. */
 export async function stimmenErzeugen(reels, { ordner, nur = null, melden = () => {} }) {
-  const schluessel = GEHEIM.elevenlabsKey, stimme = GEHEIM.elevenlabsVoice, modell = GEHEIM.elevenlabsModel;
+  const schluessel = GEHEIM.elevenlabsKey, stimme = stimmeFuerOrdner(ordner), modell = GEHEIM.elevenlabsModel;
   stimmenwechselPruefen(ordner, { melden });
   if (fehlendeTonspuren(reels, ordner) === 0) return { erzeugt: 0, uebersprungen: reels.reduce((n, r) => n + r.szenen.filter((s) => s.stimme).length, 0), zeichen: 0 };
   if (!schluessel) throw new StimmeFehler(

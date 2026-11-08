@@ -19,10 +19,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { KONFIG, WURZEL, AUSGABE_ORDNER, AUDIO_ORDNER, GEHEIM } from "./funnel/konfig.js";
-import { planLaden, planSpeichern, verlaufLaden, verlaufMerken, protokoll, aufraeumen, argumente } from "./funnel/zustand.js";
+import { planLaden, planSpeichern, verlaufLaden, verlaufMerken, verlaufBereinigen, protokoll, aufraeumen, argumente } from "./funnel/zustand.js";
 import { planErstellen, nachschubPlanen } from "./funnel/redaktion.js";
 import { stimmenErzeugen, stimmenwechselPruefen, StimmeFehler } from "./funnel/stimme.js";
-import { reelRendern, coverRendern, karussellRendern, mp4DauerMs, BROWSER } from "./funnel/rendern.js";
+import { reelRendern, coverRendern, karussellRendern, mp4DauerMs, mitWiederholung, BROWSER } from "./funnel/rendern.js";
 import { hochladen, erreichbar } from "./funnel/ablage.js";
 import { bilderSichern, bilderFiltern, karussellBilderFiltern } from "./funnel/bilder.js";
 import { karussellsPlanen } from "./funnel/karussell.js";
@@ -38,6 +38,9 @@ const start = Date.now();
 function abbruch(text) { protokoll("FEHLER " + text); process.exitCode = 1; }
 
 /* ------------------------------------------------------------ 1 Plan */
+/* Nie gesendete Themen der Vortage wieder freigeben (zustand.js). */
+const frei = verlaufBereinigen(datum, Number(KONFIG.nachholenTage) || 0);
+if (frei.length) protokoll(`Verlauf: ${frei.length} nie gesendete Themen wieder frei (${frei.slice(0, 12).join(", ")}${frei.length > 12 ? ", …" : ""}).`);
 let plan = arg.neu ? null : planLaden(datum);
 /* --nachschub[=N]: dem heutigen Plan weitere Reels fuer den Rest des
    Sendefensters anhaengen (z. B. wenn der Funnel erst tagsueber startet). */
@@ -99,7 +102,7 @@ const offenKarussells = offenAlle.filter((r) => r.typ === "karussell");   // Kar
 /* Andere Stimme konfiguriert (ELEVENLABS_VOICE_ID)? Dann duerfen die alten
    Tonspuren nicht mehr in neue Videos – sie wandern ins Archiv, neue
    entstehen unten. Gilt auch fuer --ohne-stimme. */
-for (const ordner of [path.join(WURZEL, "public", "audio"), path.join(WURZEL, "public", AUDIO_ORDNER)]) stimmenwechselPruefen(ordner, { melden: (z) => protokoll(z) });
+for (const ordner of [path.join(WURZEL, "public", "audio"), path.join(WURZEL, "public", "audio", "en"), path.join(WURZEL, "public", AUDIO_ORDNER)]) stimmenwechselPruefen(ordner, { melden: (z) => protokoll(z) });
 
 let stimmeKaputt = null;
 if (offen.length && !ohneStimme) {
@@ -159,10 +162,11 @@ for (const r of offen) {
       console.log(`  Video   ${name} bereits vorhanden`);
     } else {
       process.stdout.write(`  Video   ${name} `);
-      sekunden = await reelRendern(reelMitTon, ziel, { melden: (z) => console.log("          " + z), fortschritt: (p) => process.stdout.write(p + "% ") });
+      const melden = (z) => { console.log("          " + z); if (/neuer Versuch/.test(z)) protokoll(`Render #${r.nr}: ${z}`, { stumm: true }); };
+      sekunden = await mitWiederholung(() => reelRendern(reelMitTon, ziel, { melden, fortschritt: (p) => process.stdout.write(p + "% ") }), { melden });
       console.log(`fertig${tonVorhanden.length ? "" : " (stumm)"}`);
     }
-    if (!fs.existsSync(zielCover)) r.coverMs = await coverRendern(reelMitTon, zielCover, r.cover || 0.3);
+    if (!fs.existsSync(zielCover)) r.coverMs = await mitWiederholung(() => coverRendern(reelMitTon, zielCover, r.cover || 0.3));
     r.datei = relativ(ziel);
     r.coverDatei = relativ(zielCover);
     r.dauerSekunden = Math.round(sekunden * 10) / 10;
@@ -190,7 +194,7 @@ for (const r of offenKarussells) {
       console.log(`  Folien  #${r.nr} ${r.titel} bereits vorhanden (${dateien.length})`);
     } else {
       process.stdout.write(`  Folien  #${r.nr} ${r.titel} `);
-      dateien = await karussellRendern(karussellBilderFiltern(r.karussell), ordner, { melden: (z) => console.log("          " + z) });
+      dateien = await mitWiederholung(() => karussellRendern(karussellBilderFiltern(r.karussell), ordner, { melden: (z) => console.log("          " + z) }));
       console.log(`${dateien.length} Folien fertig`);
     }
     r.dateien = dateien.map(relativ);

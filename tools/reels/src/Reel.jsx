@@ -6,7 +6,7 @@ import { wipe } from "@remotion/transitions/wipe";
 import { clockWipe } from "@remotion/transitions/clock-wipe";
 import { MARKE } from "./reels.js";
 import { HINTERGRUND, Kreuz, Wortmarke, chf } from "./Marke.jsx";
-import { Buehne, BildKontext, SzenenKontext, useSprechschritt, woerterZaehlen, Ecke, Woerter, Rollziffern, Funken, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil } from "./Bausteine.jsx";
+import { Buehne, BildKontext, SzenenKontext, useSprechschritt, useHook, HOOK_VORLAUF, HOOK_SCHRITT, woerterZaehlen, Ecke, Woerter, Rollziffern, Funken, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil } from "./Bausteine.jsx";
 import { GRAFIK } from "./Grafik.jsx";
 import { Spielszene } from "./Szenenbild.jsx";
 import { STUFEN } from "../funnel/themen.js";
@@ -19,10 +19,13 @@ const Titel = ({ s, farben }) => {
   const schweb = useSchweben(10, 3.2);
   /* Woerter im Sprechtempo: ueber die Szene verteilt statt alle auf einmal. */
   const anzahl = woerterZaehlen(s.text);
-  const schritt = useSprechschritt(anzahl, 6, 4, 12);
+  const hook = useHook();
+  const start = hook ? HOOK_VORLAUF : 6;
+  const schrittNormal = useSprechschritt(anzahl, 6, 4, 12);
+  const schritt = hook ? HOOK_SCHRITT : schrittNormal;
   let vorher = 0;
-  const zeilen = s.text.map((zeile) => { const ab = 6 + vorher * schritt; vorher += woerterZaehlen([zeile]); return ab; });
-  const klein = useEinblenden(6 + anzahl * schritt + 4);
+  const zeilen = s.text.map((zeile) => { const ab = start + vorher * schritt; vorher += woerterZaehlen([zeile]); return ab; });
+  const klein = useEinblenden(Math.max(0, start + anzahl * schritt + 4));
   /* Mit Figur: Text oben, Spielszene darunter (mindestens ein Drittel
      der Bildhoehe), Text etwas kleiner. */
   if (s.figur) {
@@ -60,18 +63,21 @@ const Titel = ({ s, farben }) => {
 };
 
 const Zahl = ({ s, farben }) => {
-  const fall = useFeder(0, { damping: 12, stiffness: 130, mass: .9 });
+  /* Als Hook (erste Szene) alles um "vor" Frames vorziehen: Frame 0 zeigt die Zahl schon. */
+  const vor = useHook() ? 16 : 0;
+  const fall = useFeder(-vor, { damping: 12, stiffness: 130, mass: .9 });
   const schweb = useSchweben(6, 2.8);
+  const oben = useEinblenden(-vor);
   return (
     <Buehne farben={farben}>
-      <Pulsring farbe={farben.akzent} ab={6} />
-      <Funken farbe={farben.akzent} ab={16} radius={380} />
-      {s.oben && <div style={{ fontSize: 44, color: farben.leise, marginBottom: 30, ...useEinblenden(0) }}>{s.oben}</div>}
+      <Pulsring farbe={farben.akzent} ab={6 - vor} />
+      <Funken farbe={farben.akzent} ab={16 - vor} radius={380} />
+      {s.oben && <div style={{ fontSize: 44, color: farben.leise, marginBottom: 30, ...oben }}>{s.oben}</div>}
       <div style={{ fontSize: 360, fontWeight: 600, lineHeight: 1, color: farben.akzent, transform: `translateY(${(1 - fall) * -260 + schweb}px) scale(${0.8 + fall * 0.2})`, opacity: Math.min(1, fall * 1.4) }}>
-        <Rollziffern text={s.zahl} ab={2} />
+        <Rollziffern text={s.zahl} ab={2 - vor} />
       </div>
       <div style={{ fontSize: 84, fontWeight: 300, marginTop: 24 }}>
-        <Woerter text={s.wort} akzent={farben.akzent} ab={12} schritt={4} />
+        <Woerter text={s.wort} akzent={farben.akzent} ab={12 - vor} schritt={vor ? 2 : 4} />
       </div>
     </Buehne>
   );
@@ -100,12 +106,13 @@ const Zaehler = ({ s, farben }) => {
 const Zwei = ({ s, farben }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const ende = Math.round(fps * 1.4);
-  const l = interpolate(frame, [4, ende], [0, s.links.bis], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
-  const r = interpolate(frame, [4, ende], [0, s.rechts.bis], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
+  const vor = useHook() ? 14 : 0;   // als Hook: Kreise und Zahlen schon im ersten Bild
+  const ende = Math.round(fps * 1.4) - vor;
+  const l = interpolate(frame, [4 - vor, ende], [0, s.links.bis], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
+  const r = interpolate(frame, [4 - vor, ende], [0, s.rechts.bis], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
   const puls = usePuls(1.6);
   const Kreis = ({ praefix, wert, akzent, phase }) => {
-    const auf = useFeder(akzent ? 0 : 6, { damping: 12, stiffness: 110 });
+    const auf = useFeder((akzent ? 0 : 6) - vor, { damping: 12, stiffness: 110 });
     const schweb = useSchweben(10, 3, phase);
     return (
       <div style={{
@@ -261,7 +268,7 @@ export const Reel = ({ reel, dauern }) => {
     if (i > 0) teile.push(<TransitionSeries.Transition key={"u" + i} presentation={uebergaenge[i - 1]} timing={TAKT} />);
     teile.push(
       <TransitionSeries.Sequence key={s.id} durationInFrames={d[i].frames} name={`${i + 1} ${s.art}${s.bild ? " · " + s.bild : ""}`}>
-        <SzenenKontext.Provider value={{ frames: d[i].frames }}>
+        <SzenenKontext.Provider value={{ frames: d[i].frames, hook: i === 0 }}>
           <BildKontext.Provider value={s.bild || null}>
             <Szene s={s} farben={farben} />
             {s.art !== "abbinder" && <Ecke farben={farben} />}

@@ -9,6 +9,7 @@
 
    Umgebungsvariablen:
      ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID, ELEVENLABS_MODEL_ID
+     ELEVENLABS_VOICE_ID_EN                  Stimme der englischen Reels (Standard Matilda)
      BLOB_READ_WRITE_TOKEN                   Vercel Blob (Ablage der Videos)
      IG_USER_ID, IG_ACCESS_TOKEN             Instagram-Konto
      IG_HOST (graph.facebook.com | graph.instagram.com), IG_API_VERSION
@@ -39,7 +40,10 @@ const STANDARD = {
   karussellsProTag: 2,             // Bild-Karussells je Tag, zusaetzlich zu den Reels (0 = keine)
   karussellAbstandMinuten: 20,     // Mindestabstand eines Karussells zu jedem anderen Beitrag
   nachholenTage: 1,                // posten.js holt liegen gebliebene Beitraege so vieler Vortage nach (ohne Saison-Reels)
-  verfallMinuten: 360,             // posten.js laesst einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (0 = nie)
+  verfallMinuten: 0,               // posten.js laesst einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (0 = nie)
+  formateAus: [],                  // Formate, die die Redaktion nicht einplant (z. B. ["modelle", "kantone"]); Stamm/Mythos/Einwand/Countdown ebenso abschaltbar
+  maxJeFormat: 0,                  // hoechstens so viele Reels eines Formats je Tag (0 = automatisch: max(2, Anzahl/8)); Stamm-Reels zaehlen nicht, jedes ist ein eigenes Motiv
+  hashtagsMax: 5,                  // hoechstens so viele Hashtags je Beitrag
   hashtags: "bildtext",            // bildtext | kommentar | keine
   stimme: "auto",                  // auto (wenn Schluessel da) | aus
   ablage: "vercel-blob",           // vercel-blob | ordner
@@ -64,7 +68,8 @@ const UMGEBUNG = {
   proTick: "PRO_TICK", hashtags: "HASHTAGS", stimme: "STIMME", ablage: "ABLAGE", videoOrdner: "VIDEO_ORDNER",
   videoBasisUrl: "VIDEO_BASIS_URL", aufbewahrungTage: "AUFBEWAHRUNG_TAGE", igHost: "IG_HOST", igApiVersion: "IG_API_VERSION",
   igProtokoll: "IG_PROTOKOLL", igLogin: "IG_LOGIN", wiederholungStammTage: "WIEDERHOLUNG_STAMM_TAGE",
-  karussellsProTag: "KARUSSELLS_PRO_TAG", karussellAbstandMinuten: "KARUSSELL_ABSTAND_MINUTEN", nachholenTage: "NACHHOLEN_TAGE", verfallMinuten: "VERFALL_MINUTEN"
+  karussellsProTag: "KARUSSELLS_PRO_TAG", karussellAbstandMinuten: "KARUSSELL_ABSTAND_MINUTEN", nachholenTage: "NACHHOLEN_TAGE", verfallMinuten: "VERFALL_MINUTEN",
+  formateAus: "FORMATE_AUS", maxJeFormat: "MAX_JE_FORMAT", hashtagsMax: "HASHTAGS_MAX"
 };
 
 function zusammenfuehren() {
@@ -72,7 +77,7 @@ function zusammenfuehren() {
   for (const [name, variable] of Object.entries(UMGEBUNG)) {
     if (process.env[variable] !== undefined && process.env[variable] !== "") {
       const roh = process.env[variable];
-      k[name] = typeof STANDARD[name] === "number" ? Number(roh) : roh;
+      k[name] = typeof STANDARD[name] === "number" ? Number(roh) : Array.isArray(STANDARD[name]) ? roh.split(",").map((x) => x.trim()).filter(Boolean) : roh;
     }
   }
   k.mix = { ...STANDARD.mix, ...(k.mix || {}) };
@@ -88,6 +93,9 @@ export const KONFIG = zusammenfuehren();
 export const GEHEIM = {
   get elevenlabsKey() { return process.env.ELEVENLABS_API_KEY || ""; },
   get elevenlabsVoice() { return process.env.ELEVENLABS_VOICE_ID || ""; },
+  /* Englische Reels (Ordner audio/en): eigene Stimme. Standard Matilda,
+     eine vorinstallierte ElevenLabs-Stimme – keine geheime Angabe. */
+  get elevenlabsVoiceEn() { return process.env.ELEVENLABS_VOICE_ID_EN || "XrExE9yKIg1WjnnlVkGX"; },
   get elevenlabsModel() { return process.env.ELEVENLABS_MODEL_ID || "eleven_multilingual_v2"; },
   get blobToken() { return process.env.BLOB_READ_WRITE_TOKEN || ""; },
   get igUserId() { return process.env.IG_USER_ID || ""; },

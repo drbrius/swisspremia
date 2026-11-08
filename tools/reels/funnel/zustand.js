@@ -87,6 +87,37 @@ export function verlaufMerken(eintraege, datum) {
   for (const schluessel of eintraege) v[schluessel] = datum;
   fs.writeFileSync(VERLAUF, JSON.stringify(v, null, 2));
 }
+/* Themen freigeben, die geplant, aber nie veroeffentlicht wurden. tag.js
+   merkt sich ein Thema schon beim Planen (sonst kaeme es am selben Tag im
+   Nachschub doppelt); fiel der Beitrag dann aus – Stimmen-Kontingent leer,
+   Render-Fehler, Rechner aus –, blieb das Thema trotzdem 14 Tage gesperrt.
+   So lagen am 8.11.2026 zehn von zwoelf Mythen und drei von fuenf Einwaenden
+   ungesendet in der Sperre. Freigegeben wird, was in einem Plan vor "heute"
+   steht, nicht veroeffentlicht ist und dessen Verlaufsdatum noch auf diesen
+   Plan zeigt; was posten.js noch nachholen koennte (hochgeladen/fehler,
+   juenger als nachholenTage), bleibt gesperrt. */
+export function verlaufBereinigen(heute, nachholenTage = 1) {
+  const v = verlaufLaden();
+  const grenze = new Date(heute + "T12:00:00"); grenze.setDate(grenze.getDate() - nachholenTage);
+  const grenzeText = datumKurz(grenze);
+  const frei = [];
+  for (const name of fs.readdirSync(PLAN_ORDNER)) {
+    const m = name.match(/^(\d{4}-\d{2}-\d{2})\.json$/);
+    if (!m || m[1] >= heute) continue;
+    let p;
+    try { p = JSON.parse(fs.readFileSync(path.join(PLAN_ORDNER, name), "utf8")); } catch (e) { continue; }
+    for (const r of p.reels || []) {
+      if (!r.schluessel || r.status === "veroeffentlicht" || v[r.schluessel] !== p.datum) continue;
+      const nachholbar = (r.status === "hochgeladen" || r.status === "fehler") && m[1] >= grenzeText;
+      if (nachholbar) continue;
+      delete v[r.schluessel];
+      frei.push(r.schluessel);
+    }
+  }
+  if (frei.length) fs.writeFileSync(VERLAUF, JSON.stringify(v, null, 2));
+  return frei;
+}
+
 /* Ein Thema wieder freigeben (z. B. verfallener Beitrag): es gilt dann als
    noch nie gelaufen und kommt bald wieder dran. */
 export function verlaufVergessen(eintraege) {

@@ -19,8 +19,17 @@ export const BildKontext = createContext(null);
 /* Laenge der aktuellen Szene in Frames (aus der Tonspur). Damit laufen
    Kamerafahrt und Ken-Burns ueber die ganze Szene, und die Woerter
    erscheinen im Sprechtempo statt alle in der ersten Sekunde. */
-export const SzenenKontext = createContext({ frames: 120 });
+export const SzenenKontext = createContext({ frames: 120, hook: false });
 export const useSzenenFrames = () => useContext(SzenenKontext).frames;
+
+/* Erste Szene eines Reels = Hook. Im Feed entscheidet sich in den ersten
+   ein bis zwei Sekunden, ob jemand bleibt (Ø Sehdauer der ersten 66 Reels:
+   3.9 s); der Hook-Text muss darum ab Frame 0 lesbar sein. HOOK_VORLAUF
+   setzt den Start der Woerter vor Frame 0 – das erste Bild zeigt sie schon
+   fast fertig, die Bewegung laeuft noch aus. */
+export const useHook = () => Boolean(useContext(SzenenKontext).hook);
+export const HOOK_VORLAUF = -10;
+export const HOOK_SCHRITT = 2;
 
 /* Abstand zwischen zwei Woertern, so dass "anzahl" Woerter ab Frame "ab"
    bis etwa drei Viertel der Szene erschienen sind – ungefaehr im Takt der
@@ -303,14 +312,19 @@ export const Ecke = ({ farben }) => {
   return (
     <div style={{ position: "absolute", top: ZONE.oben + 10, left: ZONE.seite, display: "flex", alignItems: "center", gap: 18, ...stil }}>
       <Kreuz groesse={44} farbe={farben.akzent === MARKE.gold ? MARKE.gold : MARKE.petrol} kreuz={farben.akzent === MARKE.gold ? MARKE.slate : MARKE.weiss} />
-      <div style={{ fontSize: 26, letterSpacing: ".18em", textTransform: "uppercase", color: farben.leise, fontWeight: 500 }}>SwissPremia</div>
+      {/* Domain und Hinweis auf den Link schon ab Sekunde 0: die Ø Sehdauer
+          (3.9 s) reicht nie bis zum Abbinder am Ende (Analyse 8.11.2026). */}
+      <div style={{ fontSize: 26, letterSpacing: ".12em", textTransform: "uppercase", color: farben.leise, fontWeight: 500 }}>swisspremia.ch · Link im Profil</div>
     </div>
   );
 };
 
 /* Textzeilen unter einer Grafik – Wort fuer Wort, im Sprechtempo. */
-export const Unterzeilen = ({ text = [], farben, ab = 30, groesse = 72 }) => {
-  const schritt = useSprechschritt(woerterZaehlen(text), ab, 3, 9);
+export const Unterzeilen = ({ text = [], farben, ab: abGrafik = 30, groesse = 72 }) => {
+  const hook = useHook();
+  const ab = hook ? HOOK_VORLAUF : abGrafik;
+  const schrittNormal = useSprechschritt(woerterZaehlen(text), abGrafik, 3, 9);
+  const schritt = hook ? HOOK_SCHRITT : schrittNormal;
   let vorher = 0;
   return (
     <div style={{ marginTop: 56 }}>

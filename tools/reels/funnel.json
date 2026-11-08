@@ -1,5 +1,5 @@
 {
-  "reelsProTag": "10-20",
+  "reelsProTag": "10-14",
   "postVon": "07:00",
   "postBis": "21:30",
   "mindestabstandMinuten": 30,
@@ -10,10 +10,16 @@
     "saison": 0.15
   },
   "wiederholungStammTage": 14,
-  "karussellsProTag": 2,
+  "karussellsProTag": 1,
   "karussellAbstandMinuten": 20,
   "nachholenTage": 1,
-  "verfallMinuten": 360,
+  "verfallMinuten": 0,
+  "formateAus": [
+    "modelle",
+    "kantone"
+  ],
+  "maxJeFormat": 2,
+  "hashtagsMax": 5,
   "hashtags": "bildtext",
   "stimme": "auto",
   "ablage": "vercel-blob",

@@ -6,7 +6,10 @@
    ========================================================================= */
 
 export const HASHTAGS = {
-  basis: ["#krankenkasse", "#krankenkassenvergleich", "#grundversicherung", "#prämien", "#schweiz", "#sparen"],
+  /* Drei feste, dann Thema und Kanton – zusammen hoechstens hashtagsMax (5).
+     Vorher sechs feste plus bis zu sechs weitere: kein messbarer Nutzen
+     (6 Tags Ø 116 Views, 12 Tags Ø 96), Instagram selbst raet zu wenigen. */
+  basis: ["#krankenkasse", "#krankenkassenvergleich", "#grundversicherung"],
   franchise: ["#franchise", "#selbstbehalt"],
   wechsel: ["#kassenwechsel", "#kündigung", "#30november"],
   modelle: ["#hausarztmodell", "#hmo", "#telmed"],
@@ -361,21 +364,23 @@ export const STAMM_RAHMEN = {
 export const STUFEN = {
   tofu: {
     name: "TOFU · Aufmerksamkeit", ziel: "Problem bewusst machen, Reichweite, Follower",
-    ctaVideo: "Folgen & speichern · @swisspremia", ctaVideoEn: "Follow & save · @swisspremia",
-    ctaBildtext: "Folgen Sie @swisspremia: Krankenkassen-Wissen in 20 Sekunden. Und speichern Sie den Beitrag für die Wechselsaison.",
-    ctaBildtextEn: "Follow @swisspremia for Swiss health insurance in 20 seconds – and save this for later."
+    /* Teilen vor Folgen: Weiterleitungen (Sends) zaehlen fuer die Reichweite
+       bei Nicht-Followern am meisten; 31 Folgen-Aufrufe brachten +1 Follower. */
+    ctaVideo: "Teilen & speichern · @swisspremia", ctaVideoEn: "Share & save · @swisspremia",
+    ctaBildtext: "Schicken Sie das jemandem, der es wissen muss – und speichern Sie es für die Wechselsaison.",
+    ctaBildtextEn: "Send this to someone who needs it – and save it for later."
   },
   mofu: {
     name: "MOFU · Abwägen", ziel: "Optionen verstehen, vergleichen, Vertrauen",
     ctaVideo: "In 1 Minute vergleichen · Link im Profil", ctaVideoEn: "Compare in 1 minute · link in bio",
-    ctaBildtext: "Alle Kassen mit den offiziellen Prämiendaten des Bundes vergleichen – kostenlos und ohne Anmeldung. Link im Profil.",
-    ctaBildtextEn: "Compare every insurer with the official federal premium data – free, no sign-up. Link in bio."
+    ctaBildtext: "Ihre Prämie 2027 für Ihre Postleitzahl: in 1 Minute auf swisspremia.ch, ohne Anmeldung – Link im Profil.",
+    ctaBildtextEn: "Your 2027 premium for your postcode in 1 minute on swisspremia.ch, no sign-up – link in bio."
   },
   bofu: {
     name: "BOFU · Entscheidung", ziel: "Zweifel ausräumen, Wechsel auslösen, Anfrage",
     ctaVideo: "Kostenlos anfragen · Link im Profil", ctaVideoEn: "Free quote · link in bio",
-    ctaBildtext: "Bereit für den Wechsel? Über den Link im Profil fragen Sie kostenlos und unverbindlich an. Ihre Anfrage geht an einen lizenzierten Versicherungsvermittler.",
-    ctaBildtextEn: "Ready to sign up or switch? Request a free, no-obligation quote via the link in bio. Your request goes to a licensed insurance broker."
+    ctaBildtext: "Vergleichen und kostenlos anfragen auf swisspremia.ch (Link im Profil) – die Anfrage geht an einen lizenzierten Versicherungsvermittler.",
+    ctaBildtextEn: "Compare and request a free quote on swisspremia.ch (link in bio) – your request goes to a licensed insurance broker."
   }
 };
 

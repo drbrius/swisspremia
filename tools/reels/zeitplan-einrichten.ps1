@@ -9,7 +9,7 @@
 
   Aufgabe 1 "SwissPremia Reels - Tag":    taeglich um -TagesStart (Standard 05:30) node tag.js,
                                           nochmals um -Mittag (Standard 12:30) fuer Liegengebliebenes
-                                          (Render-Fehler, Rechner war aus) und 3 Min nach der Anmeldung
+                                          (Render-Fehler, Rechner war aus) und 3 Min nach Anmeldung/Entsperren
   Aufgabe 2 "SwissPremia Reels - Posten": alle -TaktMinuten (Standard 15) node posten.js
   Aufgabe 3 "SwissPremia Reels - Board":  alle -BoardMinuten (Standard 30) node board.js
                                           (Stand fuer das Performance-Board, tools/board)
@@ -121,9 +121,14 @@ $ausloeserTag = New-ScheduledTaskTrigger -Daily -At $TagesStart
 $ausloeserMittag = New-ScheduledTaskTrigger -Daily -At $Mittag
 $ausloeserAnmeldung = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
 $ausloeserAnmeldung.Delay = "PT3M"
-Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger @($ausloeserTag, $ausloeserMittag, $ausloeserAnmeldung) -Settings $einstellungen `
+# Entsperren (StateChange 8 = SessionUnlock): Ein Laptop aus dem Standby meldet
+# sich nicht neu an, er wird nur entsperrt – vom 26.10. bis 8.11.2026 startete
+# die Tagesproduktion so an 7 von 14 Tagen erst Stunden spaeter.
+$klasseSitzung = Get-CimClass -ClassName MSFT_TaskSessionStateChangeTrigger -Namespace Root/Microsoft/Windows/TaskScheduler
+$ausloeserEntsperren = New-CimInstance -CimClass $klasseSitzung -Property @{ StateChange = 8; UserId = "$env:USERDOMAIN\$env:USERNAME"; Delay = "PT3M" } -ClientOnly
+Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger @($ausloeserTag, $ausloeserMittag, $ausloeserAnmeldung, $ausloeserEntsperren) -Settings $einstellungen `
   -Description "Plant, vertont, rendert und laedt die Reels und Karussells des Tages hoch (tools/reels/tag.js)." -Force -ErrorAction Stop | Out-Null
-Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart und $Mittag sowie 3 Minuten nach der Anmeldung"
+Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart und $Mittag sowie 3 Minuten nach Anmeldung oder Entsperren"
 
 $einstellungenPosten = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
   -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew
