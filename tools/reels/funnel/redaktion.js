@@ -21,6 +21,9 @@ import { spanne, minuten } from "./konfig.js";
 import { zufall, mischen, datumLesen } from "./sprache.js";
 
 export function anzahlFuer(datumText, konfig) {
+  /* Volumentest: feste Anzahl je Tag aus funnel.json (anzahlJeTag). */
+  const fest = Number((konfig.anzahlJeTag || {})[datumText]);
+  if (Number.isInteger(fest) && fest > 0) return fest;
   const [a, b] = spanne(konfig.reelsProTag);
   const rnd = zufall("anzahl|" + datumText);
   return a + Math.floor(rnd() * (b - a + 1));

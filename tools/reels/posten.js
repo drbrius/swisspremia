@@ -31,7 +31,8 @@
    ========================================================================= */
 import fs from "node:fs";
 import path from "node:path";
-import { KONFIG, PLAN_ORDNER, minuten } from "./funnel/konfig.js";
+import { execFile } from "node:child_process";
+import { KONFIG, PLAN_ORDNER, minuten, spanne } from "./funnel/konfig.js";
 import { planLaden, planSpeichern, verlaufVergessen, protokoll, argumente } from "./funnel/zustand.js";
 import { datumKurz, datumLesen } from "./funnel/sprache.js";
 import { verbunden, kontingent, containerErstellen, karussellContainerErstellen, fertigWarten, veroeffentlichen, kommentieren, permalink, tokenAuffrischen, istInstagramLogin, InstagramFehler } from "./funnel/instagram.js";
@@ -48,14 +49,51 @@ const zeitpunkt = (tag, hhmm) => { const d = datumLesen(tag); const [h, m] = hhm
 const tage = [datum];
 if (!arg.datum) for (let i = 1; i <= (Number(KONFIG.nachholenTage) || 0); i++) { const d = datumLesen(datum); d.setDate(d.getDate() - i); tage.push(datumKurz(d)); }
 const plaene = tage.map((t) => planLaden(t)).filter(Boolean);
+const heute = plaene.find((p) => p.datum === datum) || null;
+
+/* Selbstheilung: Fehlt nach postVon der heutige Plan, oder haengen Reels
+   seit ueber 30 Minuten mit Render-/Stimmen-Fehler auf "geplant", startet
+   posten.js die Tagesproduktion (Aufgabe "SwissPremia Reels - Tag"; laeuft
+   sie schon, ignoriert Windows den Start). Hoechstens dreimal je Tag. Am
+   3., 4. und 7.11.2026 lief die Tagesproduktion gar nicht. */
+if (!arg.jetzt && !arg.datum && process.platform === "win32") {
+  const m = jetzt.getHours() * 60 + jetzt.getMinutes();
+  const haengt = heute && heute.reels.some((r) => r.status === "geplant" && r.fehler && /^(Render|Stimme|Ablage)/.test(r.fehler) && zeitpunkt(datum, r.zeit) < new Date(jetzt.getTime() - 30 * 60_000));
+  if (m >= minuten(KONFIG.postVon) + 15 && m <= minuten(KONFIG.postBis) && (!heute || haengt)) {
+    const marke = path.join(PLAN_ORDNER, "selbstheilung.json");
+    let st = {}; try { st = JSON.parse(fs.readFileSync(marke, "utf8")); } catch (e) { /* erster Start */ }
+    const n = st.datum === datum ? st.anzahl || 0 : 0;
+    const zuletzt = st.datum === datum && st.zuletzt ? new Date(st.zuletzt) : null;
+    if (n < 3 && (!zuletzt || jetzt - zuletzt > 45 * 60_000)) {
+      fs.writeFileSync(marke, JSON.stringify({ datum, anzahl: n + 1, zuletzt: jetzt.toISOString() }));
+      execFile("schtasks", ["/Run", "/TN", "SwissPremia Reels - Tag"], () => {});
+      protokoll(`Selbstheilung: Tagesproduktion gestartet (${heute ? "Reels mit offenem Fehler" : "kein Plan fuer heute"}, Versuch ${n + 1}/3).`);
+    }
+  }
+}
 if (!plaene.length) { if (laut) console.log(`Kein Plan fuer ${datum} – tag.js ist noch nicht gelaufen.`); process.exit(0); }
 
+/* Heute zuerst, Liegengebliebenes als Reserve: Die heutigen Beitraege gehen
+   in ihrer Reihenfolge raus; aeltere fuellen nur Luecken, wenn heute nichts
+   faellig ist. Karussells werden nie nachgeholt (sie erreichen fast nur
+   Follower, nachgeholt 6–16 Views), Countdowns auch nicht. */
 const bereit = (r) => (r.status === "hochgeladen" || r.status === "fehler") && (r.url || (r.bildUrls && r.bildUrls.length));
 let faellig = plaene
   .flatMap((plan) => plan.reels
-    .filter((r) => bereit(r) && zeitpunkt(plan.datum, r.zeit) <= jetzt && (plan.datum === datum || r.gruppe !== "saison"))
+    .filter((r) => bereit(r) && zeitpunkt(plan.datum, r.zeit) <= jetzt && (plan.datum === datum || (r.gruppe !== "saison" && r.typ !== "karussell")))
     .map((r) => ({ r, plan })))
-  .sort((a, b) => zeitpunkt(a.plan.datum, a.r.zeit) - zeitpunkt(b.plan.datum, b.r.zeit));
+  .sort((a, b) => (a.plan.datum === datum ? 0 : 1) - (b.plan.datum === datum ? 0 : 1) || zeitpunkt(a.plan.datum, a.r.zeit) - zeitpunkt(b.plan.datum, b.r.zeit));
+
+/* Tagesdeckel: nie mehr als heute geplant + 4 (ohne Plan: obere Grenze von
+   reelsProTag + 4) – auch wenn viel liegen geblieben ist. */
+{
+  const deckel = (heute ? heute.reels.length : spanne(KONFIG.reelsProTag)[1]) + 4;
+  const heuteRaus = plaene.flatMap((p) => p.reels).filter((r) => r.veroeffentlicht && datumKurz(new Date(r.veroeffentlicht)) === datum).length;
+  if (heuteRaus >= deckel && !arg.alle) {
+    if (laut) console.log(`Tagesdeckel erreicht (${heuteRaus} von ${deckel}).`);
+    process.exit(0);
+  }
+}
 
 /* Verfall: lieber auslassen als Stunden spaeter im Stapel posten. Gilt nur
    fuer den heutigen Plan – die Vortage regelt nachholenTage. */

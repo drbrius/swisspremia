@@ -441,14 +441,23 @@ export function geschichte(region) {
   if (diff < 240) return null;
   const wo = region.mehrere ? `in ${region.ort}` : `im Kanton ${region.kantonName}`;
   const woKurz = region.mehrere ? `aus ${region.ort}` : `aus dem Kanton ${region.kantonName}`;
+  const variante = hookVariante(region.schluessel);
   return paket({
     format: "geschichte", gruppe: "daten", param: region.schluessel, titel: `Leas Geschichte (${region.name})`, cover: COVER_HOOK,
-    rahmen: "Story", beats: ["Struggle", "Turning Point", "Lesson", "Lesson", "CTA"],
-    /* Hook mit Ort und Betrag (vorher «Das ist Lea» ohne Zahl: tiefste
-       Sehdauer aller verteilten Formate, 3.4 s). */
+    rahmen: "Story", beats: variante === "A" ? ["Story", "Struggle", "Turning Point", "Lesson", "Lesson", "CTA"] : ["Struggle", "Turning Point", "Lesson", "Lesson", "CTA"], hook: variante,
+    /* Hook-Test (seit 8.11.2026): A = bisheriger Einstieg «Das ist Lea» und
+       «Jedes Jahr teurer» (tiefste Sehdauer der verteilten Formate, 3.4 s),
+       B = Ort und Betrag im ersten Satz, eine Szene kuerzer. */
     szenen: [
-      { art: "titel", hintergrund: "creme", text: [`Lea ${woKurz}`, `zahlt **${chf(s0)}**`, "im Monat."], figur: { aktion: "schulter", wer: "lea" }, klein: "Beispielfigur – Zahlen: BAG-Prämien " + JAHR, dauer: 3.0,
-        stimme: `Lea ${woKurz} zahlt im Standardmodell ${franken(s0)} im Monat. Jedes Jahr mehr.` },
+      ...(variante === "A" ? [
+        { art: "titel", hintergrund: "creme", text: ["Das ist Lea.", `Sie wohnt ${wo}.`], figur: { aktion: "winken", wer: "lea" }, klein: "Beispielfigur – Zahlen: BAG-Prämien " + JAHR, dauer: 3.0,
+          stimme: `Das ist Lea. Sie wohnt ${wo} und ist seit Jahren bei derselben Kasse.` },
+        { art: "titel", hintergrund: "slate", text: ["Jedes Jahr teurer.", "Standardmodell:", `**${chf(s0)}** im Monat.`], figur: { aktion: "schulter", wer: "lea" }, dauer: 3.2,
+          stimme: `Jedes Jahr wird es teurer. Im Standardmodell zahlt sie ${franken(s0)} im Monat.` }
+      ] : [
+        { art: "titel", hintergrund: "creme", text: [`Lea ${woKurz}`, `zahlt **${chf(s0)}**`, "im Monat."], figur: { aktion: "schulter", wer: "lea" }, klein: "Beispielfigur – Zahlen: BAG-Prämien " + JAHR, dauer: 3.0,
+          stimme: `Lea ${woKurz} zahlt im Standardmodell ${franken(s0)} im Monat. Jedes Jahr mehr.` }
+      ]),
       { art: "titel", hintergrund: "petrol", text: ["Dann vergleicht sie.", "Hausarztmodell:", `**${chf(s1)}** im Monat.`], figur: { aktion: "laptop", wer: "lea", bildschirm: ["Hausarzt", chf(s1)] }, dauer: 3.4,
         stimme: `Dann vergleicht sie. Im Hausarztmodell sind es ${franken(s1)} – bei gleichen Leistungen.` },
       { art: "zaehler", hintergrund: "creme", bild: kantonBild(region.kanton, "dorf"), praefix: "CHF", von: 0, bis: diff, oben: "Lea spart", unten: "im Jahr", dauer: 3.0,

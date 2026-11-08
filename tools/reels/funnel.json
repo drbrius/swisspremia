@@ -1,18 +1,18 @@
 {
   "reelsProTag": "10-14",
-  "postVon": "07:00",
-  "postBis": "21:30",
+  "postVon": "08:00",
+  "postBis": "17:00",
   "mindestabstandMinuten": 30,
   "proTick": 1,
   "mix": {
-    "daten": 0.5,
-    "wissen": 0.35,
+    "daten": 0.4,
+    "wissen": 0.45,
     "saison": 0.15
   },
   "wiederholungStammTage": 14,
-  "karussellsProTag": 1,
+  "karussellsProTag": 0,
   "karussellAbstandMinuten": 20,
-  "nachholenTage": 1,
+  "nachholenTage": 3,
   "verfallMinuten": 0,
   "formateAus": [
     "modelle",
@@ -35,8 +35,20 @@
     "bofu": 0.2
   },
   "stufenSaison": {
-    "tofu": 0.35,
-    "mofu": 0.35,
-    "bofu": 0.3
+    "tofu": 0.4,
+    "mofu": 0.4,
+    "bofu": 0.2
+  },
+  "anzahlJeTag": {
+    "2026-11-09": 8,
+    "2026-11-10": 14,
+    "2026-11-11": 14,
+    "2026-11-12": 8,
+    "2026-11-13": 8,
+    "2026-11-14": 14,
+    "2026-11-15": 14,
+    "2026-11-16": 8,
+    "2026-11-17": 8,
+    "2026-11-18": 14
   }
 }

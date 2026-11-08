@@ -292,19 +292,20 @@ node funnel/instagram.js kontingent
 | Schlüssel | Standard | Bedeutung |
 |---|---|---|
 | `reelsProTag` | `"10-14"` | feste Zahl oder Spanne, je Tag ausgewürfelt (bis 8.11.2026 `"10-20"`, siehe Auswertung) |
-| `postVon` / `postBis` | `07:00` / `21:30` | Sendefenster, lokale Zeit |
+| `postVon` / `postBis` | `08:00` / `17:00` | Sendefenster, lokale Zeit. Seit 8.11.2026 an die Zeit gekoppelt, in der der Laptop sicher wach ist (Deckel ging meist zwischen 15 und 17:30 Uhr zu); mit stabilem Betrieb auf `20:00` und den Abend testen |
 | `mindestabstandMinuten` | `30` | nie zwei Reels näher beieinander |
 | `proTick` | `1` | wie viele fällige Reels ein Lauf von `posten.js` postet |
 | `stufen` | tofu .45, mofu .35, bofu .2 | Funnel-Mix je Tag (TOFU/MOFU/BOFU) |
-| `stufenSaison` | tofu .35, mofu .35, bofu .3 | Funnel-Mix, solange eine Kündigungsfrist läuft |
-| `mix` | daten .5, wissen .35 | innerhalb einer Stufe: Daten- zu Wissens-Reels |
+| `stufenSaison` | tofu .4, mofu .4, bofu .2 | Funnel-Mix, solange eine Kündigungsfrist läuft (bis 8.11.2026 bofu .3: zu wenige BOFU-Formate, Leas Geschichte fünfmal am Tag) |
+| `mix` | daten .4, wissen .45 | innerhalb einer Stufe: Daten- zu Wissens-Reels |
 | `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
-| `karussellsProTag` | `1` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine; Karussells erreichen fast nur Follower) |
+| `karussellsProTag` | `0` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine). Bis 30.11.2026 keine: sie erreichen im Mittel 3–4 Konten und belegen Sendeplätze; danach höchstens 1 |
+| `anzahlJeTag` | 9.–18.11.: 8 / 14 / 14 / 8 … | feste Anzahl Reels für einzelne Tage (Volumentest ABBA, Entscheid am 20.11.); sonst `reelsProTag` |
 | `formateAus` | `["modelle", "kantone"]` | Formate, die die Redaktion nicht einplant (beide fielen in der Erstverteilung fast immer durch) |
 | `maxJeFormat` | `2` | höchstens so viele Reels eines Formats je Tag, auch beim Auffüllen (Stamm-Reels ausgenommen) |
 | `hashtagsMax` | `5` | höchstens so viele Hashtags je Beitrag (drei feste, Kanton, Thema) |
 | `karussellAbstandMinuten` | `20` | Mindestabstand eines Karussells zu jedem anderen Beitrag |
-| `nachholenTage` | `1` | `posten.js` holt liegen gebliebene Beiträge so vieler Vortage nach (Countdown-Reels ausgenommen) |
+| `nachholenTage` | `3` | `posten.js` holt liegen gebliebene Reels so vieler Vortage nach – als Reserve: heutige Beiträge zuerst, ältere füllen nur Lücken; Countdowns und Karussells nie; Tagesdeckel = heute geplant + 4 |
 | `verfallMinuten` | `0` | `posten.js` lässt einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (Status `verfallen`, Thema wieder frei; `0` = nie, Standard: verspätete Reels liefen in den Daten nicht schlechter). Unabhängig davon hält `posten.js` auch beim Nachholen den `mindestabstandMinuten` zum zuletzt veröffentlichten Beitrag ein und postet nach `postBis` nichts mehr – der Rest geht am nächsten Morgen raus. |
 | `hashtags` | `bildtext` | `bildtext`, `kommentar` (erster Kommentar) oder `keine` |
 | `stimme` | `auto` | `aus` = immer stumm |
@@ -444,6 +445,16 @@ mit Betrag im ersten Satz, Aufruf als zweiter Absatz im Bildtext, Ecke «swisspr
 Profil», fünf Hashtags, nie gesendete Themen wieder frei (`verlaufBereinigen`), Plan-Abgleich
 gegen Doppelposts, Abstand beim Nachholen, nachts kein Posten, Render-Wiederholung, Mittags- und
 Entsperr-Auslöser, englische Reels mit englischer Stimme (`audio/en`, `ELEVENLABS_VOICE_ID_EN`).
+
+Nach der Synthese zusätzlich: Sendefenster 08:00–17:00, keine Karussells bis 30.11., BOFU-Anteil
+0.2, Volumentest 8/14 Reels je Tag (`anzahlJeTag`), Hook-Test auch für Leas Geschichte,
+Nachholen als Reserve mit Tagesdeckel, Selbstheilung (`posten.js` startet die Tagesproduktion,
+wenn nach `postVon` kein Plan da ist oder Renders hängen, höchstens dreimal am Tag).
+
+**Grösster Hebel, nur von Hand:** Energieoptionen des Laptops. Laut Ereignisprotokoll weckt
+WakeToRun um 05:29, bei zugeklapptem Deckel schläft er nach 0–4 Sekunden wieder ein; der Deckel
+ging an 9 von 14 Tagen zwischen 14:39 und 17:29 zu. Im Netzbetrieb «Beim Zuklappen: Nichts
+unternehmen» und «Energiesparmodus: Nie».
 
 Offen und nur von Hand möglich: Bio auf 2027 und Frist, Profil-Link mit UTM, drei Beiträge
 anheften, Kommentare beantworten, Stories mit Link-Sticker, den doppelten Countdown vom 8.11.

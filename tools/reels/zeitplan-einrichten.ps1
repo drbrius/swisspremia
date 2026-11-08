@@ -130,8 +130,9 @@ Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger @($ausloes
   -Description "Plant, vertont, rendert und laedt die Reels und Karussells des Tages hoch (tools/reels/tag.js)." -Force -ErrorAction Stop | Out-Null
 Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart und $Mittag sowie 3 Minuten nach Anmeldung oder Entsperren"
 
+# 45 Minuten: ein Karussell mit fuenf Folien kann im schlechtesten Fall 30 Minuten warten.
 $einstellungenPosten = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
-  -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew
+  -ExecutionTimeLimit (New-TimeSpan -Minutes 45) -MultipleInstances IgnoreNew
 $aktionPosten = Aktion "posten.js"
 # Ohne -RepetitionDuration wiederholt Windows unbegrenzt; [TimeSpan]::MaxValue
 # lehnt die Aufgabenplanung als ungueltige Dauer ab (P99999999DT23H59M59S).
