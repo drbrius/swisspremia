@@ -25,6 +25,7 @@ const STATUS = {
   veroeffentlicht: { text: "Veröffentlicht", art: "gut", symbol: "✓" },
   fehler: { text: "Fehler, neuer Versuch", art: "ernst", symbol: "!" },
   aufgegeben: { text: "Aufgegeben", art: "kritisch", symbol: "×" },
+  verfallen: { text: "Ausgelassen (zu spät)", art: "warnung", symbol: "–" },
   verpasst: { text: "Nicht gepostet", art: "warnung", symbol: "!" }
 };
 
@@ -174,7 +175,7 @@ function vorbereiten(s) {
   const jetzt = new Date();
   const plan = (s.plan || []).map((p) => {
     const geplant = new Date(`${p.datum}T${p.zeit}:00`);   // Ortszeit des Browsers (Schweiz)
-    const verpasst = p.status !== "veroeffentlicht" && p.status !== "aufgegeben" && p.datum < heute();
+    const verpasst = !["veroeffentlicht", "aufgegeben", "verfallen"].includes(p.status) && p.datum < heute();
     return { ...p, geplant, statusAnzeige: verpasst ? "verpasst" : p.status, medium: p.mediaId ? nachId.get(p.mediaId) || null : null, vorbei: geplant < jetzt };
   });
   return { ...s, standDatum: new Date(s.stand), medien, plan };
@@ -315,9 +316,9 @@ function planZeichnen() {
 
   const reels = plan.filter((p) => p.datum === zustand.planTag).sort((a, b) => a.zeit.localeCompare(b.zeit));
   const anzahl = (st) => reels.filter((r) => r.statusAnzeige === st).length;
-  const naechstes = reels.find((r) => !r.vorbei && r.status !== "veroeffentlicht" && r.status !== "aufgegeben");
+  const naechstes = reels.find((r) => !r.vorbei && !["veroeffentlicht", "aufgegeben", "verfallen"].includes(r.status));
   const teile = [`${anzahl("veroeffentlicht")} von ${reels.length} veröffentlicht`];
-  const probleme = anzahl("fehler") + anzahl("aufgegeben") + anzahl("verpasst");
+  const probleme = anzahl("fehler") + anzahl("aufgegeben") + anzahl("verpasst") + anzahl("verfallen");
   if (probleme) teile.push(`${probleme} mit Problem`);
   if (naechstes) teile.push(`nächstes um ${naechstes.zeit}`);
   $("#plan-zusammenfassung").textContent = reels.length ? teile.join(" · ") : "";

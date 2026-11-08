@@ -253,15 +253,19 @@ cd C:\Users\info\OneDrive\Dokumente\leads\tools\reels
 .\zeitplan-einrichten.ps1
 ```
 
-Fragt alle Schlüssel ab (Enter behält den gespeicherten Wert) und legt die zwei Aufgaben an.
-`-Status` zeigt letzte Läufe und Protokoll, `-Entfernen` löscht beide, `-TagesStart 06:00`
-und `-TaktMinuten 10` ändern die Zeiten.
+Fragt alle Schlüssel ab (Enter behält den gespeicherten Wert) und legt die drei Aufgaben an.
+`-Status` zeigt letzte Läufe und Protokoll, `-Entfernen` löscht alle, `-TagesStart 06:00`,
+`-Mittag 13:00` und `-TaktMinuten 10` ändern die Zeiten.
 
 Der Rechner muss laufen. `WakeToRun` weckt ihn aus dem Energiesparmodus für die
 Tagesproduktion, ein zugeklappter Laptop postet aber nichts. War er um 05:30 ganz aus, läuft
 die Tagesproduktion drei Minuten nach der nächsten Anmeldung (zweiter Auslöser der Aufgabe
-«Tag», seit 29.10.2026); Beiträge, die am Vorabend liegen blieben, holt `posten.js` nach
-(`nachholenTage`). Wer das nicht will, lässt die
+«Tag», seit 29.10.2026) und in jedem Fall nochmals um 12:30 (dritter Auslöser, seit 8.11.2026:
+`tag.js` macht dann nur, was im Plan noch fehlt, etwa Renders, die am Netz scheiterten).
+Beiträge, die am Vorabend liegen blieben, holt `posten.js` nach (`nachholenTage`), hält dabei
+aber den Mindestabstand ein und lässt aus, was am selben Tag mehr als `verfallMinuten` zu spät
+wäre (Status `verfallen`, Thema wieder frei) – sonst gingen nach einer Pause des Rechners alle
+liegen gebliebenen Beiträge im 15-Minuten-Takt raus. Wer das nicht will, lässt die
 beiden Skripte auf einem kleinen Server oder in einer Cloud-Routine laufen – sie brauchen nur
 Node, einen Chrome und die Umgebungsvariablen.
 
@@ -297,6 +301,7 @@ node funnel/instagram.js kontingent
 | `karussellsProTag` | `2` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine) |
 | `karussellAbstandMinuten` | `20` | Mindestabstand eines Karussells zu jedem anderen Beitrag |
 | `nachholenTage` | `1` | `posten.js` holt liegen gebliebene Beiträge so vieler Vortage nach (Countdown-Reels ausgenommen) |
+| `verfallMinuten` | `360` | `posten.js` lässt einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (Status `verfallen`, Thema wieder frei; `0` = nie). Zusätzlich hält `posten.js` auch beim Nachholen den `mindestabstandMinuten` zum zuletzt veröffentlichten Beitrag ein. |
 | `hashtags` | `bildtext` | `bildtext`, `kommentar` (erster Kommentar) oder `keine` |
 | `stimme` | `auto` | `aus` = immer stumm |
 | `ablage` | `vercel-blob` | oder `ordner` |
@@ -336,9 +341,15 @@ Anteil `cover`, Frame bei 75 %), lädt es neben das Video und `posten.js` schick
 `cover_url` mit. Ein bereits veröffentlichtes Reel bekommt sein Titelbild nur noch in der
 Instagram-App (Reel ▸ ⋯ ▸ Bearbeiten ▸ Titelbild bearbeiten).
 
-**Kein Nachholen.** Was an einem Tag nicht gepostet wurde (Rechner aus), bleibt im Plan des
-Tages stehen und wird am Folgetag nicht nachgeholt – ein Countdown von gestern wäre falsch.
-`posten.js --datum=<gestern> --alle` holt es bei Bedarf von Hand nach.
+**Nachholen mit Mass.** Was an einem Tag nicht gepostet wurde (Rechner aus), holt `posten.js`
+am Folgetag nach (`nachholenTage`), ausser Countdown-Reels – ein Countdown von gestern wäre
+falsch. Am selben Tag gilt `verfallMinuten`: Was mehr als sechs Stunden zu spät wäre, wird
+ausgelassen. `posten.js --datum=<gestern> --alle` holt bei Bedarf alles von Hand nach.
+
+**Zwei Prozesse, ein Plan.** `tag.js` und `posten.js` schreiben denselben Tagesplan. Seit
+8.11.2026 gleicht `planSpeichern` vor jedem Schreiben mit der Datei ab und behält je Reel die
+weiter fortgeschrittene Fassung – vorher hatte `tag.js` einen gerade veröffentlichten Countdown
+wieder auf «hochgeladen» zurückgesetzt, und `posten.js` veröffentlichte ihn ein zweites Mal.
 
 **Kosten.** ElevenLabs nach Zeichen (siehe 2.3), Vercel Blob nach Speicher und Transfer
 (Instagram lädt jedes Video einmal). Instagram-API und Remotion sind kostenlos.

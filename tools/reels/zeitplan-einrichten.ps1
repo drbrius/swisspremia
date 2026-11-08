@@ -7,7 +7,9 @@
     .\zeitplan-einrichten.ps1 -Entfernen       alle Aufgaben loeschen
     .\zeitplan-einrichten.ps1 -NurBoard        nur die Board-Aufgabe anlegen/erneuern
 
-  Aufgabe 1 "SwissPremia Reels - Tag":    taeglich um -TagesStart (Standard 05:30) node tag.js
+  Aufgabe 1 "SwissPremia Reels - Tag":    taeglich um -TagesStart (Standard 05:30) node tag.js,
+                                          nochmals um -Mittag (Standard 12:30) fuer Liegengebliebenes
+                                          (Render-Fehler, Rechner war aus) und 3 Min nach der Anmeldung
   Aufgabe 2 "SwissPremia Reels - Posten": alle -TaktMinuten (Standard 15) node posten.js
   Aufgabe 3 "SwissPremia Reels - Board":  alle -BoardMinuten (Standard 30) node board.js
                                           (Stand fuer das Performance-Board, tools/board)
@@ -25,6 +27,7 @@ param(
   [switch]$Entfernen,
   [switch]$Status,
   [string]$TagesStart = "05:30",
+  [string]$Mittag = "12:30",
   [int]$TaktMinuten = 15,
   [switch]$NurBoard,
   [int]$BoardMinuten = 30
@@ -113,11 +116,14 @@ $aktionTag = Aktion "tag.js"
 # Einschalten (tag.js ist wiederanlaufbar; existiert der Plan schon, macht es
 # nur, was noch fehlt). Am 28. und 29.10.2026 war das der Fall.
 $ausloeserTag = New-ScheduledTaskTrigger -Daily -At $TagesStart
+# Zweiter Lauf mittags: tag.js macht nur, was im Plan noch fehlt. Am 8.11.2026
+# scheiterten drei Renders am Netz und blieben bis zum naechsten Tag liegen.
+$ausloeserMittag = New-ScheduledTaskTrigger -Daily -At $Mittag
 $ausloeserAnmeldung = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
 $ausloeserAnmeldung.Delay = "PT3M"
-Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger @($ausloeserTag, $ausloeserAnmeldung) -Settings $einstellungen `
+Register-ScheduledTask -TaskName $NameTag -Action $aktionTag -Trigger @($ausloeserTag, $ausloeserMittag, $ausloeserAnmeldung) -Settings $einstellungen `
   -Description "Plant, vertont, rendert und laedt die Reels und Karussells des Tages hoch (tools/reels/tag.js)." -Force -ErrorAction Stop | Out-Null
-Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart und 3 Minuten nach der Anmeldung"
+Write-Host "Eingerichtet: $NameTag - taeglich $TagesStart und $Mittag sowie 3 Minuten nach der Anmeldung"
 
 $einstellungenPosten = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
   -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew

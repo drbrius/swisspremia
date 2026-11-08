@@ -18,11 +18,19 @@
    ihn nach: Plaene der letzten "nachholenTage" (funnel.json, Standard 1)
    werden mitgelesen. Saison-Reels (Countdown "noch N Tage") werden nicht
    nachgeholt – ihre Zahl stimmt am naechsten Tag nicht mehr.
+
+   Zwei Regeln gegen den Stapel nach einer Pause (5.11.2026: sechs Reels
+   in einer Stunde, 8.11.: Rueckstand im 15-Minuten-Takt):
+   - Abstand: nie ein Beitrag frueher als "mindestabstandMinuten" nach dem
+     zuletzt veroeffentlichten – auch beim Nachholen.
+   - Verfall: ein Beitrag des Tages, der "verfallMinuten" nach seiner
+     Sendezeit noch nicht raus ist, wird ausgelassen ("verfallen"); sein
+     Thema wird im Verlauf freigegeben und kommt bald wieder dran.
    ========================================================================= */
 import fs from "node:fs";
 import path from "node:path";
 import { KONFIG, PLAN_ORDNER } from "./funnel/konfig.js";
-import { planLaden, planSpeichern, protokoll, argumente } from "./funnel/zustand.js";
+import { planLaden, planSpeichern, verlaufVergessen, protokoll, argumente } from "./funnel/zustand.js";
 import { datumKurz, datumLesen } from "./funnel/sprache.js";
 import { verbunden, kontingent, containerErstellen, karussellContainerErstellen, fertigWarten, veroeffentlichen, kommentieren, permalink, tokenAuffrischen, istInstagramLogin, InstagramFehler } from "./funnel/instagram.js";
 
@@ -41,12 +49,36 @@ const plaene = tage.map((t) => planLaden(t)).filter(Boolean);
 if (!plaene.length) { if (laut) console.log(`Kein Plan fuer ${datum} – tag.js ist noch nicht gelaufen.`); process.exit(0); }
 
 const bereit = (r) => (r.status === "hochgeladen" || r.status === "fehler") && (r.url || (r.bildUrls && r.bildUrls.length));
-const faellig = plaene
+let faellig = plaene
   .flatMap((plan) => plan.reels
     .filter((r) => bereit(r) && zeitpunkt(plan.datum, r.zeit) <= jetzt && (plan.datum === datum || r.gruppe !== "saison"))
     .map((r) => ({ r, plan })))
   .sort((a, b) => zeitpunkt(a.plan.datum, a.r.zeit) - zeitpunkt(b.plan.datum, b.r.zeit));
+
+/* Verfall: lieber auslassen als Stunden spaeter im Stapel posten. Gilt nur
+   fuer den heutigen Plan – die Vortage regelt nachholenTage. */
+const verfall = Number(KONFIG.verfallMinuten) || 0;
+if (verfall > 0) {
+  const verfallen = faellig.filter(({ r, plan }) => plan.datum === datum && (jetzt - zeitpunkt(plan.datum, r.zeit)) / 60_000 > verfall);
+  for (const { r, plan } of verfallen) {
+    r.status = "verfallen";
+    r.fehler = `verfallen: ${Math.round((jetzt - zeitpunkt(plan.datum, r.zeit)) / 60_000)} Min nach Sendezeit`;
+    planSpeichern(plan);
+    protokoll(`Verfallen #${r.nr} ${r.titel} (${r.zeit}) – ${r.fehler}; Thema wieder frei.`);
+  }
+  if (verfallen.length) verlaufVergessen(verfallen.map(({ r }) => r.schluessel).filter(Boolean));
+  faellig = faellig.filter(({ r }) => r.status !== "verfallen");
+}
 if (!faellig.length) { if (laut) console.log(`Nichts faellig (${datum}, ${jetzt.toTimeString().slice(0, 5)}).`); process.exit(0); }
+
+/* Abstand zum zuletzt veroeffentlichten Beitrag (ueber alle gelesenen Plaene);
+   fuenf Minuten Toleranz, weil der 15-Minuten-Takt nie genau trifft. */
+const abstand = Number(KONFIG.mindestabstandMinuten) || 0;
+const letzte = Math.max(0, ...plaene.flatMap((p) => p.reels.filter((r) => r.veroeffentlicht).map((r) => new Date(r.veroeffentlicht).getTime() || 0)));
+if (abstand && letzte && (jetzt - letzte) / 60_000 < abstand - 5 && !arg.alle) {
+  if (laut) console.log(`Abstand halten: letzter Beitrag vor ${Math.round((jetzt - letzte) / 60_000)} Min, Mindestabstand ${abstand}.`);
+  process.exit(0);
+}
 
 if (!verbunden()) { protokoll(`${faellig.length} Reels faellig, aber Instagram ist nicht verbunden (IG_USER_ID / IG_ACCESS_TOKEN). Siehe FUNNEL.md.`); process.exit(2); }
 

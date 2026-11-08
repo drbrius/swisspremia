@@ -13,6 +13,7 @@
   "karussellsProTag": 2,
   "karussellAbstandMinuten": 20,
   "nachholenTage": 1,
+  "verfallMinuten": 360,
   "hashtags": "bildtext",
   "stimme": "auto",
   "ablage": "vercel-blob",

@@ -53,7 +53,7 @@ if (plan && arg.nachschub) {
 }
 if (!plan) {
   plan = planErstellen(datum, KONFIG, { anzahl: arg.anzahl ? Number(arg.anzahl) : null, verlauf: verlaufLaden() });
-  planSpeichern(plan);
+  planSpeichern(plan, { ersetzen: true });   // neuer Plan: nichts Altes einmischen (--neu)
   verlaufMerken(plan.reels.map((r) => r.schluessel), datum);
   protokoll(`Plan ${datum} erstellt: ${plan.reels.length} Reels (gewuenscht ${plan.gewuenscht}), Fenster ${KONFIG.postVon}–${KONFIG.postBis}.`);
 } else {

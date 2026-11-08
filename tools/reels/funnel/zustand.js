@@ -7,7 +7,8 @@
 
    Status eines Reels im Plan:
      geplant -> gerendert -> hochgeladen -> veroeffentlicht
-     dazu "fehler" (wird erneut versucht) und "aufgegeben" (nach 3 Fehlern)
+     dazu "fehler" (wird erneut versucht), "aufgegeben" (nach 3 Fehlern)
+     und "verfallen" (zu spaet fuer den Tag, posten.js, verfallMinuten)
    ========================================================================= */
 import fs from "node:fs";
 import path from "node:path";
@@ -24,10 +25,55 @@ export function planLaden(datum) {
   return JSON.parse(fs.readFileSync(p, "utf8"));
 }
 
+/* Wie weit ist ein Reel? Damit entscheidet planZusammenfuehren, welche
+   Fassung – Speicher oder Platte – die juengere ist. Ein Container ohne
+   mediaId heisst: posten.js ist gerade dran. */
+function fortschritt(r) {
+  if (r.status === "veroeffentlicht" || r.mediaId) return 4;
+  if (r.containerId) return 3;
+  if (r.status === "hochgeladen" || r.url || (r.bildUrls && r.bildUrls.length)) return 2;
+  if (r.status === "gerendert" || r.datei || (r.dateien && r.dateien.length)) return 1;
+  return 0;
+}
+
+/* tag.js (rendert, laedt hoch) und posten.js (veroeffentlicht) halten den
+   Plan beide im Speicher und schreiben ihn nach jedem Schritt. Ohne
+   Abgleich ueberschreibt der eine den Stand des anderen: Am 8.11.2026 hatte
+   posten.js den Countdown veroeffentlicht, tag.js speicherte danach seinen
+   aelteren Stand "hochgeladen", und posten.js veroeffentlichte ihn ein
+   zweites Mal. Darum vor jedem Schreiben die Fassung auf der Platte lesen
+   und je Reel die weiter fortgeschrittene behalten – in das vorhandene
+   Objekt hinein, damit die Referenzen des Aufrufers gueltig bleiben. */
+const POSTEN_FELDER = ["status", "containerId", "mediaId", "veroeffentlicht", "permalink", "fehler", "versuche"];
+export function planZusammenfuehren(plan, platte) {
+  if (!platte || !Array.isArray(platte.reels)) return plan;
+  const meine = new Map(plan.reels.map((r) => [r.nr, r]));
+  for (const d of platte.reels) {
+    const m = meine.get(d.nr);
+    if (!m) { plan.reels.push(d); continue; }   // z. B. Nachschub aus einem anderen Lauf
+    const fm = fortschritt(m), fd = fortschritt(d);
+    if (fd > fm) {
+      Object.assign(m, d);
+    } else if (fd === fm) {
+      /* Gleich weit: eigener Stand gilt, aber Fehlversuche von posten.js
+         nicht vergessen – sonst zaehlt es bei jedem Lauf wieder von vorn. */
+      if ((d.versuche || 0) > (m.versuche || 0)) m.versuche = d.versuche;
+      if (m.status === "hochgeladen" && ["fehler", "aufgegeben", "verfallen"].includes(d.status)) for (const f of POSTEN_FELDER) if (d[f] !== undefined) m[f] = d[f];
+    }
+  }
+  plan.reels.sort((a, b) => a.nr - b.nr);
+  return plan;
+}
+
 /* Erst in eine Nebendatei schreiben, dann umbenennen – ein Absturz
-   mitten im Schreiben laesst so nie einen halben Plan zurueck. */
-export function planSpeichern(plan) {
+   mitten im Schreiben laesst so nie einen halben Plan zurueck.
+   ersetzen: true schreibt ohne Abgleich (neuer Plan, --neu). */
+export function planSpeichern(plan, { ersetzen = false } = {}) {
   const p = planPfad(plan.datum);
+  if (!ersetzen && fs.existsSync(p)) {
+    try { planZusammenfuehren(plan, JSON.parse(fs.readFileSync(p, "utf8"))); }
+    catch (e) { /* unlesbare Datei: eigener Stand gewinnt */ }
+  }
   fs.writeFileSync(p + ".neu", JSON.stringify(plan, null, 2));
   fs.renameSync(p + ".neu", p);
 }
@@ -39,6 +85,13 @@ export function verlaufLaden() {
 export function verlaufMerken(eintraege, datum) {
   const v = verlaufLaden();
   for (const schluessel of eintraege) v[schluessel] = datum;
+  fs.writeFileSync(VERLAUF, JSON.stringify(v, null, 2));
+}
+/* Ein Thema wieder freigeben (z. B. verfallener Beitrag): es gilt dann als
+   noch nie gelaufen und kommt bald wieder dran. */
+export function verlaufVergessen(eintraege) {
+  const v = verlaufLaden();
+  for (const schluessel of eintraege) delete v[schluessel];
   fs.writeFileSync(VERLAUF, JSON.stringify(v, null, 2));
 }
 

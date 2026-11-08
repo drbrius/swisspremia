@@ -39,6 +39,7 @@ const STANDARD = {
   karussellsProTag: 2,             // Bild-Karussells je Tag, zusaetzlich zu den Reels (0 = keine)
   karussellAbstandMinuten: 20,     // Mindestabstand eines Karussells zu jedem anderen Beitrag
   nachholenTage: 1,                // posten.js holt liegen gebliebene Beitraege so vieler Vortage nach (ohne Saison-Reels)
+  verfallMinuten: 360,             // posten.js laesst einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (0 = nie)
   hashtags: "bildtext",            // bildtext | kommentar | keine
   stimme: "auto",                  // auto (wenn Schluessel da) | aus
   ablage: "vercel-blob",           // vercel-blob | ordner
@@ -63,7 +64,7 @@ const UMGEBUNG = {
   proTick: "PRO_TICK", hashtags: "HASHTAGS", stimme: "STIMME", ablage: "ABLAGE", videoOrdner: "VIDEO_ORDNER",
   videoBasisUrl: "VIDEO_BASIS_URL", aufbewahrungTage: "AUFBEWAHRUNG_TAGE", igHost: "IG_HOST", igApiVersion: "IG_API_VERSION",
   igProtokoll: "IG_PROTOKOLL", igLogin: "IG_LOGIN", wiederholungStammTage: "WIEDERHOLUNG_STAMM_TAGE",
-  karussellsProTag: "KARUSSELLS_PRO_TAG", karussellAbstandMinuten: "KARUSSELL_ABSTAND_MINUTEN", nachholenTage: "NACHHOLEN_TAGE"
+  karussellsProTag: "KARUSSELLS_PRO_TAG", karussellAbstandMinuten: "KARUSSELL_ABSTAND_MINUTEN", nachholenTage: "NACHHOLEN_TAGE", verfallMinuten: "VERFALL_MINUTEN"
 };
 
 function zusammenfuehren() {
