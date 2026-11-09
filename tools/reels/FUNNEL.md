@@ -88,6 +88,27 @@ Sichtprüfung vor dem ersten Posten: `npm run karussell` rendert je Format ein K
 `out/karussell-probe/` (mit `index.html` als Kontaktbogen). Das Board zeigt Karussells mit
 4:5-Vorschau und allen Folien in der Schublade.
 
+### Hintergrundmusik (seit 9.11.2026)
+
+Jedes Reel hat leise Musik unter der Stimme. Über die Instagram-Schnittstelle lässt sich keine
+Musik aus der Instagram-Bibliothek anhängen; die Musik liegt darum im Video selbst. Karussells
+bleiben ohne Ton (die Schnittstelle kennt dort keine Musik).
+
+- **Stücke** in `public/musik/` (vom Repository ausgenommen), vier Stimmungen: `ruhig` (Stamm,
+  Mythos), `hell` (Datenformate), `puls` (Countdown, Einwand), `warm` (Leas Geschichte). Je Reel
+  fest gewählt (`funnel/musik.js`, `musikFuer`), der Name steht im Plan im Feld `musik`.
+- **Quelle:** bevorzugt ElevenLabs-Musik (`node funnel/musik.js erzeugen`, sechs Stücke à 50 s,
+  einmalig rund 3'600 Credits; auf bezahlten Plänen kommerziell nutzbar). Der Schlüssel braucht
+  dafür die Berechtigung **Music** (`music_generation`); ohne sie antwortet ElevenLabs mit 401.
+  Bis dahin laufen eigene, im Code komponierte Stücke ohne fremde Rechte
+  (`node funnel/musik.js eigene`, `funnel/musik-synth.js`). Liegen ElevenLabs-Stücke einer
+  Stimmung vor, ersetzen sie die eigenen automatisch.
+- **Mischung:** Stücke auf -20 LUFS angeglichen, im Reel mit `musikLautstaerke` 0.13 (rund 14 dB
+  unter der Stimme), 0.27 s eingeblendet, 1 s ausgeblendet. Danach gleicht `rendern.js` das
+  fertige Reel in zwei Durchgängen linear auf `lautheitZiel` -14 LUFS an (vorher lag die Stimme
+  bei etwa -23.5 LUFS, leiser als üblich auf Instagram); das Video wird dabei nur kopiert.
+- **Ausschalten:** `"musik": "aus"` in `funnel.json`.
+
 ### Bewegung und Fotos (seit 25.10.2026)
 
 Alle Reels, die Stamm-Reels eingeschlossen, laufen über dieselben Bausteine in `src/`:
@@ -304,6 +325,9 @@ node funnel/instagram.js kontingent
 | `formateAus` | `["modelle", "kantone"]` | Formate, die die Redaktion nicht einplant (beide fielen in der Erstverteilung fast immer durch) |
 | `maxJeFormat` | `2` | höchstens so viele Reels eines Formats je Tag, auch beim Auffüllen (Stamm-Reels ausgenommen) |
 | `hashtagsMax` | `5` | höchstens so viele Hashtags je Beitrag (drei feste, Kanton, Thema) |
+| `musik` | `"an"` | Hintergrundmusik unter der Stimme (`"aus"` = ohne) |
+| `musikLautstaerke` | `0.13` | Faktor auf die -20-LUFS-Stücke; 0.13 = rund 14 dB unter der Stimme |
+| `lautheitZiel` | `-14` | fertiges Reel auf diese Lautheit in LUFS angleichen (`0` = nicht angleichen) |
 | `karussellAbstandMinuten` | `20` | Mindestabstand eines Karussells zu jedem anderen Beitrag |
 | `nachholenTage` | `3` | `posten.js` holt liegen gebliebene Reels so vieler Vortage nach – als Reserve: heutige Beiträge zuerst, ältere füllen nur Lücken; Countdowns und Karussells nie; Tagesdeckel = heute geplant + 4 |
 | `verfallMinuten` | `0` | `posten.js` lässt einen Beitrag des Tages aus, der so viele Minuten nach seiner Sendezeit noch nicht raus ist (Status `verfallen`, Thema wieder frei; `0` = nie, Standard: verspätete Reels liefen in den Daten nicht schlechter). Unabhängig davon hält `posten.js` auch beim Nachholen den `mindestabstandMinuten` zum zuletzt veröffentlichten Beitrag ein und postet nach `postBis` nichts mehr – der Rest geht am nächsten Morgen raus. |

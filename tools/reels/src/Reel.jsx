@@ -252,6 +252,26 @@ function uebergaengeFuer(reel) {
   return Array.from({ length: Math.max(0, reel.szenen.length - 1) }, (_, i) => UEBERGAENGE[(start + i * schritt) % n]());
 }
 
+/* -------------------------------------------------- Hintergrundmusik */
+
+/* Leise unter der Stimme, ab dem ersten Bild (kurzes Einblenden, damit der
+   Hook nicht stumm beginnt), am Ende ausgeblendet. reel.musik setzt der
+   Funnel (funnel/musik.js musikSetzen): { datei, lautstaerke }. Die
+   Stuecke sind auf -20 LUFS angeglichen, die Stimme liegt bei etwa
+   -23.5 LUFS; mit 0.13 sitzt die Musik rund 14 dB darunter. */
+const MUSIK_EIN = 8, MUSIK_AUS = 30;
+const Hintergrundmusik = ({ musik, gesamt }) => (
+  <Audio
+    src={staticFile(musik.datei)}
+    loop
+    volume={(f) => {
+      const ein = interpolate(f, [0, MUSIK_EIN], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+      const aus = interpolate(f, [gesamt - MUSIK_AUS, gesamt], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+      return (musik.lautstaerke ?? 0.13) * ein * aus;
+    }}
+  />
+);
+
 /* ------------------------------------------------------------- Reel */
 
 export const Reel = ({ reel, dauern }) => {
@@ -285,6 +305,7 @@ export const Reel = ({ reel, dauern }) => {
       {reel.szenen.map((s, i) => d[i].hatTon
         ? <Sequence key={"ton-" + s.id} from={starts[i]} durationInFrames={d[i].frames} name={`Ton ${i + 1}`}><Audio src={staticFile(d[i].datei)} /></Sequence>
         : null)}
+      {reel.musik && reel.musik.datei ? <Hintergrundmusik musik={reel.musik} gesamt={gesamt} /> : null}
       <Fortschritt gesamt={gesamt} farbe={MARKE.gold} />
     </AbsoluteFill>
   );

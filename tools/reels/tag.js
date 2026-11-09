@@ -25,6 +25,7 @@ import { stimmenErzeugen, stimmenwechselPruefen, StimmeFehler } from "./funnel/s
 import { reelRendern, coverRendern, karussellRendern, mp4DauerMs, mitWiederholung, BROWSER } from "./funnel/rendern.js";
 import { hochladen, erreichbar } from "./funnel/ablage.js";
 import { bilderSichern, bilderFiltern, karussellBilderFiltern } from "./funnel/bilder.js";
+import { musikSetzen } from "./funnel/musik.js";
 import { karussellsPlanen } from "./funnel/karussell.js";
 import { datumKurz } from "./funnel/sprache.js";
 import { verbunden } from "./funnel/instagram.js";
@@ -155,7 +156,9 @@ for (const r of offen) {
       console.log(`  Video   ${name} uebersprungen – Tonspur fehlt (ElevenLabs-Fehler)`);
       continue;
     }
-    const reelMitTon = bilderFiltern({ ...r.reel, tonVorhanden }, bilderBereit);
+    /* Hintergrundmusik (funnel/musik.js): Stueck nach Format, fest je Reel. */
+    const reelMitTon = musikSetzen(bilderFiltern({ ...r.reel, tonVorhanden }, bilderBereit), r.format, { an: KONFIG.musik !== "aus", lautstaerke: Number(KONFIG.musikLautstaerke) || 0.13 });
+    r.musik = reelMitTon.musik ? reelMitTon.musik.name : null;
     let sekunden;
     if (fs.existsSync(ziel)) {
       sekunden = (mp4DauerMs(ziel) || 0) / 1000;

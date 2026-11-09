@@ -13,6 +13,9 @@ import { bundle } from "@remotion/bundler";
 import { renderMedia, renderStill, renderFrames, selectComposition } from "@remotion/renderer";
 import { WURZEL } from "./konfig.js";
 import { szenenStarts } from "../src/takt.js";
+import { execFileSync, spawnSync } from "node:child_process";
+import { ffmpegPfad } from "./musik-synth.js";
+import { KONFIG } from "./konfig.js";
 
 
 /* Browser-Zeitlimit (Remotion-Standard 30 s). Am 8.11.2026 scheiterten drei
@@ -58,6 +61,22 @@ export async function buendeln({ melden = () => {} } = {}) {
 
 /* Rendert einen Reel (Objekt wie in src/reels.js) nach "ziel" (MP4).
    Liefert die Laenge in Sekunden. */
+/* Zwei Durchgaenge: zuerst messen, dann mit den Messwerten linear
+   angleichen (eine Verstaerkung fuer das ganze Reel). Einfaches loudnorm
+   regelt laufend nach und hebt die Musik in jeder Sprechpause an. */
+function lautheitFilter(datei, ziel) {
+  const basis = `loudnorm=I=${ziel}:TP=-1.5:LRA=11`;
+  try {
+    const r = spawnSync(ffmpegPfad(), ["-hide_banner", "-nostats", "-i", datei, "-vn", "-af", basis + ":print_format=json", "-f", "null", "-"], { encoding: "utf8" });
+    const m = String(r.stderr || "").match(/\{[^{}]*"input_i"[^{}]*\}/);
+    if (!m) return basis;
+    const w = JSON.parse(m[0]);
+    return `${basis}:measured_I=${w.input_i}:measured_TP=${w.input_tp}:measured_LRA=${w.input_lra}:measured_thresh=${w.input_thresh}:offset=${w.target_offset}:linear=true`;
+  } catch (e) {
+    return basis;
+  }
+}
+
 export async function reelRendern(reel, ziel, { melden = () => {}, fortschritt = null } = {}) {
   const url = await buendeln({ melden });
   fs.mkdirSync(path.dirname(ziel), { recursive: true });
@@ -73,6 +92,21 @@ export async function reelRendern(reel, ziel, { melden = () => {}, fortschritt =
       if (fortschritt && p !== letzter) { letzter = p; fortschritt(p * 10); }
     }
   });
+  /* Lautheit des fertigen Reels angleichen (Stimme und Musik zusammen):
+     ElevenLabs liefert die Stimme bei etwa -23.5 LUFS, ueblich auf
+     Instagram sind rund -14. Video wird nur kopiert, Ton neu kodiert. */
+  const ziel_lufs = Number(KONFIG.lautheitZiel) || 0;
+  if (ziel_lufs < 0) {
+    try {
+      execFileSync(ffmpegPfad(), ["-y", "-hide_banner", "-loglevel", "error", "-i", ziel + ".teil.mp4", "-c:v", "copy",
+        "-af", lautheitFilter(ziel + ".teil.mp4", ziel_lufs), "-ar", "48000", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", ziel + ".laut.mp4"]);
+      fs.rmSync(ziel + ".teil.mp4", { force: true });
+      fs.renameSync(ziel + ".laut.mp4", ziel + ".teil.mp4");
+    } catch (e) {
+      fs.rmSync(ziel + ".laut.mp4", { force: true });
+      melden("Lautheit nicht angeglichen (" + String(e.message).split("\n")[0].slice(0, 120) + ") – Reel bleibt, wie gerendert.");
+    }
+  }
   fs.renameSync(ziel + ".teil.mp4", ziel);
   return komposition.durationInFrames / komposition.fps;
 }

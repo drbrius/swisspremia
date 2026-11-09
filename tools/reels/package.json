@@ -14,7 +14,8 @@
     "attrappe": "node test/graph-attrappe.js",
     "bilder": "node funnel/bilder.js",
     "storyboard": "node test/storyboard.js",
-    "karussell": "node test/karussell-probe.js out/karussell-probe"
+    "karussell": "node test/karussell-probe.js out/karussell-probe",
+    "musik": "node funnel/musik.js"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.230",
