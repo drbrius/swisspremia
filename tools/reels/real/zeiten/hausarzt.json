@@ -1,0 +1,47 @@
+{
+ "id": "hausarzt",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Gehen Sie ohnehin zuerst zum Hausarzt? Im Hausarztmodell verpflichten Sie sich genau dazu – und zahlen weniger Prämie. In Zürich sind es beim günstigsten Angebot rund eintausendeinhundertsiebzig Franken im Jahr. Die Leistungen bleiben dieselben. Notfälle sind immer gedeckt. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 335,
+ "gesamt": 20.72,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Gehen Sie ohnehin **zuerst zum Hausarzt**?",
+   "von": 0,
+   "bis": 2.36
+  },
+  {
+   "szene": 1,
+   "t": "Im Hausarztmodell verpflichten Sie sich genau dazu – und zahlen **weniger Prämie**.",
+   "von": 2.507,
+   "bis": 7.12
+  },
+  {
+   "szene": 2,
+   "t": "In Zürich sind es rund **CHF 1'170 im Jahr**.",
+   "von": 7.36,
+   "bis": 12.32
+  },
+  {
+   "szene": 3,
+   "t": "Die Leistungen bleiben **dieselben**.",
+   "von": 12.48,
+   "bis": 14.4
+  },
+  {
+   "szene": 3,
+   "t": "Notfälle sind **immer gedeckt**.",
+   "von": 14.6,
+   "bis": 16.4
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 16.576,
+   "bis": 20.72
+  }
+ ]
+}

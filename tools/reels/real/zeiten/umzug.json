@@ -1,0 +1,47 @@
+{
+ "id": "umzug",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Umgezogen? Dann ändert sich vielleicht Ihre Prämie. Die Schweiz ist in Prämienregionen eingeteilt. Entscheidend ist Ihre Wohngemeinde. Schon ein Umzug ins Nachbardorf kann die Prämie spürbar ändern. Nach dem Zügeln also: neu vergleichen. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 298,
+ "gesamt": 20.08,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Umgezogen? Dann ändert sich vielleicht **Ihre Prämie**.",
+   "von": 0,
+   "bis": 3.2
+  },
+  {
+   "szene": 1,
+   "t": "Die Schweiz ist in **Prämienregionen** eingeteilt.",
+   "von": 3.36,
+   "bis": 6.24
+  },
+  {
+   "szene": 1,
+   "t": "Entscheidend ist **Ihre Wohngemeinde**.",
+   "von": 6.384,
+   "bis": 8.88
+  },
+  {
+   "szene": 2,
+   "t": "Schon ein Umzug ins Nachbardorf kann die Prämie **spürbar ändern**.",
+   "von": 8.98,
+   "bis": 12.48
+  },
+  {
+   "szene": 3,
+   "t": "Nach dem Zügeln also: **neu vergleichen**.",
+   "von": 12.64,
+   "bis": 15.76
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 15.92,
+   "bis": 20.08
+  }
+ ]
+}

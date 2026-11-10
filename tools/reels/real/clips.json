@@ -1,0 +1,26 @@
+{
+ "brief": {
+  "datei": "real/clips/brief.mp4",
+  "modell": "seedance_2_0",
+  "aufloesung": "720p",
+  "jobId": "45dc258b-eb45-4f0f-9562-b3f126c6ae63",
+  "geladen": "2026-11-10T10:37:13.229Z",
+  "dauer": 15.04,
+  "geplant": [
+   0,
+   2.5,
+   6,
+   12.5,
+   15
+  ],
+  "grenzen": [
+   0,
+   3.042,
+   6.625,
+   10.875,
+   15.042
+  ],
+  "einstellungen": 4,
+  "prompt": "Photorealistic documentary footage, vertical, 4 shots with hard cuts, the same person in all shots: a woman in her mid-thirties with shoulder-length brown hair, wearing a mustard knit sweater, same clothes throughout. Shot 1 (0-2.5s): In the entrance hall of a Swiss apartment building she takes a white envelope out of a metal letterbox and looks at it. Shot 2 (2.5-6s): She sits at a wooden kitchen table by the window, unfolds the letter and reads it with a slight frown, a cup of coffee beside her. Shot 3 (6-12.5s): She puts the letter on a small pile of papers and looks thoughtfully out of the window. Shot 4 (12.5-15s): She opens a laptop on the kitchen table, starts typing and her face relaxes into a small relieved smile. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops and phones are plain and unbranded. No readable text, no logos, no captions, no subtitles, no watermark."
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "id": "franchise",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Selten krank? Dann verschenken Sie vielleicht Geld. Mit der höchsten Franschise sinkt die Prämie um bis zu eintausendfünfhundertvierzig Franken im Jahr. Der Haken: Die ersten zweitausendfünfhundert Franken Arztkosten zahlen Sie selbst. Das lohnt sich nur, wenn Sie dieses Geld auf der Seite haben. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 358,
+ "gesamt": 21.6,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Selten krank? Dann verschenken Sie vielleicht **Geld**.",
+   "von": 0,
+   "bis": 3.04
+  },
+  {
+   "szene": 1,
+   "t": "Mit der höchsten Franchise sinkt die Prämie um bis zu **CHF 1'540 im Jahr**.",
+   "von": 3.22,
+   "bis": 9.04
+  },
+  {
+   "szene": 2,
+   "t": "Der Haken: Die ersten **CHF 2'500** Arztkosten zahlen Sie selbst.",
+   "von": 9.06,
+   "bis": 14
+  },
+  {
+   "szene": 3,
+   "t": "Das lohnt sich nur, wenn Sie dieses Geld **auf der Seite haben**.",
+   "von": 14.14,
+   "bis": 17.36
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 17.472,
+   "bis": 21.6
+  }
+ ]
+}

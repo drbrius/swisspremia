@@ -64,7 +64,7 @@ export async function buendeln({ melden = () => {} } = {}) {
 /* Zwei Durchgaenge: zuerst messen, dann mit den Messwerten linear
    angleichen (eine Verstaerkung fuer das ganze Reel). Einfaches loudnorm
    regelt laufend nach und hebt die Musik in jeder Sprechpause an. */
-function lautheitFilter(datei, ziel) {
+export function lautheitFilter(datei, ziel) {
   const basis = `loudnorm=I=${ziel}:TP=-1.5:LRA=11`;
   try {
     const r = spawnSync(ffmpegPfad(), ["-hide_banner", "-nostats", "-i", datei, "-vn", "-af", basis + ":print_format=json", "-f", "null", "-"], { encoding: "utf8" });

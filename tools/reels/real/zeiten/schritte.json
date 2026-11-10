@@ -1,0 +1,53 @@
+{
+ "id": "schritte",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Krankenkasse wechseln ist einfacher, als Sie denken. Erstens: vergleichen. Zweitens: bei der neuen Kasse anmelden. Drittens: die alte eingeschrieben kündigen – bis zum dreissigsten November. Die neue Kasse meldet sich bei der alten. Eine Lücke gibt es nicht. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 319,
+ "gesamt": 20.64,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Krankenkasse wechseln ist **einfacher, als Sie denken**.",
+   "von": 0,
+   "bis": 2.72
+  },
+  {
+   "szene": 1,
+   "t": "Erstens: **vergleichen**.",
+   "von": 2.773,
+   "bis": 4.24
+  },
+  {
+   "szene": 1,
+   "t": "Zweitens: bei der neuen Kasse **anmelden**.",
+   "von": 4.64,
+   "bis": 7.12
+  },
+  {
+   "szene": 2,
+   "t": "Drittens: die alte **eingeschrieben kündigen** – bis 30. November.",
+   "von": 7.48,
+   "bis": 12.48
+  },
+  {
+   "szene": 3,
+   "t": "Die neue Kasse meldet sich bei der alten.",
+   "von": 12.64,
+   "bis": 14.96
+  },
+  {
+   "szene": 3,
+   "t": "**Eine Lücke gibt es nicht.**",
+   "von": 15.088,
+   "bis": 16.72
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 16.816,
+   "bis": 20.64
+  }
+ ]
+}

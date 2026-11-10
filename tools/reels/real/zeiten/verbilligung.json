@@ -1,0 +1,53 @@
+{
+ "id": "verbilligung",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Viele Haushalte hätten Anspruch auf Prämienverbilligung. Und holen sie nicht ab. Je nach Kanton kommt sie nicht automatisch. Sie müssen einen Antrag stellen – die Fristen sind kantonal. Massgebend sind Einkommen und Haushalt. Nachfragen kostet nichts. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 312,
+ "gesamt": 21.52,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Viele Haushalte hätten Anspruch auf **Prämienverbilligung**.",
+   "von": 0,
+   "bis": 2.8
+  },
+  {
+   "szene": 0,
+   "t": "Und holen sie **nicht ab**.",
+   "von": 3.02,
+   "bis": 5.2
+  },
+  {
+   "szene": 1,
+   "t": "Je nach Kanton kommt sie **nicht automatisch**.",
+   "von": 5.413,
+   "bis": 7.84
+  },
+  {
+   "szene": 2,
+   "t": "Sie müssen **einen Antrag stellen** – die Fristen sind kantonal.",
+   "von": 8,
+   "bis": 11.6
+  },
+  {
+   "szene": 3,
+   "t": "Massgebend sind **Einkommen und Haushalt**.",
+   "von": 11.808,
+   "bis": 14.48
+  },
+  {
+   "szene": 3,
+   "t": "Nachfragen kostet nichts.",
+   "von": 14.64,
+   "bis": 17
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 17.104,
+   "bis": 21.52
+  }
+ ]
+}

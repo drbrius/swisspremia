@@ -1,0 +1,47 @@
+{
+ "id": "gleich",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Zwei Patienten. Dieselbe Behandlung. Der eine zahlt dafür deutlich mehr Prämie als der andere. Denn die Leistungen der Grundversicherung stehen im Gesetz. Sie sind bei jeder Kasse identisch. Wer mehr zahlt, bekommt nicht mehr. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 287,
+ "gesamt": 18.24,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Zwei Patienten. **Dieselbe Behandlung.**",
+   "von": 0,
+   "bis": 2.8
+  },
+  {
+   "szene": 1,
+   "t": "Der eine zahlt dafür **deutlich mehr Prämie** als der andere.",
+   "von": 3.04,
+   "bis": 6.56
+  },
+  {
+   "szene": 2,
+   "t": "Denn die Leistungen der Grundversicherung stehen **im Gesetz**.",
+   "von": 6.672,
+   "bis": 9.68
+  },
+  {
+   "szene": 2,
+   "t": "Sie sind bei jeder Kasse **identisch**.",
+   "von": 9.78,
+   "bis": 11.68
+  },
+  {
+   "szene": 3,
+   "t": "Wer mehr zahlt, **bekommt nicht mehr**.",
+   "von": 11.86,
+   "bis": 14.08
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 14.24,
+   "bis": 18.24
+  }
+ ]
+}

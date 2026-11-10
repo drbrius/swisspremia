@@ -1,0 +1,53 @@
+{
+ "id": "offen",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Unbezahlte Prämien können Ihren Kassenwechsel blockieren. Wer bei der alten Kasse im Verzug ist, darf nicht wechseln. Erst wenn alles bezahlt ist. Prüfen Sie vor der Kündigung: Ist alles beglichen? Prämien, Franschise, Selbstbehalt. Dann steht dem Wechsel nichts im Weg. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 331,
+ "gesamt": 21.04,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Unbezahlte Prämien können Ihren Kassenwechsel **blockieren**.",
+   "von": 0,
+   "bis": 3.04
+  },
+  {
+   "szene": 1,
+   "t": "Wer bei der alten Kasse **im Verzug** ist, darf nicht wechseln.",
+   "von": 3.28,
+   "bis": 7.12
+  },
+  {
+   "szene": 1,
+   "t": "Erst wenn alles bezahlt ist.",
+   "von": 7.2,
+   "bis": 8.72
+  },
+  {
+   "szene": 2,
+   "t": "Prüfen Sie vor der Kündigung: **Ist alles beglichen?**",
+   "von": 8.987,
+   "bis": 12
+  },
+  {
+   "szene": 2,
+   "t": "Prämien, Franchise, Selbstbehalt.",
+   "von": 12.133,
+   "bis": 14.48
+  },
+  {
+   "szene": 3,
+   "t": "Dann steht dem Wechsel **nichts im Weg**.",
+   "von": 14.608,
+   "bis": 17.16
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 17.248,
+   "bis": 21.04
+  }
+ ]
+}

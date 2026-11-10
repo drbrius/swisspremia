@@ -1,0 +1,47 @@
+{
+ "id": "sechsundzwanzig",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Mit sechsundzwanzig wird Ihre Krankenkasse auf einen Schlag teurer. Der Rabatt für junge Erwachsene fällt weg – automatisch. In Zürich sind das beim günstigsten Angebot rund hundertfünfzig Franken mehr – pro Monat. Genau dann lohnt sich ein neuer Vergleich. Denn in jeder Altersklasse ist oft eine andere Kasse die günstigste. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 387,
+ "gesamt": 23.2,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Mit 26 wird Ihre Krankenkasse **auf einen Schlag teurer**.",
+   "von": 0,
+   "bis": 4.08
+  },
+  {
+   "szene": 1,
+   "t": "Der Rabatt für junge Erwachsene **fällt weg** – automatisch.",
+   "von": 4.1,
+   "bis": 7.28
+  },
+  {
+   "szene": 1,
+   "t": "In Zürich sind das rund **CHF 150 mehr pro Monat**.",
+   "von": 7.413,
+   "bis": 12.4
+  },
+  {
+   "szene": 2,
+   "t": "Genau dann lohnt sich **ein neuer Vergleich**.",
+   "von": 12.64,
+   "bis": 15.28
+  },
+  {
+   "szene": 3,
+   "t": "Denn in jeder Altersklasse ist oft **eine andere Kasse** die günstigste.",
+   "von": 15.376,
+   "bis": 18.96
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 19.12,
+   "bis": 23.2
+  }
+ ]
+}

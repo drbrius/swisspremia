@@ -1,0 +1,47 @@
+{
+ "id": "eingang",
+ "stimme": "dCnu06FiOZma2KVNUoPZ",
+ "modell": "eleven_v3",
+ "text": "Am dreissigsten November abschicken? Zu spät. Ihre Kündigung muss dann schon bei der Kasse liegen. Es zählt der Eingang – nicht der Poststempel. Ein Tag zu spät heisst: ein Jahr länger bei der alten Kasse. Darum: eingeschrieben – und spätestens am zwanzigsten November zur Post. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
+ "zeichen": 339,
+ "gesamt": 22.88,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Am 30. November abschicken? **Zu spät.**",
+   "von": 0,
+   "bis": 3.12
+  },
+  {
+   "szene": 1,
+   "t": "Ihre Kündigung muss dann schon **bei der Kasse liegen**.",
+   "von": 3.28,
+   "bis": 6.2
+  },
+  {
+   "szene": 1,
+   "t": "Es zählt der Eingang – **nicht der Poststempel**.",
+   "von": 6.267,
+   "bis": 8.72
+  },
+  {
+   "szene": 2,
+   "t": "Ein Tag zu spät heisst: **ein Jahr länger** bei der alten Kasse.",
+   "von": 8.92,
+   "bis": 12.88
+  },
+  {
+   "szene": 3,
+   "t": "Darum: **eingeschrieben** – spätestens am 20. November.",
+   "von": 13.1,
+   "bis": 18.32
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 18.528,
+   "bis": 22.88
+  }
+ ]
+}
