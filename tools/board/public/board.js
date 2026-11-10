@@ -15,6 +15,7 @@ const ABGLEICH_ALT_MIN = 75;   // danach Warnung: laeuft der Rechner?
 const FORMATE = {
   franchise: "Franchise", modelle: "Modelle", alter: "Alter", unfall: "Unfall", flexibel: "Sparpotenzial",
   regionen: "Regionen", kantone: "Kantone", countdown: "Countdown", mythos: "Mythen", stamm: "Stamm-Reels", hand: "Von Hand",
+  geschichte: "Leas Geschichte", einwand: "Einwand", echt: "Echt-Serie (realistisch)",
   /* Karussells (Bild-Beitraege, tools/reels/funnel/karussell.js) */
   fakt: "Fakt des Tages", check: "Mythos-Check", zahl: "Zahl des Tages", steckbrief: "Kanton-Steckbrief"
 };

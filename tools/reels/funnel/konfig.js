@@ -47,6 +47,7 @@ const STANDARD = {
   musik: "an",                     // Hintergrundmusik unter der Stimme: an | aus (funnel/musik.js)
   musikLautstaerke: 0.13,          // Faktor auf die -20-LUFS-Stuecke; 0.13 = rund 14 dB unter der Stimme
   lautheitZiel: -14,               // fertiges Reel auf diese Lautheit (LUFS) angleichen; 0 = nicht angleichen
+  postBisJeTag: {},                // spaeteres Ende des Sendefensters fuer einzelne Tage, z. B. {"2026-11-10": "20:30"} (nur posten.js)
   anzahlJeTag: {},                 // feste Anzahl Reels fuer einzelne Tage, z. B. {"2026-11-09": 8} (Volumentest); sonst reelsProTag
   hashtags: "bildtext",            // bildtext | kommentar | keine
   stimme: "auto",                  // auto (wenn Schluessel da) | aus

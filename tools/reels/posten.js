@@ -116,8 +116,12 @@ if (!faellig.length) { if (laut) console.log(`Nichts faellig (${datum}, ${jetzt.
    statt um Mitternacht im Takt. */
 {
   const m = jetzt.getHours() * 60 + jetzt.getMinutes();
-  if (!arg.alle && !arg.jetzt && (m > minuten(KONFIG.postBis) + 15 || m < minuten(KONFIG.postVon))) {
-    if (laut) console.log(`Ausserhalb des Sendefensters ${KONFIG.postVon}–${KONFIG.postBis}.`);
+  /* postBisJeTag verlaengert das Fenster fuer einzelne Tage (z. B. wenn
+     nachmittags noch Videos dazukommen), ohne die Planung der uebrigen
+     Tage zu aendern. */
+  const bis = (KONFIG.postBisJeTag || {})[datum] || KONFIG.postBis;
+  if (!arg.alle && !arg.jetzt && (m > minuten(bis) + 15 || m < minuten(KONFIG.postVon))) {
+    if (laut) console.log(`Ausserhalb des Sendefensters ${KONFIG.postVon}–${bis}.`);
     process.exit(0);
   }
 }

@@ -22,5 +22,77 @@
   ],
   "einstellungen": 4,
   "prompt": "Photorealistic documentary footage, vertical, 4 shots with hard cuts, the same person in all shots: a woman in her mid-thirties with shoulder-length brown hair, wearing a mustard knit sweater, same clothes throughout. Shot 1 (0-2.5s): In the entrance hall of a Swiss apartment building she takes a white envelope out of a metal letterbox and looks at it. Shot 2 (2.5-6s): She sits at a wooden kitchen table by the window, unfolds the letter and reads it with a slight frown, a cup of coffee beside her. Shot 3 (6-12.5s): She puts the letter on a small pile of papers and looks thoughtfully out of the window. Shot 4 (12.5-15s): She opens a laptop on the kitchen table, starts typing and her face relaxes into a small relieved smile. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops and phones are plain and unbranded. No readable text, no logos, no captions, no subtitles, no watermark."
+ },
+ "gleich": {
+  "datei": "real/clips/gleich.mp4",
+  "modell": "seedance_2_0",
+  "aufloesung": "720p",
+  "jobId": "2bd11696-aa0d-4609-b66f-7e4a60db951c",
+  "geladen": "2026-11-10T11:29:56.685Z",
+  "dauer": 15.04,
+  "geplant": [
+   0,
+   3,
+   7,
+   12.5,
+   15
+  ],
+  "grenzen": [
+   0,
+   1.958,
+   5.208,
+   8.875,
+   15.042
+  ],
+  "einstellungen": 4,
+  "prompt": "Photorealistic documentary footage, vertical, 4 shots with hard cuts, the same person in all shots: a man in his fifties with grey hair and glasses, wearing a dark green cardigan, same clothes throughout. Shot 1 (0-3s): In the bright waiting room of a doctor's practice he sits next to a young woman, both waiting quietly. Shot 2 (3-7s): A female doctor in a white coat listens to his chest with a stethoscope in the consulting room. Shot 3 (7-12.5s): In a pharmacy a pharmacist hands him a small paper bag over the counter. Shot 4 (12.5-15s): He walks out onto a sunny street, looks at his phone and smiles. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops and phones are plain and unbranded. No readable text, no logos, no captions, no subtitles, no watermark."
+ },
+ "sechsundzwanzig": {
+  "datei": "real/clips/sechsundzwanzig.mp4",
+  "modell": "seedance_2_0",
+  "aufloesung": "720p",
+  "jobId": "78935247-66b1-4050-adcc-511ea6d1856b",
+  "geladen": "2026-11-10T11:39:11.922Z",
+  "dauer": 15.04,
+  "geplant": [
+   0,
+   3,
+   9.5,
+   12,
+   15
+  ],
+  "grenzen": [
+   0,
+   3.792,
+   6.875,
+   10.417,
+   15.042
+  ],
+  "einstellungen": 4,
+  "prompt": "Photorealistic documentary footage, vertical, 4 shots with hard cuts, the same person in all shots: a young woman in her mid-twenties with long dark-blond hair in a ponytail, wearing a light-blue denim shirt, same clothes throughout. Shot 1 (0-3s): In a cosy flat she blows out the candles on a birthday cake while friends around her clap. Shot 2 (3-9.5s): Later she sits on the sofa, looks at her phone and raises her eyebrows in surprise. Shot 3 (9.5-12s): At a desk she compares something on a laptop, concentrated, a notebook beside her. Shot 4 (12-15s): She closes the laptop, leans back satisfied and takes a sip of tea. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops and phones are plain and unbranded. No readable text, no logos, no captions, no subtitles, no watermark."
+ },
+ "umzug": {
+  "datei": "real/clips/umzug.mp4",
+  "modell": "seedance_2_0",
+  "aufloesung": "720p",
+  "jobId": "20de4522-8f9b-44ad-b94e-48fffb55399c",
+  "geladen": "2026-11-10T11:48:53.676Z",
+  "dauer": 15.04,
+  "geplant": [
+   0,
+   3,
+   8.5,
+   12,
+   15
+  ],
+  "grenzen": [
+   0,
+   3.042,
+   7.042,
+   11.917,
+   15.042
+  ],
+  "einstellungen": 4,
+  "prompt": "Photorealistic documentary footage, vertical, 4 shots with hard cuts, the same people in all shots: a couple in their late twenties: a man with dark curly hair and a beard in a grey hoodie, and a woman with red hair in a bun wearing a striped shirt, same clothes throughout. Shot 1 (0-3s): They carry cardboard moving boxes up the stairwell of an old apartment building. Shot 2 (3-8.5s): In an empty sunlit living room they unpack boxes and laugh. Shot 3 (8.5-12s): The woman opens a window and looks out over the roofs of a small Swiss town with mountains in the distance. Shot 4 (12-15s): They sit on the floor with a laptop on a moving box and give each other a high five. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops, tablets and phones are only seen from the screen side, never their back or lid. No readable text, no logos, no captions, no subtitles, no watermark."
  }
 }

@@ -17,7 +17,7 @@
    ========================================================================= */
 
 /* Gemeinsamer Bildstil aller Clips. */
-export const STIL = "Photorealistic documentary footage, vertical. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops and phones are plain and unbranded. No readable text, no logos, no captions, no subtitles, no watermark.";
+export const STIL = "Photorealistic documentary footage, vertical. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops, tablets and phones are only seen from the screen side, never their back or lid. No readable text, no logos, no captions, no subtitles, no watermark.";
 
 /* Abbinder: gesprochen und gezeigt. */
 export const ABBINDER = {
@@ -48,15 +48,15 @@ export const REELS = [
   },
   {
     id: "eingang", titel: "Abgeschickt ist nicht angekommen", stufe: "bofu",
-    person: "a man in his early forties with short dark-blond hair, wearing a navy jacket",
+    person: "a woman in her early fifties with short auburn hair, wearing a grey wool coat",
     szenen: [
-      { bild: "At a desk at home he seals a white envelope and glances at a wall calendar in the background.",
+      { bild: "At a desk at home she folds a letter, slides it into a white envelope and seals it.",
         zeilen: [{ t: "Am 30. November abschicken? **Zu spät.**", s: "Am dreissigsten November abschicken? Zu spät." }] },
-      { bild: "He walks briskly along a street with autumn trees, holding the envelope in his hand.",
+      { bild: "She walks briskly along a quiet street with autumn trees, holding the envelope in her hand.",
         zeilen: [{ t: "Ihre Kündigung muss dann schon **bei der Kasse liegen**." }, { t: "Es zählt der Eingang – **nicht der Poststempel**." }] },
-      { bild: "At a plain service counter in a small shop he hands the envelope to a friendly female clerk, who gives him a small paper receipt.",
+      { bild: "At the wooden counter of a small village shop she hands the envelope to a friendly shop assistant.",
         zeilen: [{ t: "Ein Tag zu spät heisst: **ein Jahr länger** bei der alten Kasse." }] },
-      { bild: "Outside on the street he puts the receipt into his wallet and exhales with a relieved smile.",
+      { bild: "Outside on the street she stops, takes a deep breath and smiles with relief.",
         zeilen: [{ t: "Darum: **eingeschrieben** – spätestens am 20. November.", s: "Darum: eingeschrieben – und spätestens am zwanzigsten November zur Post." }] }
     ],
     bildtext: {
@@ -93,9 +93,9 @@ export const REELS = [
       { bild: "Later she sits on the sofa, looks at her phone and raises her eyebrows in surprise.",
         zeilen: [{ t: "Der Rabatt für junge Erwachsene **fällt weg** – automatisch." }, { t: "In Zürich sind das rund **CHF 150 mehr pro Monat**.", s: "In Zürich sind das beim günstigsten Angebot rund hundertfünfzig Franken mehr – pro Monat." }],
         zahl: { wert: "+ CHF 150", zusatz: "pro Monat ab 26", quelle: Q_ZH } },
-      { bild: "At a desk she compares something on a laptop, concentrated, a notebook beside her.",
+      { bild: "Seen over her shoulder, she sits at a desk typing on a laptop, concentrated, a notebook beside her.",
         zeilen: [{ t: "Genau dann lohnt sich **ein neuer Vergleich**." }] },
-      { bild: "She closes the laptop, leans back satisfied and takes a sip of tea.",
+      { bild: "Close on her face as she leans back in her chair, satisfied, and takes a sip of tea.",
         zeilen: [{ t: "Denn in jeder Altersklasse ist oft **eine andere Kasse** die günstigste." }] }
     ],
     bildtext: {
@@ -126,15 +126,15 @@ export const REELS = [
   },
   {
     id: "baby", titel: "Vor der Geburt anmelden", stufe: "tofu",
-    person: "a pregnant woman in her early thirties with dark hair, wearing a cream cardigan, and her partner, a man with short brown hair in a grey sweater",
+    person: "a couple in their early thirties: a woman with dark hair wearing a loose cream cardigan, and a man with short brown hair in a grey sweater",
     szenen: [
-      { bild: "They sit close together on a sofa, both with a hand on her belly, smiling.",
+      { bild: "In a bright nursery they assemble a wooden cot together and laugh.",
         zeilen: [{ t: "Ihr Baby braucht eine Krankenkasse – **am besten schon vor der Geburt**." }] },
-      { bild: "They look at a laptop together on the sofa, she points at the screen.",
+      { bild: "Seen over their shoulders, they look at a laptop on the sofa table and she points at the blurred screen.",
         zeilen: [{ t: "Nach der Geburt bleiben **drei Monate** Zeit." }, { t: "Rechtzeitig angemeldet, gilt die Deckung **ab dem ersten Tag**." }] },
-      { bild: "Close-up of a newborn baby's tiny hand gripping an adult's finger, soft light.",
+      { bild: "Close-up of the woman's hands folding tiny knitted clothes and placing a small pair of woollen socks on a shelf.",
         zeilen: [{ t: "Das Kind muss **nicht zur Kasse der Eltern**." }] },
-      { bild: "The parents stand by a window, the mother holding the sleeping newborn in her arms, both smiling.",
+      { bild: "They stand arm in arm next to the finished cot with a small mobile above it and smile at each other.",
         zeilen: [{ t: "Kinderprämien unterscheiden sich – **vergleichen lohnt sich**." }] }
     ],
     bildtext: {
@@ -216,7 +216,7 @@ export const REELS = [
         zeilen: [{ t: "Sie haben **drei Monate**, um eine Krankenkasse zu wählen." }, { t: "Die Deckung gilt dann **rückwirkend ab Ihrer Ankunft**." }] },
       { bild: "She unlocks the door of her new apartment and steps inside.",
         zeilen: [{ t: "Wer die Frist verpasst, wird **zugeteilt** – und riskiert einen Zuschlag." }] },
-      { bild: "She sits on the floor of the empty apartment with a laptop between moving boxes and smiles.",
+      { bild: "Seen over her shoulder, she sits on the floor of the empty apartment typing on a laptop between moving boxes, then turns her head and smiles.",
         zeilen: [{ t: "Jede Kasse muss Sie aufnehmen – **ohne Gesundheitsfragen**." }] }
     ],
     bildtext: {
@@ -233,7 +233,7 @@ export const REELS = [
         zeilen: [{ t: "Viele Haushalte hätten Anspruch auf **Prämienverbilligung**." }, { t: "Und holen sie **nicht ab**." }] },
       { bild: "Later in the evening the mother sits alone at the table sorting bills with a calculator.",
         zeilen: [{ t: "Je nach Kanton kommt sie **nicht automatisch**." }] },
-      { bild: "She fills in a form on a laptop while the father looks over her shoulder.",
+      { bild: "Seen from behind, she types on a laptop at the table while the father stands beside her and looks at the blurred screen.",
         zeilen: [{ t: "Sie müssen **einen Antrag stellen** – die Fristen sind kantonal." }] },
       { bild: "The whole family walks through an autumn park, the children running ahead, everyone relaxed.",
         zeilen: [{ t: "Massgebend sind **Einkommen und Haushalt**." }, { t: "Nachfragen kostet nichts." }] }
@@ -252,7 +252,7 @@ export const REELS = [
         zeilen: [{ t: "Seit 20 Jahren bei derselben Krankenkasse?", s: "Seit zwanzig Jahren bei derselben Krankenkasse?" }, { t: "**Dafür gibt es nichts.**" }] },
       { bild: "The man reads a letter through reading glasses and shakes his head slightly.",
         zeilen: [{ t: "In der Grundversicherung wird Treue **nicht belohnt**." }, { t: "Kein Rabatt. Keine besseren Leistungen." }] },
-      { bild: "The woman holds a tablet and they look at it together, interested.",
+      { bild: "Seen over their shoulders, the woman holds a tablet and they look at the blurred screen together, interested.",
         zeilen: [{ t: "Die günstigste Kasse von damals ist es heute **oft nicht mehr**." }] },
       { bild: "They walk arm in arm along a lakeside promenade in soft afternoon light.",
         zeilen: [{ t: "Wechseln dürfen Sie **in jedem Alter**." }, { t: "Jede Kasse muss Sie aufnehmen." }] }
@@ -288,7 +288,7 @@ export const REELS = [
     szenen: [
       { bild: "He stands in a tram looking at his phone, the city passing by outside the window.",
         zeilen: [{ t: "Krankenkasse wechseln ist **einfacher, als Sie denken**." }] },
-      { bild: "He sits at a café table and types on a laptop, a cup of coffee beside him.",
+      { bild: "Seen over his shoulder, he sits at a café table typing on a laptop, a cup of coffee beside him.",
         zeilen: [{ t: "Erstens: **vergleichen**." }, { t: "Zweitens: bei der neuen Kasse **anmelden**." }] },
       { bild: "He drops a white envelope into a plain letterbox on a street with autumn leaves.",
         zeilen: [{ t: "Drittens: die alte **eingeschrieben kündigen** – bis 30. November.", s: "Drittens: die alte eingeschrieben kündigen – bis zum dreissigsten November." }] },
@@ -309,7 +309,7 @@ export const REELS = [
         zeilen: [{ t: "Unbezahlte Prämien können Ihren Kassenwechsel **blockieren**." }] },
       { bild: "He opens the envelopes one by one and lays the letters out on the desk.",
         zeilen: [{ t: "Wer bei der alten Kasse **im Verzug** ist, darf nicht wechseln." }, { t: "Erst wenn alles bezahlt ist." }] },
-      { bild: "He holds his phone, taps the screen a few times and exhales with relief.",
+      { bild: "Seen over his shoulder, he taps on his phone a few times, then leans back and exhales with relief.",
         zeilen: [{ t: "Prüfen Sie vor der Kündigung: **Ist alles beglichen?**" }, { t: "Prämien, Franchise, Selbstbehalt.", s: "Prämien, Franschise, Selbstbehalt." }] },
       { bild: "He folds a letter, slides it into an envelope and smiles.",
         zeilen: [{ t: "Dann steht dem Wechsel **nichts im Weg**." }] }
