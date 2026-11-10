@@ -48,7 +48,7 @@ export const REELS = [
   },
   {
     id: "eingang", titel: "Abgeschickt ist nicht angekommen", stufe: "bofu",
-    person: "a woman in her early fifties with short auburn hair, wearing a grey wool coat",
+    person: "an ordinary-looking woman in her early fifties with short auburn hair and freckles, wearing a grey wool coat",
     szenen: [
       { bild: "At a desk at home she folds a letter, slides it into a white envelope and seals it.",
         zeilen: [{ t: "Am 30. November abschicken? **Zu spät.**", s: "Am dreissigsten November abschicken? Zu spät." }] },
@@ -145,15 +145,15 @@ export const REELS = [
   },
   {
     id: "unfall", titel: "Den Unfall doppelt bezahlt", stufe: "mofu",
-    person: "a man in his mid-thirties with short brown hair, wearing a light-blue shirt",
+    person: "an ordinary-looking woman in her late thirties with curly black hair and round glasses, wearing a rust-coloured blouse",
     szenen: [
-      { bild: "He works at a desk in a bright modern open-plan office, typing on a keyboard.",
+      { bild: "She works at a desk in a bright modern open-plan office, typing on a keyboard.",
         zeilen: [{ t: "Angestellt? Dann zahlen Sie den Unfall vielleicht **doppelt**." }] },
-      { bild: "He rides a bicycle through a city street in the morning light, wearing a helmet.",
+      { bild: "She rides a bicycle along a quiet street in the morning light, wearing a helmet.",
         zeilen: [{ t: "Ab **8 Stunden pro Woche** beim selben Arbeitgeber", s: "Ab acht Stunden pro Woche beim selben Arbeitgeber" }, { t: "sind Sie über ihn versichert – **auch in der Freizeit**.", s: "sind Sie über ihn gegen Unfälle versichert – auch in der Freizeit." }] },
-      { bild: "Back at his desk he fills in a short paper form and signs it with a pen.",
+      { bild: "Back at her desk she fills in a short paper form and signs it with a pen.",
         zeilen: [{ t: "Die Unfalldeckung der Krankenkasse können Sie dann **ausschliessen**." }] },
-      { bild: "During a coffee break he laughs with a female colleague, holding a cup.",
+      { bild: "During a coffee break she laughs with an older male colleague, holding a cup.",
         zeilen: [{ t: "In Zürich spart das rund **CHF 320 im Jahr**.", s: "In Zürich spart das beim günstigsten Angebot rund dreihundertzwanzig Franken im Jahr." }],
         zahl: { wert: "CHF 320", zusatz: "weniger im Jahr", quelle: Q_ZH } }
     ],
@@ -284,7 +284,7 @@ export const REELS = [
   },
   {
     id: "schritte", titel: "Wechseln in drei Schritten", stufe: "bofu",
-    person: "a man in his late twenties with short black hair, wearing a white t-shirt under an open checked flannel shirt",
+    person: "an ordinary-looking man in his late twenties with a round face, short black hair and a full beard, wearing a white t-shirt under an open checked flannel shirt",
     szenen: [
       { bild: "He stands in a tram looking at his phone, the city passing by outside the window.",
         zeilen: [{ t: "Krankenkasse wechseln ist **einfacher, als Sie denken**." }] },
@@ -303,7 +303,7 @@ export const REELS = [
   },
   {
     id: "offen", titel: "Offene Prämien blockieren", stufe: "bofu",
-    person: "a man in his early thirties with light-brown hair, wearing a grey sweater",
+    person: "an ordinary-looking, slightly stocky man in his early thirties with thinning light-brown hair and stubble, wearing a grey sweater",
     szenen: [
       { bild: "At a desk at home he looks at a small stack of unopened envelopes and rubs his forehead.",
         zeilen: [{ t: "Unbezahlte Prämien können Ihren Kassenwechsel **blockieren**." }] },
