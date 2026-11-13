@@ -6,7 +6,7 @@
    durchblick/motive.js. Daraus entsteht die Eingabe fuer die Komposition
    "durchblick" (src/Durchblick.jsx); gerendert wird nach
    out/durchblick/<id>.mp4 samt Titelbild <id>.jpg, die Lautheit danach
-   auf -14 LUFS angeglichen. Kein KI-Video, keine neuen Sprachaufnahmen.
+   auf -14 LUFS angeglichen. Kein KI-Video; die Stimme erzeugt real/stimme.js.
 
        node durchblick/bauen.js                      alle, die noch fehlen
        node durchblick/bauen.js franchise --neu      eines neu rendern

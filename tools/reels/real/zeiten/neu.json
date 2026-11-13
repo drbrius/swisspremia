@@ -1,47 +1,48 @@
 {
  "id": "neu",
- "stimme": "dCnu06FiOZma2KVNUoPZ",
- "modell": "eleven_v3",
- "text": "Neu in der Schweiz? Die Uhr läuft – seit dem ersten Tag. Sie haben drei Monate, um eine Krankenkasse zu wählen. Die Deckung gilt dann rückwirkend ab Ihrer Ankunft. Wer die Frist verpasst, wird zugeteilt – und riskiert einen Zuschlag. Jede Kasse muss Sie aufnehmen – ohne Gesundheitsfragen. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
- "zeichen": 350,
- "gesamt": 21.36,
+ "stimme": "vGWWh1bodhwwi4yHd6qZ",
+ "modell": "eleven_multilingual_v2",
+ "tempo": 1.1,
+ "text": "Neu in der Schweiz? Die Uhr läuft – seit dem ersten Tag. Sie haben drei Monate, um eine Krankenkasse zu wählen. Die Deckung gilt dann rückwirkend ab Ihrer Ankunft. Wer die Frist verpasst, wird zugeteilt – und riskiert einen Zuschlag. Jede Kasse muss Sie aufnehmen – ohne Gesundheitsfragen. Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha.",
+ "zeichen": 352,
+ "gesamt": 23.638,
  "genau": true,
  "bloecke": [
   {
    "szene": 0,
    "t": "Neu in der Schweiz? **Die Uhr läuft** – seit dem ersten Tag.",
    "von": 0,
-   "bis": 3.8
+   "bis": 4.296
   },
   {
    "szene": 1,
    "t": "Sie haben **drei Monate**, um eine Krankenkasse zu wählen.",
-   "von": 3.89,
-   "bis": 6.96
+   "von": 4.644,
+   "bis": 7.709
   },
   {
    "szene": 1,
    "t": "Die Deckung gilt dann **rückwirkend ab Ihrer Ankunft**.",
-   "von": 6.98,
-   "bis": 9.6
+   "von": 7.895,
+   "bis": 10.983
   },
   {
    "szene": 2,
    "t": "Wer die Frist verpasst, wird **zugeteilt** – und riskiert einen Zuschlag.",
-   "von": 9.68,
-   "bis": 13.92
+   "von": 11.169,
+   "bis": 15.233
   },
   {
    "szene": 3,
    "t": "Jede Kasse muss Sie aufnehmen – **ohne Gesundheitsfragen**.",
-   "von": 14.12,
-   "bis": 17.28
+   "von": 15.523,
+   "bis": 18.692
   },
   {
    "szene": 4,
    "t": "In 1 Minute vergleichen.",
-   "von": 17.408,
-   "bis": 21.36
+   "von": 19.041,
+   "bis": 23.638
   }
  ]
 }

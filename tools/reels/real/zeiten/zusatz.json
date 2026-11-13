@@ -1,47 +1,48 @@
 {
  "id": "zusatz",
- "stimme": "dCnu06FiOZma2KVNUoPZ",
- "modell": "eleven_v3",
- "text": "Dieser Fehler beim Kassenwechsel lässt sich nicht rückgängig machen. Die Grundversicherung muss Sie nehmen. Die Zusatzversicherung nicht. Sie darf Gesundheitsfragen stellen – und ablehnen. Kündigen Sie die alte Zusatzversicherung erst, wenn die neue schriftlich zugesagt hat. Grund- und Zusatzversicherung dürfen bei verschiedenen Kassen sein. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
- "zeichen": 404,
- "gesamt": 23.92,
+ "stimme": "vGWWh1bodhwwi4yHd6qZ",
+ "modell": "eleven_multilingual_v2",
+ "tempo": 1.1,
+ "text": "Dieser Fehler beim Kassenwechsel lässt sich nicht rückgängig machen. Die Grundversicherung muss Sie nehmen. Die Zusatzversicherung nicht. Sie darf Gesundheitsfragen stellen – und ablehnen. Kündigen Sie die alte Zusatzversicherung erst, wenn die neue schriftlich zugesagt hat. Grund- und Zusatzversicherung dürfen bei verschiedenen Kassen sein. Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha.",
+ "zeichen": 406,
+ "gesamt": 26.006,
  "genau": true,
  "bloecke": [
   {
    "szene": 0,
    "t": "Dieser Fehler beim Kassenwechsel lässt sich **nicht rückgängig machen**.",
    "von": 0,
-   "bis": 3.12
+   "bis": 3.692
   },
   {
    "szene": 1,
    "t": "Die Grundversicherung muss Sie nehmen. Die Zusatzversicherung **nicht**.",
-   "von": 3.26,
-   "bis": 7.12
+   "von": 3.982,
+   "bis": 8.115
   },
   {
    "szene": 1,
    "t": "Sie darf Gesundheitsfragen stellen – **und ablehnen**.",
-   "von": 7.28,
-   "bis": 10.64
+   "von": 8.464,
+   "bis": 11.773
   },
   {
    "szene": 2,
    "t": "Kündigen Sie die alte Zusatzversicherung erst, wenn die neue **schriftlich zugesagt** hat.",
-   "von": 11.04,
-   "bis": 15.84
+   "von": 12.063,
+   "bis": 17.09
   },
   {
    "szene": 3,
    "t": "Grund- und Zusatzversicherung dürfen bei **verschiedenen Kassen** sein.",
-   "von": 15.987,
-   "bis": 20.2
+   "von": 17.38,
+   "bis": 21.293
   },
   {
    "szene": 4,
    "t": "In 1 Minute vergleichen.",
-   "von": 20.256,
-   "bis": 23.92
+   "von": 21.641,
+   "bis": 26.006
   }
  ]
 }

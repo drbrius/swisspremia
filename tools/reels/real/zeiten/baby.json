@@ -1,47 +1,48 @@
 {
  "id": "baby",
- "stimme": "dCnu06FiOZma2KVNUoPZ",
- "modell": "eleven_v3",
- "text": "Ihr Baby braucht eine Krankenkasse – am besten schon vor der Geburt. Nach der Geburt bleiben drei Monate Zeit. Rechtzeitig angemeldet, gilt die Deckung ab dem ersten Tag. Das Kind muss nicht zur Kasse der Eltern. Kinderprämien unterscheiden sich – vergleichen lohnt sich. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
- "zeichen": 332,
- "gesamt": 21.04,
+ "stimme": "vGWWh1bodhwwi4yHd6qZ",
+ "modell": "eleven_multilingual_v2",
+ "tempo": 1.1,
+ "text": "Ihr Baby braucht eine Krankenkasse – am besten schon vor der Geburt. Nach der Geburt bleiben drei Monate Zeit. Rechtzeitig angemeldet, gilt die Deckung ab dem ersten Tag. Das Kind muss nicht zur Kasse der Eltern. Kinderprämien unterscheiden sich – vergleichen lohnt sich. Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha.",
+ "zeichen": 334,
+ "gesamt": 22.105,
  "genau": true,
  "bloecke": [
   {
    "szene": 0,
    "t": "Ihr Baby braucht eine Krankenkasse – **am besten schon vor der Geburt**.",
    "von": 0,
-   "bis": 3.84
+   "bis": 4.156
   },
   {
    "szene": 1,
    "t": "Nach der Geburt bleiben **drei Monate** Zeit.",
-   "von": 4.048,
-   "bis": 6.88
+   "von": 4.505,
+   "bis": 7.094
   },
   {
    "szene": 1,
    "t": "Rechtzeitig angemeldet, gilt die Deckung **ab dem ersten Tag**.",
-   "von": 7.093,
-   "bis": 10.72
+   "von": 7.5,
+   "bis": 11.157
   },
   {
    "szene": 2,
    "t": "Das Kind muss **nicht zur Kasse der Eltern**.",
-   "von": 10.8,
-   "bis": 13.48
+   "von": 11.505,
+   "bis": 13.978
   },
   {
    "szene": 3,
    "t": "Kinderprämien unterscheiden sich – **vergleichen lohnt sich**.",
-   "von": 13.577,
-   "bis": 16.96
+   "von": 14.269,
+   "bis": 17.485
   },
   {
    "szene": 4,
    "t": "In 1 Minute vergleichen.",
-   "von": 17.136,
-   "bis": 21.04
+   "von": 17.67,
+   "bis": 22.105
   }
  ]
 }

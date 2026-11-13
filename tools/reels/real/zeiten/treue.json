@@ -1,59 +1,60 @@
 {
  "id": "treue",
- "stimme": "dCnu06FiOZma2KVNUoPZ",
- "modell": "eleven_v3",
- "text": "Seit zwanzig Jahren bei derselben Krankenkasse? Dafür gibt es nichts. In der Grundversicherung wird Treue nicht belohnt. Kein Rabatt. Keine besseren Leistungen. Die günstigste Kasse von damals ist es heute oft nicht mehr. Wechseln dürfen Sie in jedem Alter. Jede Kasse muss Sie aufnehmen. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
- "zeichen": 349,
- "gesamt": 21.68,
+ "stimme": "vGWWh1bodhwwi4yHd6qZ",
+ "modell": "eleven_multilingual_v2",
+ "tempo": 1.1,
+ "text": "Seit zwanzig Jahren bei derselben Krankenkasse? Dafür gibt es nichts. In der Grundversicherung wird Treue nicht belohnt. Kein Rabatt. Keine besseren Leistungen. Die günstigste Kasse von damals ist es heute oft nicht mehr. Wechseln dürfen Sie in jedem Alter. Jede Kasse muss Sie aufnehmen. Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha.",
+ "zeichen": 351,
+ "gesamt": 23.638,
  "genau": true,
  "bloecke": [
   {
    "szene": 0,
    "t": "Seit 20 Jahren bei derselben Krankenkasse?",
    "von": 0,
-   "bis": 2.48
+   "bis": 2.949
   },
   {
    "szene": 0,
    "t": "**Dafür gibt es nichts.**",
-   "von": 2.68,
-   "bis": 4.28
+   "von": 3.297,
+   "bis": 4.679
   },
   {
    "szene": 1,
    "t": "In der Grundversicherung wird Treue **nicht belohnt**.",
-   "von": 4.427,
-   "bis": 7.16
+   "von": 4.841,
+   "bis": 7.964
   },
   {
    "szene": 1,
    "t": "Kein Rabatt. Keine besseren Leistungen.",
-   "von": 7.227,
-   "bis": 9.72
+   "von": 8.313,
+   "bis": 10.844
   },
   {
    "szene": 2,
    "t": "Die günstigste Kasse von damals ist es heute **oft nicht mehr**.",
-   "von": 9.79,
-   "bis": 12.96
+   "von": 11.134,
+   "bis": 14.512
   },
   {
    "szene": 3,
    "t": "Wechseln dürfen Sie **in jedem Alter**.",
-   "von": 13.28,
-   "bis": 15.72
+   "von": 14.768,
+   "bis": 16.904
   },
   {
    "szene": 3,
    "t": "Jede Kasse muss Sie aufnehmen.",
-   "von": 15.86,
-   "bis": 17.36
+   "von": 17.194,
+   "bis": 18.808
   },
   {
    "szene": 4,
    "t": "In 1 Minute vergleichen.",
-   "von": 17.52,
-   "bis": 21.68
+   "von": 19.156,
+   "bis": 23.638
   }
  ]
 }

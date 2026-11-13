@@ -7,7 +7,7 @@ Neue Skripte (15 Themen), deutsche Stimme, Musik.
 | Was | Womit | Wo |
 |---|---|---|
 | Skripte, Bildbeschriebe, Bildtexte | `real/skripte.js` | je Reel vier Szenen und ein Abbinder |
-| Stimme | ElevenLabs `eleven_v3`, `language_code: "de"`, Stimme Mila | `real/stimme.js` → `public/real/ton/<id>.mp3`, `real/zeiten/<id>.json` |
+| Stimme | ElevenLabs `eleven_multilingual_v2`, Stimme Marcus (deutscher Sprecher), Tempo 1.1; bis 13.11.2026 Mila mit `eleven_v3` | `real/stimme.js` → `public/real/ton/<id>.mp3`, `real/zeiten/<id>.json` |
 | Szenen | Higgsfield, Modell `seedance_2_0`, 720p, 9:16, 15 s, ohne Ton | `real/clips.js` → `public/real/clips/<id>.mp4` (nicht im Repository), `real/clips.json` |
 | Zusammenbau | Remotion, Komposition `echtreel` (`src/EchtReel.jsx`) | `real/bauen.js` → `out/real/<id>.mp4` und `<id>.jpg` |
 | Bildtexte | `real/bildtexte.js` | `out/real/bildtexte.md` |
@@ -33,9 +33,13 @@ node real/bildtexte.js               # Bildtexte schreiben
 - **Stimme ohne englischen Einschlag.** Im Funnel entsteht je Szene ein kurzer Schnipsel mit
   `eleven_multilingual_v2`, das die Sprache selbst errät – bei kurzen Sätzen und Wörtern wie
   «Franchise» oder «Swisspremia» rutscht es ins Englische. Hier: ganzer Text in einem Zug,
-  Modell `eleven_v3` mit erzwungenem Deutsch, Zahlen ausgeschrieben, «Franschise» für die
-  deutsche Aussprache. Andere Stimme: `REAL_VOICE_ID` setzen, `node real/stimme.js --neu`,
-  `node real/bauen.js --neu`. Hörproben: `node real/stimme.js --probe=<voice_id>:<Name>`.
+  Zahlen ausgeschrieben, «Franschise» und «Punkt Ce Ha» für die deutsche Aussprache; die
+  Sprechfassung bekommt das scharfe S («Maßgebend», «dreißigsten»), auf dem Bild bleibt «ss».
+  Seit 13.11.2026 spricht Marcus (Stimmklon eines deutschen Radio- und Werbesprechers) mit
+  `eleven_multilingual_v2`; die ersten fünf Reels der Serie sprach Mila mit `eleven_v3`.
+  Andere Stimme: `REAL_VOICE_ID` (und bei Bedarf `REAL_MODEL_ID`, `REAL_TEMPO`) setzen,
+  `node real/stimme.js <id>`, dann neu rendern. Ohne `<id>` entstehen alle Tonspuren neu, die
+  von einer anderen Stimme stammen. Hörproben: `node real/stimme.js --probe=<voice_id>:<Name> [id]`.
 - **Untertitel aus den Zeitstempeln.** ElevenLabs liefert je Zeichen Start und Ende; jeder
   Untertitel-Block erscheint mit seinem ersten Wort. Der erste steht ab dem ersten Bild.
 - **Musik.** `public/musik/real-1.mp3` (REAL_MUSIK). Künftig keine Musik über Higgsfield

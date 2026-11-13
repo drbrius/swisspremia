@@ -1,47 +1,48 @@
 {
  "id": "unfall",
- "stimme": "dCnu06FiOZma2KVNUoPZ",
- "modell": "eleven_v3",
- "text": "Angestellt? Dann zahlen Sie den Unfall vielleicht doppelt. Ab acht Stunden pro Woche beim selben Arbeitgeber sind Sie über ihn gegen Unfälle versichert – auch in der Freizeit. Die Unfalldeckung der Krankenkasse können Sie dann ausschliessen. In Zürich spart das beim günstigsten Angebot rund dreihundertzwanzig Franken im Jahr. Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H.",
- "zeichen": 388,
- "gesamt": 22.4,
+ "stimme": "vGWWh1bodhwwi4yHd6qZ",
+ "modell": "eleven_multilingual_v2",
+ "tempo": 1.1,
+ "text": "Angestellt? Dann zahlen Sie den Unfall vielleicht doppelt. Ab acht Stunden pro Woche beim selben Arbeitgeber sind Sie über ihn gegen Unfälle versichert – auch in der Freizeit. Die Unfalldeckung der Krankenkasse können Sie dann ausschließen. In Zürich spart das beim günstigsten Angebot rund dreihundertzwanzig Franken im Jahr. Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha.",
+ "zeichen": 389,
+ "gesamt": 24.706,
  "genau": true,
  "bloecke": [
   {
    "szene": 0,
    "t": "Angestellt? Dann zahlen Sie den Unfall vielleicht **doppelt**.",
    "von": 0,
-   "bis": 3.28
+   "bis": 3.599
   },
   {
    "szene": 1,
    "t": "Ab **8 Stunden pro Woche** beim selben Arbeitgeber",
-   "von": 3.493,
-   "bis": 6.16
+   "von": 3.855,
+   "bis": 6.734
   },
   {
    "szene": 1,
    "t": "sind Sie über ihn versichert – **auch in der Freizeit**.",
-   "von": 6.208,
-   "bis": 9.6
+   "von": 6.92,
+   "bis": 11.041
   },
   {
    "szene": 2,
    "t": "Die Unfalldeckung der Krankenkasse können Sie dann **ausschliessen**.",
-   "von": 9.7,
-   "bis": 12.88
+   "von": 11.389,
+   "bis": 14.733
   },
   {
    "szene": 3,
    "t": "In Zürich spart das rund **CHF 320 im Jahr**.",
-   "von": 13.12,
-   "bis": 18
+   "von": 15.081,
+   "bis": 20.201
   },
   {
    "szene": 4,
    "t": "In 1 Minute vergleichen.",
-   "von": 18.176,
-   "bis": 22.4
+   "von": 20.608,
+   "bis": 24.706
   }
  ]
 }

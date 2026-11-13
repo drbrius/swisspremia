@@ -21,7 +21,7 @@ export const STIL = "Photorealistic documentary footage, vertical. Handheld came
 
 /* Abbinder: gesprochen und gezeigt. */
 export const ABBINDER = {
-  zeilen: [{ t: "In 1 Minute vergleichen.", s: "Vergleichen Sie in einer Minute – auf Swisspremia Punkt C H." }]
+  zeilen: [{ t: "In 1 Minute vergleichen.", s: "Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha." }]
 };
 
 const Q_ZH = "Günstigstes Angebot, Zürich (Region 1), Erwachsene, Franchise 300, BAG-Prämien 2027";
@@ -322,8 +322,12 @@ export const REELS = [
   }
 ];
 
-/* Gesprochener Text eines Blocks: s, sonst t ohne Auszeichnung. */
-export const sprich = (z) => (z.s || z.t).replace(/\*\*/g, "");
+/* Gesprochener Text eines Blocks: s, sonst t ohne Auszeichnung. Auf dem
+   Bild steht die Schweizer Schreibweise (ss); die Sprechfassung bekommt
+   das scharfe S, sonst spricht eine deutsche Stimme den Vokal davor kurz
+   («Mass-gebend» statt «Maassgebend»). */
+const SCHARF = [["dreissig", "dreißig"], ["Dreissig", "Dreißig"], ["heisst", "heißt"], ["schliessen", "schließen"], ["Massgebend", "Maßgebend"], ["massgebend", "maßgebend"], ["grösste", "größte"], ["Grösste", "Größte"], ["gross", "groß"], ["Gross", "Groß"], ["ausser", "außer"], ["Ausser", "Außer"]];
+export const sprich = (z) => SCHARF.reduce((s, [ch, de]) => s.split(ch).join(de), (z.s || z.t).replace(/\*\*/g, ""));
 
 /* Alle Bloecke eines Reels in Sprechreihenfolge, mit Szenenindex
    (der Abbinder ist die letzte «Szene»). */

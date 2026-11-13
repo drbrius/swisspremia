@@ -533,8 +533,8 @@ entscheiden lassen.
 Zehn Reels im Look des Moodboards vom 13.11.2026: Bögen als Durchgang, Sonne, Farbflächen in
 Petrol, Orange, Sand und Creme, Fotos in Schwarzweiss immer in einer Form, Papierkorn darüber.
 Jede Szene endet mit einer Fahrt in ihr «Tor», dahinter liegt die nächste. Alles ist Remotion-Code –
-kein KI-Video, keine neuen Sprachaufnahmen: Skript, Stimme und Sprechzeiten stammen aus der Serie
-«Echt» (`real/skripte.js`, `public/real/ton/`, `real/zeiten/`).
+kein KI-Video. Skript, Stimme und Sprechzeiten teilt sie mit der Serie «Echt» (`real/skripte.js`,
+`real/stimme.js`, `public/real/ton/`, `real/zeiten/`); es spricht Marcus, ein deutscher Sprecher.
 
 ```
 npm run durchblick                          alle rendern, die noch fehlen  ->  out/durchblick/<id>.mp4 und .jpg
