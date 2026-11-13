@@ -19,7 +19,7 @@ import { FOTOS } from "./motive.js";
 export const ORDNER = path.join(WURZEL, "public", "durchblick");
 
 /* Graues Rauschen als PNG (8 Bit Graustufen), fest vorgegebene Zufallsfolge. */
-function kornSchreiben(ziel, breite = 540, hoehe = 960) {
+export function kornSchreiben(ziel, breite = 540, hoehe = 960) {
   let z = 20261113;
   const zufall = () => ((z = (z * 1664525 + 1013904223) >>> 0) / 4294967296);
   const roh = Buffer.alloc((breite + 1) * hoehe);

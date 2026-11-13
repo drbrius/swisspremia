@@ -461,6 +461,8 @@ tools/reels/
   src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
   src/bilder.js             Motive (Unsplash, Pixabay); funnel/bilder.js lädt sie nach public/bilder/
   funnel/recherche.js       Bildsuche über Pixabay (funnel/pixabay.js), Kontaktbogen, Motiv eintragen
+  plakat/                   Serie «Plakat»: regie.js (Ort, Tageszeit, Format, Titel je Szene), bauen.js (Render)
+  src/Plakat.jsx            Illustrationen und Bewegung der Serie «Plakat» (Komposition «plakat»)
   durchblick/               Serie «Durchblick»: motive.js (Bildregie), fotos.js (Pixabay-Fotos), bauen.js (Render)
   src/Durchblick.jsx        Design der Serie «Durchblick» (Komposition «durchblick»)
   plan/                     Tagespläne, Verlauf, Protokoll (nicht im Git)
@@ -552,3 +554,31 @@ Text und Motiv bleiben zwischen 250 px oben und 320 px unten. Die Fotos liegen i
 (nicht im Git), ihre Herkunft in `public/durchblick/quellen.json`.
 
 Die Videos sind nicht im Tagesplan; `real/einplanen.js` kennt nur `out/real`.
+
+---
+
+## 10. Serie «Plakat» (seit 13.11.2026)
+
+Reiseplakate, die sich selbst aufbauen – Anregung war ein Motion-Design-Clip mit animierten
+Städteplakaten. Eine Karte auf einem Farbverlauf zeigt eine gezeichnete Schweizer Szene: Berge fahren
+hoch, Häuser wachsen gestaffelt aus dem Boden, Tram, Schiff, Zug oder Postauto gleiten durchs Bild,
+Bäume ragen über den Kartenrand. Darüber zeichnet sich ein grosser Konturtitel (Schrift Anton) mit
+einem kleinen kursiven Wort; Sonne oder Mond liegen dahinter. Beim Szenenwechsel fährt alles ein, die
+Karte wechselt Format (quer, quadrat, hoch) und Tageszeit (nacht, daemmerung, abend, morgen, tag),
+dann wächst die nächste Szene. Zahlen aus dem Skript zählen im Titel hoch. Alles ist Code – keine
+Fotos, kein KI-Video. Skript, Stimme und Zeiten teilt die Serie mit «Echt» und «Durchblick».
+
+```
+npm run plakat                          alle rendern, die noch fehlen  ->  out/plakat/<id>.mp4 und .jpg
+npm run plakat -- franchise --neu       eines neu rendern
+npm run plakat -- --bild=szenen         je Szene ein Standbild nach out/plakat/pruef/
+npm run plakat -- franchise --bild=wechsel   Bilder rund um den ersten Szenenwechsel (Bewegung prüfen)
+```
+
+`plakat/regie.js` legt je Szene Ort (`seestadt`, `bergdorf`, `bahnhof`, `praxis`, `quartier`, `gipfel`),
+Tageszeit, Kartenformat und die zwei Titelzeilen fest. Neue Orte sind Funktionen in `src/Plakat.jsx`
+(`ORTE`): Sie zeichnen in Weltmass ab Kartenboden und geben `gestirn`, `innen` (auf die Karte
+beschnitten) und `aussen` (ragt über den Rand) zurück; `w(verz)` liefert den Aufbau je Element.
+Der Bildtext steht unter der Karte; bei langen Texten weicht `bauen.js` von «hoch» auf «quadrat» aus.
+
+Die Videos sind nicht im Tagesplan.

@@ -8,6 +8,7 @@ import { Modellblatt } from "./Modellblatt.jsx";
 import { Karussell, KARUSSELL_BEISPIEL, KARUSSELL_BREITE, KARUSSELL_HOEHE } from "./Karussell.jsx";
 import { EchtReel, ECHT_BEISPIEL } from "./EchtReel.jsx";
 import { Durchblick, DURCHBLICK_BEISPIEL } from "./Durchblick.jsx";
+import { Plakat, PLAKAT_BEISPIEL } from "./Plakat.jsx";
 
 export { FPS };
 export const BREITE = 1080;
@@ -116,6 +117,18 @@ export const RemotionRoot = () => (
       fps={FPS}
       durationInFrames={DURCHBLICK_BEISPIEL.gesamt}
       defaultProps={{ reel: DURCHBLICK_BEISPIEL }}
+      calculateMetadata={({ props }) => ({ durationInFrames: Math.max(1, props.reel.gesamt) })}
+    />
+
+    {/* Serie «Plakat»: Reiseplakate, die sich selbst aufbauen (plakat/bauen.js liefert die Eingabe). */}
+    <Composition
+      id="plakat"
+      component={Plakat}
+      width={BREITE}
+      height={HOEHE}
+      fps={FPS}
+      durationInFrames={PLAKAT_BEISPIEL.gesamt}
+      defaultProps={{ reel: PLAKAT_BEISPIEL }}
       calculateMetadata={({ props }) => ({ durationInFrames: Math.max(1, props.reel.gesamt) })}
     />
 
