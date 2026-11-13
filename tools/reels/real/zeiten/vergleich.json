@@ -1,0 +1,48 @@
+{
+ "id": "vergleich",
+ "stimme": "vGWWh1bodhwwi4yHd6qZ",
+ "modell": "eleven_turbo_v2_5",
+ "tempo": 1.1,
+ "text": "Jede Kasse, jedes Modell, sechs Franschisen – wer blickt da durch? Es geht auch einfacher. Aus den offiziellen Prämien für nächstes Jahr: die günstigsten Angebote für Ihren Wohnort. Postleitzahl, Alter, Franschise, Modell – vier Angaben genügen. Kostenlos und ohne Anmeldung. Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha.",
+ "zeichen": 338,
+ "gesamt": 24.01,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Jede Kasse, jedes Modell, sechs Franchisen – **wer blickt da durch?**",
+   "von": 0,
+   "bis": 4.226
+  },
+  {
+   "szene": 1,
+   "t": "Es geht auch **einfacher**.",
+   "von": 4.632,
+   "bis": 5.759
+  },
+  {
+   "szene": 2,
+   "t": "Aus den offiziellen Prämien 2027: die **günstigsten Angebote** für Ihren Wohnort.",
+   "von": 5.979,
+   "bis": 11.262
+  },
+  {
+   "szene": 3,
+   "t": "**Postleitzahl, Alter, Franchise, Modell** – vier Angaben genügen.",
+   "von": 11.61,
+   "bis": 16.498
+  },
+  {
+   "szene": 3,
+   "t": "Kostenlos und **ohne Anmeldung**.",
+   "von": 16.719,
+   "bis": 18.774
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 19.18,
+   "bis": 24.01
+  }
+ ]
+}

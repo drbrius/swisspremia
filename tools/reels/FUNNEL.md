@@ -632,6 +632,9 @@ Fehlt die Tonspur, rendert `bauen.js` eine **Vorschau ohne Stimme** mit geschät
 (`out/tisch/<id>-vorschau.mp4`) – zum Anschauen, nicht zum Veröffentlichen. Sobald `ton` gelaufen ist,
 entsteht mit `npm run tisch` die fertige Fassung.
 
-Stand 13.11.2026: `belege` (Arztrechnungen einsenden) ist fertig, `vergleich` (Vom Zettelchaos zum
-Vergleich) wartet auf die Tonspur – das ElevenLabs-Guthaben war aufgebraucht. Die Videos sind nicht im
-Tagesplan; dafür bräuchte die Serie einen Eintrag in `SERIEN` (`funnel/serie.js`) und dort die eigenen Skripte.
+Stand 13.11.2026: `belege` (Arztrechnungen einsenden) und `vergleich` (Vom Zettelchaos zum Vergleich)
+sind fertig. Weil das ElevenLabs-Guthaben fast leer war, spricht Marcus in `vergleich` über das
+sparsamere Modell `eleven_turbo_v2_5` (`REAL_MODEL_ID`, Tempo 1.1) statt `eleven_multilingual_v2`; ein
+späteres `node tisch/bauen.js ton vergleich` ohne diese Variable erzeugt die Spur mit dem Standardmodell
+neu. Die Videos sind nicht im Tagesplan; dafür bräuchte die Serie einen Eintrag in `SERIEN`
+(`funnel/serie.js`) und dort die eigenen Skripte.

@@ -466,8 +466,8 @@ const Laptop = ({ teil, t, D }) => {
   const z = 1 + 0.06 * (t / D);
   const LAENGE = [0.86, 0.58, 1.0, 0.7];
   const rang = LAENGE.map((l) => LAENGE.filter((m) => m < l).length);
-  const sortiert = feder(t, fps, 16, 16);
-  const preis = feder(t, fps, 32, 14, 14);
+  const sortiert = feder(t, fps, Math.min(16, Math.round(D * 0.24)), 14);
+  const preis = feder(t, fps, Math.min(32, Math.round(D * 0.55)), 12, 14);
   return (
     <Leinwand>
       <rect width={B0} height={H0} fill="url(#t-pult)" />
@@ -493,7 +493,7 @@ const Laptop = ({ teil, t, D }) => {
           <text x="84" y="51" fontFamily={SCHRIFT} fontWeight="700" fontSize="32" fill={CREME}>Prämien 2027</text>
           <rect x="672" y="20" width="176" height="38" rx="19" fill="none" stroke="rgba(244,238,228,0.7)" strokeWidth="3" /><text x="760" y="47" textAnchor="middle" fontFamily={SCHRIFT} fontWeight="600" fontSize="22" fill={CREME}>Ihr Wohnort</text>
           {LAENGE.map((l, i) => {
-            const rein = feder(t, fps, 2 + i * 3, 14);
+            const rein = feder(t, fps, 1 + i * 2, 10);
             const platz = i + (rang[i] - i) * sortiert;
             const bester = rang[i] === 0;
             return (
