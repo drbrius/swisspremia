@@ -104,6 +104,7 @@ export const GEHEIM = {
   get elevenlabsVoiceEn() { return process.env.ELEVENLABS_VOICE_ID_EN || "XrExE9yKIg1WjnnlVkGX"; },
   get elevenlabsModel() { return process.env.ELEVENLABS_MODEL_ID || "eleven_multilingual_v2"; },
   get blobToken() { return process.env.BLOB_READ_WRITE_TOKEN || ""; },
+  get pixabayKey() { return process.env.PIXABAY_API_KEY || ""; },   // Bildsuche (funnel/pixabay.js)
   get igUserId() { return process.env.IG_USER_ID || ""; },
   get igToken() { return process.env.IG_ACCESS_TOKEN || ""; },
   get metaAppId() { return process.env.META_APP_ID || ""; },

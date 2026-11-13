@@ -1,12 +1,12 @@
 ﻿<#
-  Schluessel sicher setzen und pruefen: ElevenLabs (Stimme) und Vercel Blob (Ablage).
+  Schluessel sicher setzen und pruefen: ElevenLabs (Stimme), Vercel Blob (Ablage) und Pixabay (Bildsuche).
 
     powershell -ExecutionPolicy Bypass -File .\schluessel-setzen.ps1              abfragen, pruefen, speichern
     powershell -ExecutionPolicy Bypass -File .\schluessel-setzen.ps1 -NurPruefen  gespeicherte Werte nur pruefen
 
   Die Eingabe wird nicht angezeigt. Anfuehrungszeichen und Leerzeichen am Rand
   werden entfernt. Gespeichert wird nur ein Wert, der die richtige Form hat
-  (sk_... bzw. vercel_blob_rw_...) und den der Dienst live annimmt.
+  (sk_..., vercel_blob_rw_... bzw. Zahl-Bindestrich-Hexfolge) und den der Dienst live annimmt.
   Enter ohne Eingabe laesst den gespeicherten Wert unveraendert.
 #>
 param([switch]$NurPruefen)
@@ -28,6 +28,8 @@ function Testen([string]$art, [string]$wert) {
   if (-not $env:SP_STIMME) { $env:SP_STIMME = "uvysWDLbKpA4XvpD3GI6" }   # Leonie (deutsch), nur fuer den Testsatz
   if ($art -eq "elevenlabs") {
     $js = 'const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + process.env.SP_STIMME + "?output_format=mp3_44100_128", { method: "POST", headers: { "xi-api-key": process.env.SP_TESTWERT, "Content-Type": "application/json" }, body: JSON.stringify({ text: "Test.", model_id: "eleven_multilingual_v2" }) }); console.log(r.ok ? "ok" : "HTTP " + r.status + " " + (await r.text()).slice(0, 120));'
+  } elseif ($art -eq "pixabay") {
+    $js = 'const r = await fetch("https://pixabay.com/api/?per_page=3&q=test&key=" + encodeURIComponent(process.env.SP_TESTWERT)).catch(() => null); console.log(!r ? "nicht erreichbar" : r.ok ? "ok" : "HTTP " + r.status + " " + (await r.text()).slice(0, 120));'
   } else {
     $js = 'import { list } from "@vercel/blob"; try { await list({ token: process.env.SP_TESTWERT, limit: 1 }); console.log("ok"); } catch (e) { console.log(e.message.slice(0, 120)); }'
   }
@@ -38,7 +40,8 @@ function Testen([string]$art, [string]$wert) {
 
 $schluessel = @(
   @{ Name = "ELEVENLABS_API_KEY"; Art = "elevenlabs"; Muster = '^sk_[A-Za-z0-9]{20,}$'; Text = "ElevenLabs API-Schluessel (beginnt mit sk_)" },
-  @{ Name = "BLOB_READ_WRITE_TOKEN"; Art = "blob"; Muster = '^vercel_blob_rw_[A-Za-z0-9_]{10,}$'; Text = "Vercel Blob Token (beginnt mit vercel_blob_rw_)" }
+  @{ Name = "BLOB_READ_WRITE_TOKEN"; Art = "blob"; Muster = '^vercel_blob_rw_[A-Za-z0-9_]{10,}$'; Text = "Vercel Blob Token (beginnt mit vercel_blob_rw_)" },
+  @{ Name = "PIXABAY_API_KEY"; Art = "pixabay"; Muster = '^\d{5,}-[0-9a-f]{20,}$'; Text = "Pixabay API-Schluessel (pixabay.com/api/docs, Zahl-Bindestrich-Hexfolge)" }
 )
 
 foreach ($s in $schluessel) {

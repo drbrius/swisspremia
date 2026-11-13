@@ -94,5 +94,29 @@
   ],
   "einstellungen": 4,
   "prompt": "Photorealistic documentary footage, vertical, 4 shots with hard cuts, the same people in all shots: a couple in their late twenties: a man with dark curly hair and a beard in a grey hoodie, and a woman with red hair in a bun wearing a striped shirt, same clothes throughout. Shot 1 (0-3s): They carry cardboard moving boxes up the stairwell of an old apartment building. Shot 2 (3-8.5s): In an empty sunlit living room they unpack boxes and laugh. Shot 3 (8.5-12s): The woman opens a window and looks out over the roofs of a small Swiss town with mountains in the distance. Shot 4 (12-15s): They sit on the floor with a laptop on a moving box and give each other a high five. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops, tablets and phones are only seen from the screen side, never their back or lid. No readable text, no logos, no captions, no subtitles, no watermark."
+ },
+ "eingang": {
+  "datei": "real/clips/eingang.mp4",
+  "modell": "seedance_2_0",
+  "aufloesung": "720p",
+  "jobId": "f3dc1f62-3bd1-47f5-abf4-a387710b85d3",
+  "geladen": "2026-11-10T14:34:03.123Z",
+  "dauer": 15.04,
+  "geplant": [
+   0,
+   2.5,
+   7,
+   10.5,
+   15
+  ],
+  "grenzen": [
+   0,
+   3.625,
+   7.333,
+   8.917,
+   15.042
+  ],
+  "einstellungen": 4,
+  "prompt": "Photorealistic documentary footage, vertical, 4 shots with hard cuts, the same person in all shots: an ordinary-looking woman in her early fifties with short auburn hair and freckles, wearing a grey wool coat, same clothes throughout. Shot 1 (0-2.5s): At a desk at home she folds a letter, slides it into a white envelope and seals it. Shot 2 (2.5-7s): She walks briskly along a quiet street with autumn trees, holding the envelope in her hand. Shot 3 (7-10.5s): At the wooden counter of a small village shop she hands the envelope to a friendly shop assistant. Shot 4 (10.5-15s): Outside on the street she stops, takes a deep breath and smiles with relief. Handheld camera, shallow depth of field, soft natural daylight, 35mm film look, realistic skin texture, calm natural acting, muted natural colours, set in Switzerland. Papers, screens and signs stay out of focus. Laptops, tablets and phones are only seen from the screen side, never their back or lid. No readable text, no logos, no captions, no subtitles, no watermark."
  }
 }

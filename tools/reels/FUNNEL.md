@@ -130,6 +130,30 @@ das selbst. Eine Szene bekommt ein Foto mit `bild: "<name>"`; regionale Reels ne
 `kantonBild()` die Stadt ihres Kantons. Fehlt ein Foto (kein Netz), läuft die Szene ohne.
 Das Kalenderbild zeigt «June» und passt nur zu den Juni-/März-Terminen.
 
+**Bildrecherche (Pixabay, seit 13.11.2026):** Neue Motive sucht `npm run recherche` über die
+Pixabay-API. Der Schlüssel liegt als `PIXABAY_API_KEY` in der Nutzer-Umgebung
+(`schluessel-setzen.ps1`), nie im Repository.
+
+```
+npm run recherche -- "Arzt Patientin"                        12 Fotos im Hochformat, Kontaktbogen
+npm run recherche -- "family doctor" --lang=en --anzahl=24   englisch findet deutlich mehr
+npm run recherche -- --nimm=5710159 --name=beratung          Treffer als Motiv eintragen und laden
+npm run recherche -- "walking autumn" --lang=en --video      Videos (bis Full HD); --lade=<Nummer> holt eines
+```
+
+Der Kontaktbogen liegt in `out/recherche/<begriff>/` (`index.html`, `bogen.png`) und zeigt
+jede Vorschau im Reel-Zuschnitt mit Nummer, Grösse und Urheber. `--nimm` schreibt den Eintrag
+`name: "pixabay:<Nummer>"` in `src/bilder.js` und legt beide Zuschnitte nach `public/bilder/`;
+danach gilt das Motiv wie jedes andere (`bild: "<name>"`). `--fokus=x,y` verschiebt den
+Ausschnitt, `--ersetzen` tauscht ein Motiv aus. KI-erzeugte und als schwach markierte Bilder
+blendet die Suche aus (`--ki` lässt sie zu).
+
+Grenzen: Über die API liefert Pixabay Fotos bis 1280 px Kantenlänge – fürs Reel werden sie
+hochgerechnet, was hinter der dunklen Farbschicht nicht auffällt; volle Auflösung gibt es nur
+auf Antrag bei Pixabay. Antworten werden 24 Stunden in `plan/pixabay/` aufbewahrt (Vorgabe
+des Dienstes, 100 Abfragen je Minute). Lizenz: kostenlos, auch kommerziell, ohne Namensnennung;
+erkennbare Personen dürfen nicht so gezeigt werden, als würden sie für das Angebot werben.
+
 **Takt:** Zwei Szenen überlappen sich 12 Frames (`src/takt.js`). Die Stimme läuft getrennt von
 den Bildern ab dem Start ihrer Szene; der Nachhall von 0,5 s ist länger als der Übergang, damit
 sich zwei Sätze nie überlagern.
@@ -435,7 +459,8 @@ tools/reels/
   test/karussell-probe.js   je Format ein Karussell als JPEG-Folien plus Kontaktbogen
   src/Karussell.jsx         Folien-Design der Karussells (Komposition «karussell», 1080 × 1350)
   src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
-  src/bilder.js             Unsplash-Motive; funnel/bilder.js lädt sie nach public/bilder/
+  src/bilder.js             Motive (Unsplash, Pixabay); funnel/bilder.js lädt sie nach public/bilder/
+  funnel/recherche.js       Bildsuche über Pixabay (funnel/pixabay.js), Kontaktbogen, Motiv eintragen
   plan/                     Tagespläne, Verlauf, Protokoll (nicht im Git)
   out/tag/<Datum>/          gerenderte Videos und Karussell-Ordner mit Folien (nicht im Git)
   public/audio/tag/         Tonspuren der Daten-Reels (nicht im Git)

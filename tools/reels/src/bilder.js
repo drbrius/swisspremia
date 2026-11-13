@@ -1,6 +1,12 @@
 /* =========================================================================
    Fotos fuer die Reels – Unsplash (Unsplash-Lizenz: kostenlos, auch
-   kommerziell, ohne Namensnennung; keine Unsplash+-Bilder).
+   kommerziell, ohne Namensnennung; keine Unsplash+-Bilder) und, seit
+   13.11.2026, Pixabay (Pixabay-Inhaltslizenz, gleiche Freiheiten).
+
+   Eintrag:  name: "photo-…"            Unsplash
+             name: "pixabay:<Nummer>"   Pixabay, optional "@x,y" fuer den
+                                        Ausschnitt (0 = links/oben, 1 = rechts/unten)
+   Neue Motive suchen und eintragen: npm run recherche (funnel/recherche.js).
 
    Ausgewaehlt am 25.10.2026. Die Dateien werden nicht im Repository
    abgelegt, sondern von funnel/bilder.js nach public/bilder/<name>.jpg
