@@ -252,6 +252,17 @@ Pfad, z. B. ein Webserver- oder NAS-Ordner) und `videoBasisUrl` (dessen öffentl
 
 ### 2.3 Stimme (optional)
 
+**Seit 14.11.2026 spricht Marcus** (`vGWWh1bodhwwi4yHd6qZ`, deutscher Radio- und Werbesprecher) alle
+Videos – die Tagesreels genauso wie die Serien. Massgebend ist die Fassung aus «Vom Zettelchaos zum
+Vergleich» (Serie Küchentisch): Modell `eleven_turbo_v2_5` mit erzwungener Sprache Deutsch, Tempo 1.1.
+In der Umgebung stehen dafür `ELEVENLABS_VOICE_ID` und `ELEVENLABS_MODEL_ID`, das Tempo steht in
+`funnel.json` (`stimmeTempo`). Vor dem Senden schreibt `funnel/stimme.js` den Sprechtext in die
+deutsche Sprechfassung um (scharfes S, «Franschise» – `sprechfassung` in `real/skripte.js`); im Bild
+bleibt die Schweizer Schreibweise. Das Turbo-Modell braucht deutlich weniger Guthaben je Zeichen als
+`eleven_multilingual_v2`. Davor: Ava (8.–13.11.), Leonie (ab 1.11.).
+
+Der folgende Text beschreibt, wie man eine Stimme wählt und wechselt.
+
 `ELEVENLABS_API_KEY` und `ELEVENLABS_VOICE_ID` (Modell `eleven_multilingual_v2`). Seit 1.11.2026 spricht
 **Leonie** (`uvysWDLbKpA4XvpD3GI6`), eine deutsche Stimme aus der Voice Library: klar, Studioqualität,
 für Sachtexte. Matilda (`XrExE9yKIg1WjnnlVkGX`), mit der die Reels bis Oktober 2026 vertont wurden, ist
@@ -346,7 +357,9 @@ node funnel/instagram.js kontingent
 | `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
 | `karussellsProTag` | `0` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine). Bis 30.11.2026 keine: sie erreichen im Mittel 3–4 Konten und belegen Sendeplätze; danach höchstens 1 |
 | `anzahlJeTag` | 9.–18.11.: 8 / 14 / 14 / 8 … | feste Anzahl Reels für einzelne Tage (Volumentest ABBA, Entscheid am 20.11.); sonst `reelsProTag` |
-| `serie` | `{"name": "plakat", "proTag": 2}` | fertige Serien-Videos im Tagesplan: je Tag so viele anstelle erzeugter Reels (Tageszahl bleibt); `proTag` 0 oder leerer Name = aus. Siehe Abschnitt 10 |
+| `stil` | `tisch` | Look der Tagesreels: `tisch` (wie die Serie «Küchentisch», Abschnitt 12) oder `klassisch` (Petrol und Gold, Fotos) |
+| `stimmeTempo` | `1.1` | Sprechtempo der Stimme (0.7 bis 1.2) |
+| `serie` | `{"name": "tisch", "proTag": 1}` | fertige Serien-Videos im Tagesplan: je Tag so viele anstelle erzeugter Reels (Tageszahl bleibt); `proTag` 0 oder leerer Name = aus. Siehe Abschnitt 10 |
 | `formateAus` | `["modelle", "kantone"]` | Formate, die die Redaktion nicht einplant (beide fielen in der Erstverteilung fast immer durch) |
 | `maxJeFormat` | `2` | höchstens so viele Reels eines Formats je Tag, auch beim Auffüllen (Stamm-Reels ausgenommen) |
 | `hashtagsMax` | `5` | höchstens so viele Hashtags je Beitrag (drei feste, Kanton, Thema) |
@@ -457,6 +470,7 @@ tools/reels/
     board.js                Board-Stand bauen, verschlüsseln, ablegen
   test/graph-attrappe.js    Nachbau der Graph API für Tests
   test/standbilder.js       ein Standbild je Szene als Kontaktbogen (Layoutprüfung)
+  test/look.js              Standbilder oder ganzes Video eines Reels aus Plan oder Stamm, wahlweise im alten Look (Abschnitt 12)
   test/karussell-probe.js   je Format ein Karussell als JPEG-Folien plus Kontaktbogen
   src/Karussell.jsx         Folien-Design der Karussells (Komposition «karussell», 1080 × 1350)
   src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
@@ -636,5 +650,51 @@ Stand 13.11.2026: `belege` (Arztrechnungen einsenden) und `vergleich` (Vom Zette
 sind fertig. Weil das ElevenLabs-Guthaben fast leer war, spricht Marcus in `vergleich` über das
 sparsamere Modell `eleven_turbo_v2_5` (`REAL_MODEL_ID`, Tempo 1.1) statt `eleven_multilingual_v2`; ein
 späteres `node tisch/bauen.js ton vergleich` ohne diese Variable erzeugt die Spur mit dem Standardmodell
-neu. Die Videos sind nicht im Tagesplan; dafür bräuchte die Serie einen Eintrag in `SERIEN`
-(`funnel/serie.js`) und dort die eigenen Skripte.
+neu.
+
+Seit 14.11.2026 ist die Turbo-Fassung der Standard aller Stimmen (Abschnitt 2.3) und die Serie steht in
+`SERIEN` (`funnel/serie.js`): mit `"serie": {"name": "tisch", "proTag": 1}` läuft je Tag eines der
+beiden Videos im Tagesplan. Die Serie «Plakat» ist damit ausgesetzt (acht Videos noch nicht gesendet);
+wieder einschalten: `"name": "plakat"`.
+
+---
+
+## 12. Alle Tagesreels im Look «Küchentisch» (seit 14.11.2026)
+
+Nach «Vom Zettelchaos zum Vergleich» sollten alle Videos des Funnels so aussehen. Die Skripte der
+Redaktion (Formate, Rahmen, Zahlen, Sprechtexte) sind unverändert – geändert ist nur das Bild:
+
+| Szene | vorher | jetzt |
+|---|---|---|
+| Text (`titel`) | Text gross in der Mitte, dazu Foto oder kleine Spielszene | Figur am Tisch voller Papiere, die Kamera fährt langsam näher; Text als Untertitel in Fraunces mit orangem Feld. Am Schluss: aufgeräumt und hell |
+| Text, im Skript «am Laptop» | Figur mit Laptop | aufgeräumter Tisch von oben, Laptop mit Vergleich |
+| Text, in dem vom Vergleich die Rede ist | – | Platine mit Chip, die günstigsten Angebote kommen heraus (höchstens einmal je Reel) |
+| Zahl, Zähler, Vergleich, Balken, Karte, Schalter, Münzen … | Petrol/Slate/Creme mit Gold, zum Teil Foto | dieselbe Grafik auf der Platine (dunkel) oder auf Papier mit Punktraster (hell); Ziffern in Anton, Akzent Orange |
+| Abbinder | Kreuz, Wortmarke, goldener Knopf | Platinen-Abbinder der Serie; die Aufforderung der Funnel-Stufe steht oben, «Link im Profil» im orangen Knopf |
+| Szenenwechsel | Schieben, Wischen, Kreis, Uhr | weiche Überblendung |
+
+Dazu überall: Markenzeile «SWISSPREMIA.CH · LINK IM PROFIL» oben in der Mitte, Filmkorn, oranger
+Fortschrittsstrich. Fotos kommen im Tisch-Look nicht mehr vor.
+
+**Regie** (`regieFuer` in `src/TischReel.jsx`): je Reel fest aus der Reel-Id – Figur (die Figur des
+Skripts: lea → anna, marco → marc, dazu noah und brunner), Raum (Küche nachts oder Büro bei Regen),
+Tisch (Chaos oder Zettel). Die Stimmung folgt dem Schritt des Skripts (`beat`): Problem-Schritte zeigen
+die Figur besorgt (liest einen Brief oder hält den Kopf), spätere Schritte den Blick nach oben, die
+letzte Textszene den aufgeräumten Tisch im warmen Licht.
+
+Dateien: `src/TischReel.jsx` (Textszene, Abbinder, Regie), `src/Tisch.jsx` (Figur, Räume, Platine –
+gemeinsam mit der Serie), `src/Bausteine.jsx` (`StilKontext`: Grund, Schrift und Markierung je Look),
+`src/Reel.jsx` (wählt den Look aus `reel.stil`), `funnel/rendern.js` (gibt `stil` aus `funnel.json` mit).
+
+Zurück zum alten Look: `"stil": "klassisch"` in `funnel.json`.
+
+**Prüfen ohne Ton und ohne Plan zu verändern:**
+
+```
+node test/look.js 2026-11-14 1,5          je Szene zwei Standbilder nach out/pruef/
+node test/look.js stamm                   die Stamm-Reels
+node test/look.js 2026-11-14 1 --video    das ganze Reel als MP4 nach out/pruef/
+node test/look.js stamm umzug --stil=klassisch
+```
+
+Die Videos sind mit Filmkorn grösser als vorher (rund 15–20 MB statt 7–13 MB je Reel).

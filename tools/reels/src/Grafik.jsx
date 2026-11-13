@@ -1,8 +1,8 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
 import { MARKE } from "./reels.js";
-import { Buehne, Unterzeilen, useEinblenden, useAnteil, useFeder, useSchweben, usePuls, Haken } from "./Bausteine.jsx";
-import { chf } from "./Marke.jsx";
+import { Buehne, Unterzeilen, useEinblenden, useAnteil, useFeder, useSchweben, usePuls, Haken, useZahlstil } from "./Bausteine.jsx";
+import { chf, SCHRIFT } from "./Marke.jsx";
 
 /* =========================================================================
    Grafikszenen. Jede zeichnet eine animierte SVG-Grafik und darunter die
@@ -213,6 +213,7 @@ export const Zeitstrahl = ({ s, farben }) => {
 export const Schalter = ({ s, farben }) => {
   const kipp = useAnteil(30, 48);
   const wert = interpolate(kipp, [0, 1], [s.von || 0, s.bis || 0]);
+  const zahlstil = useZahlstil();
   return (
     <Buehne farben={farben}>
       <div style={{ display: "flex", alignItems: "center", gap: 40, fontSize: 44, fontWeight: 500 }}>
@@ -223,9 +224,9 @@ export const Schalter = ({ s, farben }) => {
         <span style={{ opacity: .4 + kipp * .6, color: kipp > .5 ? farben.akzent : farben.text }}>{s.an || "ohne Unfall"}</span>
       </div>
       {s.von !== undefined && (
-        <div style={{ marginTop: 60, fontSize: 150, fontWeight: 600, color: farben.akzent, fontVariantNumeric: "tabular-nums" }}>
-          <span style={{ fontSize: 60, fontWeight: 300, color: farben.text, marginRight: 18 }}>CHF</span>{chf(wert)}
-          <span style={{ fontSize: 44, fontWeight: 300, color: farben.leise, marginLeft: 16 }}>/ Mt.</span>
+        <div style={{ marginTop: 60, fontSize: 150, fontWeight: 600, ...zahlstil, color: farben.akzent, fontVariantNumeric: "tabular-nums" }}>
+          <span style={{ fontSize: 60, fontWeight: 300, color: farben.text, marginRight: 18, fontFamily: SCHRIFT, letterSpacing: 0 }}>CHF</span>{chf(wert)}
+          <span style={{ fontSize: 44, fontWeight: 300, color: farben.leise, marginLeft: 16, fontFamily: SCHRIFT, letterSpacing: 0 }}>/ Mt.</span>
         </div>
       )}
       <Unterzeilen text={s.text} farben={farben} ab={56} />
@@ -290,6 +291,7 @@ export const Muenzen = ({ s, farben }) => {
   const n = 12;
   const gefallen = Math.min(n, Math.floor(frame / 5));
   const wert = interpolate(gefallen, [0, n], [0, s.bis || 0]);
+  const zahlstil = useZahlstil();
   return (
     <Buehne farben={farben}>
       <Rahmen w={520} h={520}>
@@ -303,8 +305,8 @@ export const Muenzen = ({ s, farben }) => {
           return <ellipse key={i} cx={x} cy={y} rx="44" ry="13" fill={MARKE.gold} stroke="#b7a06a" strokeWidth="3" opacity={frame >= i * 5 ? glanz : 0} />;
         })}
       </Rahmen>
-      <div style={{ marginTop: 20, fontSize: 150, fontWeight: 600, color: farben.akzent, fontVariantNumeric: "tabular-nums" }}>
-        <span style={{ fontSize: 60, fontWeight: 300, color: farben.text, marginRight: 18 }}>CHF</span>{chf(wert)}
+      <div style={{ marginTop: 20, fontSize: 150, fontWeight: 600, ...zahlstil, color: farben.akzent, fontVariantNumeric: "tabular-nums" }}>
+        <span style={{ fontSize: 60, fontWeight: 300, color: farben.text, marginRight: 18, fontFamily: SCHRIFT, letterSpacing: 0 }}>CHF</span>{chf(wert)}
       </div>
       <Unterzeilen text={s.text} farben={farben} ab={Math.round(fps * 2.2)} groesse={64} />
     </Buehne>

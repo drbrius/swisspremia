@@ -105,7 +105,10 @@ const Tisch_ = ({ art, holz }) => (
 /* ---- Figur -------------------------------------------------------------- */
 const TYPEN = {
   anna: { haut: ["#FAD6B8", "#EBB18B", "#C98562"], haar: ["#96502C", "#592A12"], form: "dutt", kleid: ["#37989A", "#1B5B63"], lippe: "#A9483A", iris: "#5F8450" },
-  marc: { haut: ["#F2C9A5", "#DCA67E", "#B67A56"], haar: ["#4E382B", "#241711"], form: "kurz", kleid: ["#6E7A89", "#3A4350"], lippe: "#93493B", iris: "#56799E", brille: true }
+  marc: { haut: ["#F2C9A5", "#DCA67E", "#B67A56"], haar: ["#4E382B", "#241711"], form: "kurz", kleid: ["#6E7A89", "#3A4350"], lippe: "#93493B", iris: "#56799E", brille: true },
+  /* Fuer die Tagesreels (Figuren der Redaktion: lea -> anna, marco -> marc, dazu noah und brunner). */
+  noah: { haut: ["#F6D2B0", "#E2AD86", "#BE8460"], haar: ["#B98A58", "#6B4827"], form: "kurz", kleid: ["#5F9A6A", "#2F5E3C"], lippe: "#A0523F", iris: "#6B5A3A" },
+  brunner: { haut: ["#F0C8A8", "#D9A583", "#B07C5C"], haar: ["#D3D6DA", "#8C9299"], form: "kurz", kleid: ["#8F4E56", "#562B33"], lippe: "#8E4A40", iris: "#5B7186", brille: true }
 };
 
 const FigurDefs = ({ typ }) => {
@@ -289,7 +292,7 @@ const Kueche = () => (
   </g>
 );
 
-const Buero = ({ t }) => (
+const Buero = ({ t, regen = true }) => (
   <g>
     <rect x="-80" y="-80" width="1240" height="1100" fill="#CDD3DA" />
     <rect x="-80" y="840" width="1240" height="180" fill="#AEB6C0" />
@@ -297,7 +300,7 @@ const Buero = ({ t }) => (
       <rect x="40" y="110" width="430" height="590" fill="#8D97A3" />
       <rect x="58" y="128" width="394" height="554" fill="url(#t-fenster)" />
       <path d="M255 128 V682 M58 400 H452" stroke="#8D97A3" strokeWidth="14" />
-      <g clipPath="url(#t-fenster-clip)" stroke="rgba(235,242,250,0.55)" strokeWidth="4" strokeLinecap="round">
+      <g clipPath="url(#t-fenster-clip)" stroke="rgba(235,242,250,0.55)" strokeWidth="4" strokeLinecap="round" opacity={regen ? 1 : 0}>
         {Array.from({ length: 22 }, (_, i) => { const y = ((i * 97 + t * 14) % 640) + 100; const x = 70 + ((i * 53) % 370); return <path key={i} d={`M${x} ${y} l-10 46`} />; })}
       </g>
       <rect x="20" y="700" width="470" height="22" fill="#7C8692" />
@@ -339,6 +342,8 @@ const SzeneDefs = () => (
     <linearGradient id="t-pult" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#F0E2CB" /><stop offset="1" stopColor="#D8C2A0" /></linearGradient>
     <FigurDefs typ="anna" />
     <FigurDefs typ="marc" />
+    <FigurDefs typ="noah" />
+    <FigurDefs typ="brunner" />
   </defs>
 );
 
@@ -372,7 +377,7 @@ const Raum = ({ teil, t, D, absolut }) => {
     <Leinwand stil={teil.licht === "kalt" ? { filter: "saturate(0.6)" } : undefined}>
       <rect width={B0} height={H0} fill={NACHT} />
       <g transform={kamera}>
-        {teil.raum === "buero" ? <Buero t={absolut} /> : <Kueche />}
+        {teil.raum === "buero" ? <Buero t={absolut} regen={teil.licht !== "warm"} /> : <Kueche />}
         <Figur {...fig} ebene="koerper" />
         <Tisch_ art={teil.tisch} holz={teil.raum === "buero" ? "grau" : "warm"} />
         <Figur {...fig} ebene="arme" />
@@ -417,6 +422,15 @@ const Platine = ({ t, x = 540, y = 760, hin = false }) => (
     </g>
   </g>
 );
+
+/* Grund fuer die Grafikszenen der Tagesreels (Bausteine.jsx, Buehne): dunkel
+   die Platine, hell das Papier mit Punktraster wie bei den Schritt-Karten. */
+export const Grund = ({ hell, t }) => (hell ? (
+  <g>
+    <rect width={B0} height={H0} fill={CREME} />
+    {Array.from({ length: 22 }, (_, r) => Array.from({ length: 8 }, (_, k) => <circle key={`${r}-${k}`} cx={70 + k * 134} cy={90 + r * 80} r="3.5" fill="rgba(20,33,44,0.1)" />))}
+  </g>
+) : <Platine t={t} />);
 
 /* Rechnungen fliegen in den Franchise-Zaehler; ist er voll: 90 %. */
 const Zaehler = ({ teil, t, D }) => {
@@ -468,6 +482,7 @@ const Laptop = ({ teil, t, D }) => {
   const rang = LAENGE.map((l) => LAENGE.filter((m) => m < l).length);
   const sortiert = feder(t, fps, Math.min(16, Math.round(D * 0.24)), 14);
   const preis = feder(t, fps, Math.min(32, Math.round(D * 0.55)), 12, 14);
+  const F = TYPEN[teil.figur] || TYPEN.marc;
   return (
     <Leinwand>
       <rect width={B0} height={H0} fill="url(#t-pult)" />
@@ -508,7 +523,7 @@ const Laptop = ({ teil, t, D }) => {
               </g>
             );
           })}
-          <g transform={`translate(676 122) scale(${preis})`}><rect x="-150" y="-24" width="300" height="48" rx="24" fill={TINTE} /><text x="0" y="9" textAnchor="middle" fontFamily={SCHRIFT} fontWeight="700" fontSize="24" fill={CREME}>günstigstes Angebot</text></g>
+          <g transform={`translate(676 122) scale(${preis})`}><rect x="-150" y="-24" width="300" height="48" rx="24" fill={TINTE} /><text x="0" y="9" textAnchor="middle" fontFamily={SCHRIFT} fontWeight="700" fontSize="24" fill={CREME}>{teil.schild || "günstigstes Angebot"}</text></g>
         </g>
         <rect x="80" y="1120" width="920" height="26" fill="#8F99A2" />
         <path d="M50 1146 L1030 1146 L1120 1560 L-40 1560 Z" fill="#D9DEE3" />
@@ -517,11 +532,11 @@ const Laptop = ({ teil, t, D }) => {
           const tipp = 5 * Math.sin(t / 2.2 + (m > 0 ? 1.6 : 0));
           return (
             <g key={m} transform={`translate(${540 + m * 215} ${1330 + tipp})`}>
-              <path d={`M${m * 250} 700 C${m * 190} 420 ${m * 90} 250 ${m * 20} 120`} stroke="#3A4350" strokeWidth="190" strokeLinecap="round" fill="none" />
-              <path d={`M${m * 250} 700 C${m * 190} 420 ${m * 90} 250 ${m * 20} 120`} stroke="#6E7A89" strokeWidth="150" strokeLinecap="round" fill="none" />
-              <ellipse cx="0" cy="20" rx="82" ry="94" fill={TYPEN.marc.haut[1]} />
-              {[-48, -16, 16, 48].map((f, i) => <rect key={i} x={f - 15} y={-128 + Math.abs(f) * 0.45 + (i === (Math.floor(t / 4) + (m > 0 ? 2 : 0)) % 4 ? 10 : 0)} width="30" height="110" rx="15" fill={TYPEN.marc.haut[i % 2 ? 1 : 0]} />)}
-              <ellipse cx={m * -10} cy="6" rx="52" ry="62" fill={TYPEN.marc.haut[0]} opacity="0.5" />
+              <path d={`M${m * 250} 700 C${m * 190} 420 ${m * 90} 250 ${m * 20} 120`} stroke={F.kleid[1]} strokeWidth="190" strokeLinecap="round" fill="none" />
+              <path d={`M${m * 250} 700 C${m * 190} 420 ${m * 90} 250 ${m * 20} 120`} stroke={F.kleid[0]} strokeWidth="150" strokeLinecap="round" fill="none" />
+              <ellipse cx="0" cy="20" rx="82" ry="94" fill={F.haut[1]} />
+              {[-48, -16, 16, 48].map((f, i) => <rect key={i} x={f - 15} y={-128 + Math.abs(f) * 0.45 + (i === (Math.floor(t / 4) + (m > 0 ? 2 : 0)) % 4 ? 10 : 0)} width="30" height="110" rx="15" fill={F.haut[i % 2 ? 1 : 0]} />)}
+              <ellipse cx={m * -10} cy="6" rx="52" ry="62" fill={F.haut[0]} opacity="0.5" />
             </g>
           );
         })}
@@ -743,3 +758,6 @@ export const TISCH_BEISPIEL = {
     { von: 210, bis: 300, art: "schluss", hinweis: "Stimme KI-generiert · keine Beratung", bloecke: [] }
   ]
 };
+
+/* Fuer die Tagesreels im selben Look (TischReel.jsx, Bausteine.jsx). */
+export { SERIF, ZAHL as ZAHLSCHRIFT, NACHT, TINTE, CREME, PETROL, ORANGE, GLUT, Leinwand, Platine, Raum, Laptop, Maschine, TYPEN, feder };

@@ -16,6 +16,10 @@ import { szenenStarts } from "../src/takt.js";
 import { execFileSync, spawnSync } from "node:child_process";
 import { ffmpegPfad } from "./musik-synth.js";
 import { KONFIG } from "./konfig.js";
+import { kornSchreiben } from "../durchblick/fotos.js";
+
+/* Der Look kommt aus funnel.json ("stil"), solange der Reel keinen eigenen nennt. */
+const mitStil = (reel) => ({ ...reel, stil: reel.stil || KONFIG.stil || "tisch" });
 
 
 /* Browser-Zeitlimit (Remotion-Standard 30 s). Am 8.11.2026 scheiterten drei
@@ -49,6 +53,9 @@ let serveUrl = null;
 
 export async function buendeln({ melden = () => {} } = {}) {
   if (serveUrl) return serveUrl;
+  /* Das Filmkorn des Tisch-Looks muss vor dem Buendeln in public/ liegen. */
+  const korn = path.join(WURZEL, "public", "plakat", "korn.png");
+  if (!fs.existsSync(korn)) { fs.mkdirSync(path.dirname(korn), { recursive: true }); kornSchreiben(korn); }
   melden("Remotion buendelt …");
   serveUrl = await bundle({
     entryPoint: path.join(WURZEL, "src", "index.jsx"),
@@ -80,7 +87,7 @@ export function lautheitFilter(datei, ziel) {
 export async function reelRendern(reel, ziel, { melden = () => {}, fortschritt = null } = {}) {
   const url = await buendeln({ melden });
   fs.mkdirSync(path.dirname(ziel), { recursive: true });
-  const inputProps = { reel, dauern: null };
+  const inputProps = { reel: mitStil(reel), dauern: null };
   const komposition = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "warn", timeoutInMilliseconds: BROWSER_TIMEOUT });
   let letzter = -1;
   await renderMedia({
@@ -122,7 +129,7 @@ export async function reelRendern(reel, ziel, { melden = () => {}, fortschritt =
    Liefert die Position in Millisekunden (Rueckfall fuer thumb_offset). */
 export async function coverRendern(reel, ziel, anteil = 0.3, { melden = () => {} } = {}) {
   const url = await buendeln({ melden });
-  const inputProps = { reel, dauern: null };
+  const inputProps = { reel: mitStil(reel), dauern: null };
   const k = await selectComposition({ serveUrl: url, id: "tagesreel", inputProps, browserExecutable: BROWSER, logLevel: "error", timeoutInMilliseconds: BROWSER_TIMEOUT });
   const dauern = k.props.dauern || [];
   const starts = szenenStarts(dauern);   // Szenen ueberlappen sich um den Uebergang

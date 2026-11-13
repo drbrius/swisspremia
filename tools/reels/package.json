@@ -18,6 +18,7 @@
     "plakat": "node plakat/bauen.js",
     "tisch": "node tisch/bauen.js",
     "storyboard": "node test/storyboard.js",
+    "look": "node test/look.js",
     "karussell": "node test/karussell-probe.js out/karussell-probe",
     "musik": "node funnel/musik.js"
   },

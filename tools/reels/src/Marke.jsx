@@ -17,6 +17,14 @@ export const HINTERGRUND = {
   foto:   { fläche: MARKE.slate,  text: MARKE.weiss, akzent: MARKE.gold, leise: "rgba(255,255,255,.82)" }
 };
 
+/* Look «Küchentisch» (seit 14.11.2026 Standard der Tagesreels): dunkel ist
+   die Platine, hell das Papier. "akzent" faerbt Grafik und Zahlen, "marker"
+   ist das orange Feld hinter hervorgehobenen Woertern. */
+export const TISCHFARBEN = {
+  dunkel: { fläche: "#0E1B26", text: "#F4EEE4", akzent: "#EC6A1E", leise: "rgba(244,238,228,.74)", marker: "#EC6A1E", hell: false },
+  hell:   { fläche: "#F4EEE4", text: "#14212C", akzent: "#005786", leise: "rgba(20,33,44,.68)", marker: "#EC6A1E", hell: true }
+};
+
 /* Bildmarke: dieselbe wie auf der Website – Kreuz auf Petrol. */
 export const Kreuz = ({ groesse = 120, farbe = MARKE.petrol, kreuz = MARKE.weiss }) => (
   <svg width={groesse} height={groesse} viewBox="0 0 100 100" aria-hidden="true">

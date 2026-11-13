@@ -13,7 +13,9 @@
    Umgebung (setx ELEVENLABS_VOICE_ID <id>).
 
    Library-Stimmen (elevenlabs.io/text-to-speech/german) sprechen direkt ueber
-   ihre ID – ohne Uebernahme ins Konto. Seit 1.11.2026: Leonie uvysWDLbKpA4XvpD3GI6.
+   ihre ID – ohne Uebernahme ins Konto. Seit 1.11.2026: Leonie uvysWDLbKpA4XvpD3GI6,
+   seit 8.11.2026 Ava, seit 14.11.2026 Marcus vGWWh1bodhwwi4yHd6qZ mit
+   ELEVENLABS_MODEL_ID eleven_turbo_v2_5 – dieselbe Stimme wie in den Serien.
 
    Kommandozeile (suchen/hinzufuegen brauchen voices_read bzw. voices_write):
      node funnel/stimme.js suchen [de] [--weiblich|--maennlich] [--suche=Wort]
@@ -26,7 +28,8 @@
    ========================================================================= */
 import fs from "node:fs";
 import path from "node:path";
-import { GEHEIM, WURZEL, AUDIO_ORDNER, maskiert } from "./konfig.js";
+import { GEHEIM, KONFIG, WURZEL, AUDIO_ORDNER, maskiert } from "./konfig.js";
+import { sprechfassung } from "../real/skripte.js";
 
 const API = "https://api.elevenlabs.io/v1";
 const MARKER = "stimme.json";
@@ -80,17 +83,24 @@ export async function stimmeHinzufuegen(besitzer, voiceId, name) {
   return d.voice_id || voiceId;
 }
 
+/* Seit 14.11.2026 spricht im Funnel dieselbe Stimme wie in den Serien
+   (Marcus, eleven_turbo_v2_5, Tempo 1.1 – so klingt «Vom Zettelchaos zum
+   Vergleich», und so wollte es der Nutzer fuer alle Videos). Darum dieselben
+   Einstellungen wie real/stimme.js; das Tempo steht in funnel.json
+   (stimmeTempo), Stimme und Modell in der Umgebung. */
 async function sprechen(stimme, text, modell, sprache = "de") {
+  const tempo = Math.min(1.2, Math.max(0.7, Number(KONFIG.stimmeTempo) || 1));
   const r = await anfrage(`/text-to-speech/${stimme}?output_format=mp3_44100_128`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      text,
+      /* Deutsch: scharfes S und «Franschise», damit eine deutsche Stimme es richtig spricht. */
+      text: sprache === "de" ? sprechfassung(text) : text,
       model_id: modell,
       /* Sprache erzwingen koennen nur die Turbo- und Flash-Modelle; das
          Mehrsprachen-Modell erkennt sie selbst und weist den Parameter ab. */
       ...(/turbo|flash/.test(modell) ? { language_code: sprache } : {}),
-      voice_settings: { stability: 0.55, similarity_boost: 0.75, style: 0.15, use_speaker_boost: true }
+      voice_settings: { stability: 0.5, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true, ...(tempo !== 1 ? { speed: tempo } : {}) }
     })
   });
   return Buffer.from(await r.arrayBuffer());

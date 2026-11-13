@@ -52,6 +52,8 @@ const STANDARD = {
   serie: { name: "", proTag: 0 },  // fertige Serien-Videos im Tagesplan, z. B. {"name": "plakat", "proTag": 2}: je Tag so viele anstelle erzeugter Reels (funnel/serie.js)
   hashtags: "bildtext",            // bildtext | kommentar | keine
   stimme: "auto",                  // auto (wenn Schluessel da) | aus
+  stimmeTempo: 1.1,                // Sprechtempo der Stimme (0.7 bis 1.2); 1.1 wie in den Serien
+  stil: "tisch",                   // Look der Reels: tisch (Figur am Tisch, Platine, Papier – wie die Serie «Küchentisch») | klassisch (Petrol und Gold, Fotos)
   ablage: "vercel-blob",           // vercel-blob | ordner
   videoOrdner: "",                 // bei ablage=ordner: wohin die MP4 kopiert werden
   videoBasisUrl: "",               // bei ablage=ordner: oeffentliche Basis-URL dieses Ordners
@@ -76,7 +78,7 @@ const UMGEBUNG = {
   igProtokoll: "IG_PROTOKOLL", igLogin: "IG_LOGIN", wiederholungStammTage: "WIEDERHOLUNG_STAMM_TAGE",
   karussellsProTag: "KARUSSELLS_PRO_TAG", karussellAbstandMinuten: "KARUSSELL_ABSTAND_MINUTEN", nachholenTage: "NACHHOLEN_TAGE", verfallMinuten: "VERFALL_MINUTEN",
   formateAus: "FORMATE_AUS", maxJeFormat: "MAX_JE_FORMAT", hashtagsMax: "HASHTAGS_MAX",
-  musik: "MUSIK", musikLautstaerke: "MUSIK_LAUTSTAERKE", lautheitZiel: "LAUTHEIT_ZIEL"
+  musik: "MUSIK", musikLautstaerke: "MUSIK_LAUTSTAERKE", lautheitZiel: "LAUTHEIT_ZIEL", stil: "STIL", stimmeTempo: "STIMME_TEMPO"
 };
 
 function zusammenfuehren() {

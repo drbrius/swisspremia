@@ -9,8 +9,13 @@
    deutscher Schreibweise (real/skripte.js: sprich).
 
    Seit 13.11.2026 spricht Marcus, ein deutscher Radio- und Werbesprecher
-   (Stimmklon eines Muttersprachlers), mit eleven_multilingual_v2 – dem
-   Modell, das die Aussprache des Sprechers am treuesten wiedergibt. Davor:
+   (Stimmklon eines Muttersprachlers). Zuerst mit eleven_multilingual_v2;
+   seit 14.11.2026 ist eleven_turbo_v2_5 mit Tempo 1.1 der Standard – so
+   klingt «Vom Zettelchaos zum Vergleich» (Serie Küchentisch), und diese
+   Fassung wollte der Nutzer fuer alle Videos. Sie kostet zudem nur halb so
+   viele Credits je Zeichen. Tonspuren, die noch mit dem alten Modell
+   gesprochen sind, erzeugt ein Lauf ohne --neu NEU (Modellvergleich unten).
+   Davor:
    Mila mit eleven_v3 (dCnu06FiOZma2KVNUoPZ); der Nutzer hoerte dort keine
    deutsche Aussprache. language_code "de" geht nur an Modelle, die ihn
    annehmen (v3, Turbo/Flash 2.5); Multilingual v2 weist ihn ab.
@@ -34,10 +39,10 @@ const WURZEL = path.resolve(HIER, "..");
 export const TON_ORDNER = path.join(WURZEL, "public", "real", "ton");
 export const ZEITEN_ORDNER = path.join(HIER, "zeiten");
 export const STIMME = process.env.REAL_VOICE_ID || "vGWWh1bodhwwi4yHd6qZ";   // Marcus – deutscher Radio- und Werbesprecher
-export const MODELL = process.env.REAL_MODEL_ID || "eleven_multilingual_v2";
+export const MODELL = process.env.REAL_MODEL_ID || "eleven_turbo_v2_5";
 const MIT_SPRACHCODE = /v3|turbo_v2_5|flash_v2_5/.test(MODELL);
 /* Sprechtempo (0.7 bis 1.2): Marcus spricht ruhig, mit 1.1 bleibt ein Reel bei rund 25 Sekunden. */
-const TEMPO = Number(process.env.REAL_TEMPO) || (MIT_SPRACHCODE ? 1 : 1.1);
+const TEMPO = Number(process.env.REAL_TEMPO) || 1.1;
 
 async function sprechen(text, stimme = STIMME) {
   const key = process.env.ELEVENLABS_API_KEY;

@@ -4,6 +4,7 @@ import { noise2D } from "@remotion/noise";
 import { MARKE } from "./reels.js";
 import { SCHRIFT, ZONE, Kreuz } from "./Marke.jsx";
 import { bildDatei } from "./bilder.js";
+import { SERIF, ZAHLSCHRIFT, Leinwand, Grund } from "./Tisch.jsx";
 
 /* =========================================================================
    Gemeinsame Bausteine. Alles, was eine Szene lebendig macht, sitzt hier:
@@ -20,6 +21,14 @@ export const BildKontext = createContext(null);
    Kamerafahrt und Ken-Burns ueber die ganze Szene, und die Woerter
    erscheinen im Sprechtempo statt alle in der ersten Sekunde. */
 export const SzenenKontext = createContext({ frames: 120, hook: false });
+
+/* Look des Reels: "tisch" (Standard seit 14.11.2026 – Platine, Papier,
+   Fraunces mit orangem Feld, wie die Serie «Küchentisch») oder "klassisch"
+   (Petrol und Gold, Fotos, Wortanimation in Figtree). Reel.jsx setzt ihn. */
+export const StilKontext = createContext("klassisch");
+export const useStil = () => useContext(StilKontext);
+/* Grosse Ziffern: im Tisch-Look in Anton. */
+export const useZahlstil = () => (useContext(StilKontext) === "tisch" ? { fontFamily: ZAHLSCHRIFT, fontWeight: 400, letterSpacing: "0.01em" } : {});
 export const useSzenenFrames = () => useContext(SzenenKontext).frames;
 
 /* Erste Szene eines Reels = Hook. Im Feed entscheidet sich in den ersten
@@ -82,21 +91,49 @@ export const useEinblenden = (verzoegerung = 0, dauer = 14) => {
    (kinetische Typografie). **so** markierte Woerter kommen in der
    Akzentfarbe, mit einem Marker, der sich von links hinter das Wort zieht. */
 export const Woerter = ({ text, akzent, ab = 0, schritt = 4, dauer = 12 }) => {
+  const tisch = useStil() === "tisch";
   const teile = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
   let index = 0;
   return (
-    <>
+    <span style={tisch ? { fontFamily: SERIF, fontWeight: 600, letterSpacing: "-0.01em" } : undefined}>
       {teile.map((teil, ti) => {
         const fett = teil.startsWith("**");
         const woerter = (fett ? teil.slice(2, -2) : teil).split(/(\s+)/);
+        const echte = woerter.map((w, wi) => (w && !/^\s+$/.test(w) ? wi : -1)).filter((wi) => wi >= 0);
         return woerter.map((w, wi) => {
           if (/^\s+$/.test(w)) return <span key={ti + "-" + wi}>{w}</span>;
           if (!w) return null;
           const i = index++;
-          return <Wort key={ti + "-" + wi} text={w} fett={fett} akzent={akzent} ab={ab + i * schritt} dauer={dauer} />;
+          /* Tisch-Look: die Felder einer Wortgruppe schliessen aneinander an, rund sind nur die Enden. */
+          const rand = (wi === echte[0] ? "l" : "") + (wi === echte[echte.length - 1] ? "r" : "");
+          return tisch
+            ? <WortTisch key={ti + "-" + wi} text={w} fett={fett} ab={ab + i * schritt} rand={rand} />
+            : <Wort key={ti + "-" + wi} text={w} fett={fett} akzent={akzent} ab={ab + i * schritt} dauer={dauer} />;
         });
       })}
-    </>
+    </span>
+  );
+};
+
+/* Wort im Tisch-Look: steigt wie sonst aus der Maske; hervorgehobene Woerter
+   stehen weiss auf einem orangen Feld, das mit dem Wort hereinkommt. */
+const MARKER = "#EC6A1E";
+const WortTisch = ({ text, fett, ab, rand }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const auf = spring({ frame: frame - ab, fps, config: { damping: 16, stiffness: 150, mass: 0.8 } });
+  const sicht = interpolate(frame, [ab, ab + 4], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const r = 12;
+  return (
+    <span style={{ display: "inline-block", overflow: "hidden", verticalAlign: "top", padding: "0.06em 0.16em 0.14em", margin: "-0.06em -0.16em -0.14em" }}>
+      <span style={{ display: "inline-block", position: "relative", opacity: sicht, transform: `translateY(${(1 - auf) * 110}%)`, color: fett ? "#FFFFFF" : undefined }}>
+        {fett && <span style={{
+          position: "absolute", left: "-0.15em", right: "-0.15em", top: "9%", bottom: "3%", backgroundColor: MARKER,
+          borderRadius: `${rand.includes("l") ? r : 0}px ${rand.includes("r") ? r : 0}px ${rand.includes("r") ? r : 0}px ${rand.includes("l") ? r : 0}px`
+        }} />}
+        <span style={{ position: "relative" }}>{text}</span>
+      </span>
+    </span>
   );
 };
 
@@ -170,15 +207,19 @@ export const Funken = ({ farbe, ab = 0, anzahl = 12, radius = 340 }) => {
 
 /* Fuer Stellen, die keine Wortanimation wollen. */
 export const Zeile = ({ text, akzent }) => {
+  const tisch = useStil() === "tisch";
   const teile = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
+  const fett = tisch
+    ? { background: MARKER, color: "#FFFFFF", padding: "0 0.16em", borderRadius: 10, boxDecorationBreak: "clone", WebkitBoxDecorationBreak: "clone" }
+    : { color: akzent, fontWeight: 600 };
   return (
-    <>
+    <span style={tisch ? { fontFamily: SERIF, fontWeight: 600, letterSpacing: "-0.01em" } : undefined}>
       {teile.map((t, i) =>
         t.startsWith("**")
-          ? <span key={i} style={{ color: akzent, fontWeight: 600 }}>{t.slice(2, -2)}</span>
+          ? <span key={i} style={fett}>{t.slice(2, -2)}</span>
           : <span key={i}>{t}</span>
       )}
-    </>
+    </span>
   );
 };
 
@@ -286,10 +327,30 @@ const Fotoebene = ({ name }) => {
    auch eine stehende Zeile lebt. */
 export const Buehne = ({ farben, children, ausrichtung = "center" }) => {
   const bild = useContext(BildKontext);
+  const stil = useStil();
   const frame = useCurrentFrame();
   const frames = useSzenenFrames();
   const fahrt = interpolate(frame, [0, frames], [1, 1.06], { extrapolateRight: "clamp" });
   const neigung = Math.sin(frame / 55) * 0.35;
+  if (stil === "tisch") {
+    /* Platine (dunkel) oder Papier mit Punktraster (hell); in der Mitte ein
+       ruhiges Feld, damit Zahlen und Grafik nicht mit den Leiterbahnen ringen.
+       Keine Fotos, kein Pendeln – nur die langsame Fahrt. */
+    return (
+      <AbsoluteFill style={{ backgroundColor: farben.fläche, fontFamily: SCHRIFT, color: farben.text }}>
+        <Leinwand><Grund hell={farben.hell} t={frame} /></Leinwand>
+        {farben.hell ? null : <AbsoluteFill style={{ background: "radial-gradient(ellipse 64% 40% at 50% 52%, rgba(9,18,26,.86) 0%, rgba(9,18,26,.6) 55%, rgba(9,18,26,0) 100%)" }} />}
+        <div style={{
+          position: "absolute", left: ZONE.seite, right: ZONE.seite, top: ZONE.oben + 40, bottom: ZONE.unten,
+          display: "flex", flexDirection: "column", justifyContent: "center", alignItems: ausrichtung,
+          textAlign: ausrichtung === "center" ? "center" : "left",
+          transform: `scale(${fahrt})`
+        }}>
+          {children}
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
     <AbsoluteFill style={{ backgroundColor: farben.fläche, fontFamily: SCHRIFT, color: farben.text }}>
       {bild ? <><Fotoebene name={bild} /><Partikel farben={farben} anzahl={8} /></> : <Hintergrund farben={farben} />}
@@ -309,6 +370,17 @@ export const Buehne = ({ farben, children, ausrichtung = "center" }) => {
 /* Kleines Markenzeichen, knapp innerhalb der sicheren Zone, gleitet herein. */
 export const Ecke = ({ farben }) => {
   const stil = useEinblenden(2, 12);
+  if (useStil() === "tisch") {
+    /* Markenzeile wie in der Serie «Küchentisch», mittig ueber dem Bild –
+       mit dem Hinweis auf den Link ab Sekunde 0. */
+    const hell = farben.hell;
+    return (
+      <div style={{ position: "absolute", left: 0, right: 0, top: ZONE.oben + 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 14, fontFamily: SCHRIFT }}>
+        <svg width="38" height="38" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill={hell ? "#005786" : "#F4EEE4"} /><path d="M41 20h18v21h21v18H59v21H41V59H20V41h21z" fill={hell ? "#F4EEE4" : "#005786"} /></svg>
+        <div style={{ fontWeight: 600, fontSize: 24, letterSpacing: "0.16em", color: farben.text }}>SWISSPREMIA.CH · LINK IM PROFIL</div>
+      </div>
+    );
+  }
   return (
     <div style={{ position: "absolute", top: ZONE.oben + 10, left: ZONE.seite, display: "flex", alignItems: "center", gap: 18, ...stil }}>
       <Kreuz groesse={44} farbe={farben.akzent === MARKE.gold ? MARKE.gold : MARKE.petrol} kreuz={farben.akzent === MARKE.gold ? MARKE.slate : MARKE.weiss} />

@@ -25,6 +25,8 @@
   "lautheitZiel": -14,
   "hashtags": "bildtext",
   "stimme": "auto",
+  "stimmeTempo": 1.1,
+  "stil": "tisch",
   "ablage": "vercel-blob",
   "videoOrdner": "",
   "videoBasisUrl": "",
@@ -55,8 +57,8 @@
     "2026-11-18": 14
   },
   "serie": {
-    "name": "plakat",
-    "proTag": 2
+    "name": "tisch",
+    "proTag": 1
   },
   "postBisJeTag": {
     "2026-11-10": "20:30"

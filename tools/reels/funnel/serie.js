@@ -23,19 +23,22 @@ import { WURZEL, minuten } from "./konfig.js";
 import { bildtextBauen, hashtagsSammeln } from "./bildtext.js";
 import { mp4DauerMs } from "./rendern.js";
 import { REELS } from "../real/skripte.js";
+import { REELS as TISCH } from "../tisch/skripte.js";
 
 /* ordner: wo die fertigen Videos liegen; hinweis: Kennzeichnung im Bildtext;
    coverMs: Stelle des Titelbilds im Video (Rueckfall, falls Instagram das
    JPEG nicht nimmt); musik: Name des Stuecks, nur fuer die Auswertung. */
 export const SERIEN = {
-  plakat: { titel: "Plakat", ordner: "out/plakat", hinweis: "Die Stimme ist KI-generiert.", coverMs: 1500, musik: "eigen-warm" }
+  plakat: { titel: "Plakat", ordner: "out/plakat", skripte: REELS, hinweis: "Die Stimme ist KI-generiert.", coverMs: 1500, musik: "eigen-warm" },
+  /* «Küchentisch» hat eigene Skripte (tisch/skripte.js); seit 14.11.2026 sehen auch die Tagesreels so aus. */
+  tisch: { titel: "Küchentisch", ordner: "out/tisch", skripte: TISCH, hinweis: "Die Stimme ist KI-generiert.", coverMs: 1300, musik: "eigen-ruhig" }
 };
 
 /* Videos der Serie, die fertig sind und noch nie liefen – in Skript-Reihenfolge. */
 export function serieOffen(name, verlauf = {}) {
   const serie = SERIEN[name];
   if (!serie) return [];
-  return REELS.filter((r) => !verlauf[`${name}|${r.id}`] && fs.existsSync(path.join(WURZEL, serie.ordner, `${r.id}.mp4`)));
+  return serie.skripte.filter((r) => !verlauf[`${name}|${r.id}`] && fs.existsSync(path.join(WURZEL, serie.ordner, `${r.id}.mp4`)));
 }
 
 function eintrag(name, reel, platz, konfig) {

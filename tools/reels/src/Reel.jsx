@@ -5,8 +5,9 @@ import { slide } from "@remotion/transitions/slide";
 import { wipe } from "@remotion/transitions/wipe";
 import { clockWipe } from "@remotion/transitions/clock-wipe";
 import { MARKE } from "./reels.js";
-import { HINTERGRUND, Kreuz, Wortmarke, chf } from "./Marke.jsx";
-import { Buehne, BildKontext, SzenenKontext, useSprechschritt, useHook, HOOK_VORLAUF, HOOK_SCHRITT, woerterZaehlen, Ecke, Woerter, Rollziffern, Funken, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil } from "./Bausteine.jsx";
+import { HINTERGRUND, TISCHFARBEN, SCHRIFT, Kreuz, Wortmarke, chf } from "./Marke.jsx";
+import { Buehne, BildKontext, SzenenKontext, useSprechschritt, useHook, HOOK_VORLAUF, HOOK_SCHRITT, woerterZaehlen, Ecke, Woerter, Rollziffern, Funken, Pulsring, Ping, Fortschritt, useEinblenden, useFeder, useSchweben, usePuls, useAnteil, StilKontext, useZahlstil } from "./Bausteine.jsx";
+import { TischTitel, TischAbbinder, Korn, regieFuer, tischHell, ueberblenden } from "./TischReel.jsx";
 import { GRAFIK } from "./Grafik.jsx";
 import { Spielszene } from "./Szenenbild.jsx";
 import { STUFEN } from "../funnel/themen.js";
@@ -68,12 +69,13 @@ const Zahl = ({ s, farben }) => {
   const fall = useFeder(-vor, { damping: 12, stiffness: 130, mass: .9 });
   const schweb = useSchweben(6, 2.8);
   const oben = useEinblenden(-vor);
+  const zahlstil = useZahlstil();
   return (
     <Buehne farben={farben}>
       <Pulsring farbe={farben.akzent} ab={6 - vor} />
       <Funken farbe={farben.akzent} ab={16 - vor} radius={380} />
       {s.oben && <div style={{ fontSize: 44, color: farben.leise, marginBottom: 30, ...oben }}>{s.oben}</div>}
-      <div style={{ fontSize: 360, fontWeight: 600, lineHeight: 1, color: farben.akzent, transform: `translateY(${(1 - fall) * -260 + schweb}px) scale(${0.8 + fall * 0.2})`, opacity: Math.min(1, fall * 1.4) }}>
+      <div style={{ fontSize: 360, fontWeight: 600, lineHeight: 1, ...zahlstil, color: farben.akzent, transform: `translateY(${(1 - fall) * -260 + schweb}px) scale(${0.8 + fall * 0.2})`, opacity: Math.min(1, fall * 1.4) }}>
         <Rollziffern text={s.zahl} ab={2 - vor} />
       </div>
       <div style={{ fontSize: 84, fontWeight: 300, marginTop: 24 }}>
@@ -89,13 +91,14 @@ const Zaehler = ({ s, farben }) => {
   const ende = Math.round(fps * 1.6);
   const wert = interpolate(frame, [6, ende], [s.von, s.bis], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
   const ueber = useFeder(ende - 4, { damping: 9, stiffness: 200 });
+  const zahlstil = useZahlstil();
   return (
     <Buehne farben={farben}>
       <Ping farbe={farben.akzent} ab={ende - 2} groesse={620} />
       <Funken farbe={farben.akzent} ab={ende - 2} radius={440} anzahl={14} />
       {s.oben && <div style={{ fontSize: 56, fontWeight: 300, marginBottom: 36, ...useEinblenden(0) }}>{s.oben}</div>}
-      <div style={{ fontSize: 230, fontWeight: 600, lineHeight: 1, color: farben.akzent, fontVariantNumeric: "tabular-nums", transform: `scale(${1 + (1 - Math.min(1, ueber)) * 0.12})` }}>
-        {s.praefix ? <span style={{ fontSize: 110, fontWeight: 300, marginRight: 24, color: farben.text }}>{s.praefix}</span> : null}
+      <div style={{ fontSize: 230, fontWeight: 600, lineHeight: 1, ...zahlstil, color: farben.akzent, fontVariantNumeric: "tabular-nums", transform: `scale(${1 + (1 - Math.min(1, ueber)) * 0.12})` }}>
+        {s.praefix ? <span style={{ fontSize: 110, fontWeight: 300, marginRight: 24, color: farben.text, fontFamily: SCHRIFT, letterSpacing: 0 }}>{s.praefix}</span> : null}
         {chf(wert)}
       </div>
       {s.unten && <div style={{ fontSize: 56, fontWeight: 300, marginTop: 36 }}><Woerter text={s.unten} akzent={farben.akzent} ab={Math.round(fps * 1.4)} /></div>}
@@ -111,18 +114,19 @@ const Zwei = ({ s, farben }) => {
   const l = interpolate(frame, [4 - vor, ende], [0, s.links.bis], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
   const r = interpolate(frame, [4 - vor, ende], [0, s.rechts.bis], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
   const puls = usePuls(1.6);
+  const zahlstil = useZahlstil();
   const Kreis = ({ praefix, wert, akzent, phase }) => {
     const auf = useFeder((akzent ? 0 : 6) - vor, { damping: 12, stiffness: 110 });
     const schweb = useSchweben(10, 3, phase);
     return (
       <div style={{
         width: 400, height: 400, borderRadius: 200, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        border: `6px solid ${akzent ? farben.akzent : farben.leise}`, color: akzent ? farben.akzent : farben.text,
+        border: `6px solid ${akzent ? farben.akzent : farben.leise}`, color: akzent ? farben.akzent : farben.text, backgroundColor: farben.kreis || "transparent",
         transform: `scale(${auf * (akzent ? puls : 1)}) translateY(${schweb}px)`,
         boxShadow: akzent ? `0 0 ${60 * puls}px ${farben.akzent}44` : "none"
       }}>
         {praefix ? <div style={{ fontSize: 40, fontWeight: 300, opacity: .8 }}>{praefix}</div> : null}
-        <div style={{ fontSize: 120, fontWeight: 600, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{chf(wert)}</div>
+        <div style={{ fontSize: 120, fontWeight: 600, lineHeight: 1, ...zahlstil, fontVariantNumeric: "tabular-nums" }}>{chf(wert)}</div>
       </div>
     );
   };
@@ -151,7 +155,7 @@ const Balken = ({ s, farben }) => {
           return (
             <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, transform: `translateY(${schweb}px)` }}>
               <div style={{ width: 200, height: h, borderRadius: 12, position: "relative", overflow: "hidden",
-                backgroundColor: b.gold ? farben.akzent : "rgba(255,255,255,.28)", boxShadow: b.gold ? `0 0 ${50 * puls}px ${farben.akzent}55` : "none" }}>
+                backgroundColor: b.gold ? farben.akzent : (farben.hell ? "rgba(20,33,44,.2)" : "rgba(255,255,255,.28)"), boxShadow: b.gold ? `0 0 ${50 * puls}px ${farben.akzent}55` : "none" }}>
                 <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 22, background: "linear-gradient(180deg, rgba(255,255,255,.35), transparent)" }} />
               </div>
               <div style={{ fontSize: 40, fontWeight: 500, color: b.gold ? farben.akzent : farben.text, ...useEinblenden(i * 8 + 10) }}>{b.label}</div>
@@ -213,6 +217,9 @@ const Abbinder = ({ s, farben }) => {
 };
 
 const SZENEN = { titel: Titel, zahl: Zahl, zaehler: Zaehler, zwei: Zwei, balken: Balken, schritte: Schritte, abbinder: Abbinder, ...GRAFIK };
+/* Look «Küchentisch»: Textszenen und Abbinder sind eigene Bilder (TischReel.jsx),
+   alle Grafikszenen erben Grund, Schrift und Farben ueber die Buehne. */
+const SZENEN_TISCH = { ...SZENEN, titel: TischTitel, abbinder: TischAbbinder };
 
 /* --------------------------------------------------- Szenenuebergaenge */
 
@@ -245,7 +252,8 @@ const TAKT = linearTiming({ durationInFrames: UEBERGANG, easing: Easing.inOut(Ea
    Schrittweite aus der Reel-Id. Bei 7 Uebergaengen (Primzahl) und einer
    Schrittweite von 1 bis 6 kommt jeder vor, bevor sich einer wiederholt,
    und nie zweimal derselbe hintereinander. */
-function uebergaengeFuer(reel) {
+function uebergaengeFuer(reel, tisch) {
+  if (tisch) return Array.from({ length: Math.max(0, reel.szenen.length - 1) }, () => ueberblenden());
   const n = UEBERGAENGE.length;
   const start = Math.floor(streuwert(reel.id) * n);
   const schritt = 1 + Math.floor(streuwert(reel.id + "#schritt") * (n - 1));
@@ -279,17 +287,22 @@ export const Reel = ({ reel, dauern }) => {
   const d = dauern || reel.szenen.map((s) => ({ frames: Math.ceil(s.dauer * fps), hatTon: false }));
   const gesamt = gesamtFrames(d);
   const starts = szenenStarts(d);
-  const uebergaenge = uebergaengeFuer(reel);
+  /* Look: reel.stil kommt vom Funnel (funnel.json "stil"); ohne Angabe «tisch». */
+  const tisch = (reel.stil || "tisch") !== "klassisch";
+  const regie = tisch ? regieFuer(reel) : [];
+  const uebergaenge = uebergaengeFuer(reel, tisch);
   const teile = [];
   reel.szenen.forEach((s, i) => {
-    const Szene = SZENEN[s.art];
+    const Szene = (tisch ? SZENEN_TISCH : SZENEN)[s.art];
     if (!Szene) throw new Error(`Unbekannte Szenenart "${s.art}" in Reel "${reel.id}"`);
-    const farben = s.bild ? HINTERGRUND.foto : HINTERGRUND[s.hintergrund];
+    const farben = tisch
+      ? (s.art === "titel" ? (tischHell(regie[i]) ? TISCHFARBEN.hell : TISCHFARBEN.dunkel) : (s.hintergrund === "creme" ? TISCHFARBEN.hell : TISCHFARBEN.dunkel))
+      : (s.bild ? HINTERGRUND.foto : HINTERGRUND[s.hintergrund]);
     if (i > 0) teile.push(<TransitionSeries.Transition key={"u" + i} presentation={uebergaenge[i - 1]} timing={TAKT} />);
     teile.push(
       <TransitionSeries.Sequence key={s.id} durationInFrames={d[i].frames} name={`${i + 1} ${s.art}${s.bild ? " · " + s.bild : ""}`}>
-        <SzenenKontext.Provider value={{ frames: d[i].frames, hook: i === 0 }}>
-          <BildKontext.Provider value={s.bild || null}>
+        <SzenenKontext.Provider value={{ frames: d[i].frames, hook: i === 0, start: starts[i], regie: regie[i] || null }}>
+          <BildKontext.Provider value={tisch ? null : (s.bild || null)}>
             <Szene s={s} farben={farben} />
             {s.art !== "abbinder" && <Ecke farben={farben} />}
           </BildKontext.Provider>
@@ -298,15 +311,18 @@ export const Reel = ({ reel, dauern }) => {
     );
   });
   return (
-    <AbsoluteFill style={{ backgroundColor: MARKE.slate }}>
+    <StilKontext.Provider value={tisch ? "tisch" : "klassisch"}>
+    <AbsoluteFill style={{ backgroundColor: tisch ? TISCHFARBEN.dunkel.fläche : MARKE.slate }}>
       <TransitionSeries>{teile}</TransitionSeries>
+      {tisch ? <Korn /> : null}
       {/* Die Stimme laeuft getrennt von den Bildern, genau ab dem Start
           ihrer Szene – Uebergaenge verschieben sie nicht. */}
       {reel.szenen.map((s, i) => d[i].hatTon
         ? <Sequence key={"ton-" + s.id} from={starts[i]} durationInFrames={d[i].frames} name={`Ton ${i + 1}`}><Audio src={staticFile(d[i].datei)} /></Sequence>
         : null)}
       {reel.musik && reel.musik.datei ? <Hintergrundmusik musik={reel.musik} gesamt={gesamt} /> : null}
-      <Fortschritt gesamt={gesamt} farbe={MARKE.gold} />
+      <Fortschritt gesamt={gesamt} farbe={tisch ? TISCHFARBEN.dunkel.marker : MARKE.gold} />
     </AbsoluteFill>
+    </StilKontext.Provider>
   );
 };
