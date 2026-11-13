@@ -49,6 +49,7 @@ const STANDARD = {
   lautheitZiel: -14,               // fertiges Reel auf diese Lautheit (LUFS) angleichen; 0 = nicht angleichen
   postBisJeTag: {},                // spaeteres Ende des Sendefensters fuer einzelne Tage, z. B. {"2026-11-10": "20:30"} (nur posten.js)
   anzahlJeTag: {},                 // feste Anzahl Reels fuer einzelne Tage, z. B. {"2026-11-09": 8} (Volumentest); sonst reelsProTag
+  serie: { name: "", proTag: 0 },  // fertige Serien-Videos im Tagesplan, z. B. {"name": "plakat", "proTag": 2}: je Tag so viele anstelle erzeugter Reels (funnel/serie.js)
   hashtags: "bildtext",            // bildtext | kommentar | keine
   stimme: "auto",                  // auto (wenn Schluessel da) | aus
   ablage: "vercel-blob",           // vercel-blob | ordner
@@ -89,6 +90,7 @@ function zusammenfuehren() {
   k.mix = { ...STANDARD.mix, ...(k.mix || {}) };
   k.stufen = { ...STANDARD.stufen, ...(k.stufen || {}) };
   k.stufenSaison = { ...STANDARD.stufenSaison, ...(k.stufenSaison || {}) };
+  k.serie = { ...STANDARD.serie, ...(k.serie || {}) };
   return k;
 }
 

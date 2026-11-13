@@ -346,6 +346,7 @@ node funnel/instagram.js kontingent
 | `wiederholungStammTage` | `14` | Sperrfrist für Stamm-Reels und Mythen |
 | `karussellsProTag` | `0` | Bild-Karussells je Tag, zusätzlich zu den Reels (`0` = keine). Bis 30.11.2026 keine: sie erreichen im Mittel 3–4 Konten und belegen Sendeplätze; danach höchstens 1 |
 | `anzahlJeTag` | 9.–18.11.: 8 / 14 / 14 / 8 … | feste Anzahl Reels für einzelne Tage (Volumentest ABBA, Entscheid am 20.11.); sonst `reelsProTag` |
+| `serie` | `{"name": "plakat", "proTag": 2}` | fertige Serien-Videos im Tagesplan: je Tag so viele anstelle erzeugter Reels (Tageszahl bleibt); `proTag` 0 oder leerer Name = aus. Siehe Abschnitt 10 |
 | `formateAus` | `["modelle", "kantone"]` | Formate, die die Redaktion nicht einplant (beide fielen in der Erstverteilung fast immer durch) |
 | `maxJeFormat` | `2` | höchstens so viele Reels eines Formats je Tag, auch beim Auffüllen (Stamm-Reels ausgenommen) |
 | `hashtagsMax` | `5` | höchstens so viele Hashtags je Beitrag (drei feste, Kanton, Thema) |
@@ -581,4 +582,18 @@ Tageszeit, Kartenformat und die zwei Titelzeilen fest. Neue Orte sind Funktionen
 beschnitten) und `aussen` (ragt über den Rand) zurück; `w(verz)` liefert den Aufbau je Element.
 Der Bildtext steht unter der Karte; bei langen Texten weicht `bauen.js` von «hoch» auf «quadrat» aus.
 
-Die Videos sind nicht im Tagesplan.
+### Im Tagesplan (seit 14.11.2026)
+
+`funnel/serie.js` mischt die fertigen Videos in den Tagesplan, gesteuert über `serie` in `funnel.json`.
+Beim Erstellen des Plans nimmt `tag.js` je Tag `proTag` noch nicht gesendete Videos (Reihenfolge wie in
+`real/skripte.js`) und setzt sie an die Stelle erzeugter Reels: Nummer und Sendezeit bleiben, die
+Tageszahl ändert sich nicht – der Volumentest bleibt vergleichbar. Ersetzt wird bevorzugt ein
+Wissens-Reel derselben Funnel-Stufe nahe 1/3 und 2/3 des Sendefensters, nie der Countdown. Der Eintrag
+hat Format `plakat` (so erscheint die Serie in der Auswertung als eigenes Format), startet mit Status
+`gerendert` und wird von `tag.js` hochgeladen und von `posten.js` veröffentlicht wie jedes andere Reel.
+
+Jedes Video läuft einmal (Verlauf `plakat|<id>`); fällt es an seinem Tag aus, gibt der Verlauf es wieder
+frei und es kommt später erneut in den Plan. Bei zwei je Tag sind die zehn Videos vom 14. bis 18.11.2026
+durch – danach plant die Redaktion wieder allein. Neue Videos der Serie (weitere Skripte, `npm run plakat`)
+rücken von selbst nach. Der Bildtext stammt aus dem Skript, mit dem Hinweis «Die Stimme ist KI-generiert.»
+Eine weitere Serie braucht nur einen Eintrag in `SERIEN` (`funnel/serie.js`).

@@ -27,6 +27,7 @@ import { hochladen, erreichbar } from "./funnel/ablage.js";
 import { bilderSichern, bilderFiltern, karussellBilderFiltern } from "./funnel/bilder.js";
 import { musikSetzen } from "./funnel/musik.js";
 import { karussellsPlanen } from "./funnel/karussell.js";
+import { serieEinplanen } from "./funnel/serie.js";
 import { datumKurz } from "./funnel/sprache.js";
 import { verbunden } from "./funnel/instagram.js";
 
@@ -57,9 +58,15 @@ if (plan && arg.nachschub) {
 }
 if (!plan) {
   plan = planErstellen(datum, KONFIG, { anzahl: arg.anzahl ? Number(arg.anzahl) : null, verlauf: verlaufLaden() });
+  /* Fertige Serien-Videos (funnel/serie.js) treten an die Stelle erzeugter
+     Reels – die Tageszahl bleibt. Ein Fehler dort darf den Tag nicht kosten. */
+  let serie = [];
+  try { serie = serieEinplanen(plan, KONFIG, { verlauf: verlaufLaden() }); }
+  catch (e) { protokoll("Hinweis: Serie nicht eingeplant – " + (e.message || String(e)).split("\n")[0]); }
   planSpeichern(plan, { ersetzen: true });   // neuer Plan: nichts Altes einmischen (--neu)
   verlaufMerken(plan.reels.map((r) => r.schluessel), datum);
   protokoll(`Plan ${datum} erstellt: ${plan.reels.length} Reels (gewuenscht ${plan.gewuenscht}), Fenster ${KONFIG.postVon}–${KONFIG.postBis}.`);
+  if (serie.length) protokoll(`Serie ${datum}: ${serie.map((w) => `#${w.neu.nr} ${w.neu.titel} (${w.neu.zeit}, statt ${w.ersetzt.titel})`).join("; ")}.`);
 } else {
   protokoll(`Plan ${datum} vorhanden (${plan.reels.length} Reels) – setze fort.`);
 }
