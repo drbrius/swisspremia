@@ -19,3 +19,6 @@ tools/reels/public/musik/
 
 # Serie Echt: KI-Clips (gross, nicht weiterverteilen)
 tools/reels/public/real/clips/
+
+# Serie Durchblick: Fotos werden beim Rendern geladen (durchblick/fotos.js)
+tools/reels/public/durchblick/

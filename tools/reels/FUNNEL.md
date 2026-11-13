@@ -461,6 +461,8 @@ tools/reels/
   src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
   src/bilder.js             Motive (Unsplash, Pixabay); funnel/bilder.js lädt sie nach public/bilder/
   funnel/recherche.js       Bildsuche über Pixabay (funnel/pixabay.js), Kontaktbogen, Motiv eintragen
+  durchblick/               Serie «Durchblick»: motive.js (Bildregie), fotos.js (Pixabay-Fotos), bauen.js (Render)
+  src/Durchblick.jsx        Design der Serie «Durchblick» (Komposition «durchblick»)
   plan/                     Tagespläne, Verlauf, Protokoll (nicht im Git)
   out/tag/<Datum>/          gerenderte Videos und Karussell-Ordner mit Folien (nicht im Git)
   public/audio/tag/         Tonspuren der Daten-Reels (nicht im Git)
@@ -523,3 +525,30 @@ aus: Plan und Instagram-Zahlen lesen, verschlüsselt mit `BOARD_SCHLUESSEL` nach
 Für die Auswertung nach zwei Wochen (Abschnitt 4) zeigt das Board «Aufrufe nach Format» und
 die Klicks auf den Website-Link – die zwei Zahlen, an denen sich `reelsProTag` und `mix`
 entscheiden lassen.
+
+---
+
+## 9. Serie «Durchblick» (seit 13.11.2026)
+
+Zehn Reels im Look des Moodboards vom 13.11.2026: Bögen als Durchgang, Sonne, Farbflächen in
+Petrol, Orange, Sand und Creme, Fotos in Schwarzweiss immer in einer Form, Papierkorn darüber.
+Jede Szene endet mit einer Fahrt in ihr «Tor», dahinter liegt die nächste. Alles ist Remotion-Code –
+kein KI-Video, keine neuen Sprachaufnahmen: Skript, Stimme und Sprechzeiten stammen aus der Serie
+«Echt» (`real/skripte.js`, `public/real/ton/`, `real/zeiten/`).
+
+```
+npm run durchblick                          alle rendern, die noch fehlen  ->  out/durchblick/<id>.mp4 und .jpg
+npm run durchblick -- franchise --neu       eines neu rendern
+npm run durchblick -- --bild=szenen         je Szene ein Standbild nach out/durchblick/pruef/ (Layout prüfen)
+node durchblick/fotos.js [--neu]            Fotos laden (braucht PIXABAY_API_KEY, nur beim ersten Mal)
+```
+
+`durchblick/motive.js` legt je Reel fest, was die vier Szenen zeigen. Bausteine: `bogenfoto` (Foto im
+Bogen, Sonne dahinter), `durchgang` (ineinanderliegende Bögen), `zahl` (Zahl aus dem Skript, rollt hoch),
+`kennzahl` (grosse Angabe in der Sonne), `saeulen` (zwei oder drei Bögen als Vergleich), `landschaft`,
+`tisch`. Regeln: Orange trägt Schrift nur auf dunklem Grund, auf hellem wird das Schlüsselwort orange
+hinterlegt; erkennbare Personen nur in neutralem oder freundlichem Zusammenhang (Pixabay-Lizenz);
+Text und Motiv bleiben zwischen 250 px oben und 320 px unten. Die Fotos liegen in `public/durchblick/`
+(nicht im Git), ihre Herkunft in `public/durchblick/quellen.json`.
+
+Die Videos sind nicht im Tagesplan; `real/einplanen.js` kennt nur `out/real`.

@@ -7,6 +7,7 @@ import { FPS, NACHHALL, gesamtFrames } from "./takt.js";
 import { Modellblatt } from "./Modellblatt.jsx";
 import { Karussell, KARUSSELL_BEISPIEL, KARUSSELL_BREITE, KARUSSELL_HOEHE } from "./Karussell.jsx";
 import { EchtReel, ECHT_BEISPIEL } from "./EchtReel.jsx";
+import { Durchblick, DURCHBLICK_BEISPIEL } from "./Durchblick.jsx";
 
 export { FPS };
 export const BREITE = 1080;
@@ -104,6 +105,18 @@ export const RemotionRoot = () => (
       durationInFrames={ECHT_BEISPIEL.gesamt}
       defaultProps={{ echt: ECHT_BEISPIEL }}
       calculateMetadata={({ props }) => ({ durationInFrames: Math.max(1, props.echt.gesamt) })}
+    />
+
+    {/* Serie «Durchblick»: Boegen, Sonne, Fotos in Schwarzweiss (durchblick/bauen.js liefert die Eingabe). */}
+    <Composition
+      id="durchblick"
+      component={Durchblick}
+      width={BREITE}
+      height={HOEHE}
+      fps={FPS}
+      durationInFrames={DURCHBLICK_BEISPIEL.gesamt}
+      defaultProps={{ reel: DURCHBLICK_BEISPIEL }}
+      calculateMetadata={({ props }) => ({ durationInFrames: Math.max(1, props.reel.gesamt) })}
     />
 
     {/* Kontrollblatt der Figuren (Standbild): npx remotion still src/index.jsx modellblatt out/modellblatt.png */}

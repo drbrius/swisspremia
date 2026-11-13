@@ -14,6 +14,7 @@
     "attrappe": "node test/graph-attrappe.js",
     "bilder": "node funnel/bilder.js",
     "recherche": "node funnel/recherche.js",
+    "durchblick": "node durchblick/bauen.js",
     "storyboard": "node test/storyboard.js",
     "karussell": "node test/karussell-probe.js out/karussell-probe",
     "musik": "node funnel/musik.js"
