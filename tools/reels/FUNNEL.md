@@ -462,6 +462,8 @@ tools/reels/
   src/takt.js               Übergangslänge, Nachhall, Szenenstarts (Remotion und Node)
   src/bilder.js             Motive (Unsplash, Pixabay); funnel/bilder.js lädt sie nach public/bilder/
   funnel/recherche.js       Bildsuche über Pixabay (funnel/pixabay.js), Kontaktbogen, Motiv eintragen
+  tisch/                    Serie «Küchentisch»: skripte.js (Texte und Regie), bauen.js (Ton, Render)
+  src/Tisch.jsx             Figur, Räume, Platine und Schritt-Karten der Serie «Küchentisch» (Komposition «tisch»)
   plakat/                   Serie «Plakat»: regie.js (Ort, Tageszeit, Format, Titel je Szene), bauen.js (Render)
   src/Plakat.jsx            Illustrationen und Bewegung der Serie «Plakat» (Komposition «plakat»)
   durchblick/               Serie «Durchblick»: motive.js (Bildregie), fotos.js (Pixabay-Fotos), bauen.js (Render)
@@ -597,3 +599,39 @@ frei und es kommt später erneut in den Plan. Bei zwei je Tag sind die zehn Vide
 durch – danach plant die Redaktion wieder allein. Neue Videos der Serie (weitere Skripte, `npm run plakat`)
 rücken von selbst nach. Der Bildtext stammt aus dem Skript, mit dem Hinweis «Die Stimme ist KI-generiert.»
 Eine weitere Serie braucht nur einen Eintrag in `SERIEN` (`funnel/serie.js`).
+
+---
+
+## 11. Serie «Küchentisch» (seit 13.11.2026)
+
+Zwei Vorlagen standen Pate: eine besorgte Trickfigur nachts am Küchentisch voller Rechnungen, auf die
+die Kamera langsam zufährt – und ein Erklärfilm mit Vorher/Nachher, Technik-Szene und Schritt-Karten.
+Die Serie zeichnet beides selbst (SVG im Code, keine Fotos, kein KI-Video):
+
+| Szene (`art`) | Was zu sehen ist |
+|---|---|
+| `raum` | Figur (`anna`, `marc`) am Tisch in Küche oder Büro; Pose `brief` (liest ein Blatt) oder `kopf` (Kopf in den Händen); Licht `nacht`, `kalt`, `warm`; Tisch `chaos`, `zettel`, `stapel`; Kamerafahrt über `zoom: [von, bis]` |
+| `zaehler` | Rechnungen fliegen in den Franchise-Zähler; ist er voll, erscheint «90 %» |
+| `laptop` | aufgeräumter Tisch von oben, Laptop mit Vergleich, die Angebote sortieren sich |
+| `maschine` | Prämien fallen in einen Chip, darunter erscheinen die günstigsten Angebote |
+| `schritte` | vier Karten im Zickzack mit Pfeilen (`karten: [...]`), beim zweiten Satz Häkchen |
+| `schluss` | Abbinder auf der Platine |
+
+Anders als bei «Durchblick» und «Plakat» hat die Serie eigene Skripte: `tisch/skripte.js` enthält je
+Reel Text, Bildtext und die Regie (`bild` je Szene). Stimme und Sprechzeiten kommen wie sonst aus
+`real/stimme.js` (`public/real/ton/<id>.mp3`, `real/zeiten/<id>.json`).
+
+```
+node tisch/bauen.js ton                 Tonspuren erzeugen (ElevenLabs – aus PowerShell mit Nutzer-Umgebung)
+npm run tisch                           alle rendern, die noch fehlen  ->  out/tisch/<id>.mp4 und .jpg
+npm run tisch -- belege --neu           eines neu rendern
+npm run tisch -- --bild=szenen          je Szene zwei Standbilder nach out/tisch/pruef/
+```
+
+Fehlt die Tonspur, rendert `bauen.js` eine **Vorschau ohne Stimme** mit geschätzten Sprechzeiten
+(`out/tisch/<id>-vorschau.mp4`) – zum Anschauen, nicht zum Veröffentlichen. Sobald `ton` gelaufen ist,
+entsteht mit `npm run tisch` die fertige Fassung.
+
+Stand 13.11.2026: `belege` (Arztrechnungen einsenden) ist fertig, `vergleich` (Vom Zettelchaos zum
+Vergleich) wartet auf die Tonspur – das ElevenLabs-Guthaben war aufgebraucht. Die Videos sind nicht im
+Tagesplan; dafür bräuchte die Serie einen Eintrag in `SERIEN` (`funnel/serie.js`) und dort die eigenen Skripte.

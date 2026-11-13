@@ -1,0 +1,54 @@
+{
+ "id": "belege",
+ "stimme": "vGWWh1bodhwwi4yHd6qZ",
+ "modell": "eleven_multilingual_v2",
+ "tempo": 1.1,
+ "text": "Ein Stapel Arztrechnungen – und keine eingereicht? Unter der Franschise zahlt die Kasse nichts zurück. Einsenden lohnt sich trotzdem. Nur was die Kasse kennt, zählt an Ihre Franschise. Ist sie erreicht, übernimmt die Kasse neunzig Prozent. Zeit dafür haben Sie fünf Jahre. Vergleichen Sie in einer Minute – auf Swisspremia Punkt Ce Ha.",
+ "zeichen": 335,
+ "gesamt": 23.777,
+ "genau": true,
+ "bloecke": [
+  {
+   "szene": 0,
+   "t": "Ein Stapel Arztrechnungen – und **keine eingereicht**?",
+   "von": 0,
+   "bis": 3.123
+  },
+  {
+   "szene": 1,
+   "t": "Unter der Franchise zahlt die Kasse **nichts zurück**.",
+   "von": 3.587,
+   "bis": 7.059
+  },
+  {
+   "szene": 1,
+   "t": "Einsenden lohnt sich **trotzdem**.",
+   "von": 7.349,
+   "bis": 9.741
+  },
+  {
+   "szene": 2,
+   "t": "Nur was die Kasse kennt, **zählt an Ihre Franchise**.",
+   "von": 10.089,
+   "bis": 13.27
+  },
+  {
+   "szene": 2,
+   "t": "Ist sie erreicht, übernimmt die Kasse **90 Prozent**.",
+   "von": 13.433,
+   "bis": 17.101
+  },
+  {
+   "szene": 3,
+   "t": "Zeit dafür haben Sie **fünf Jahre**.",
+   "von": 17.45,
+   "bis": 19.342
+  },
+  {
+   "szene": 4,
+   "t": "In 1 Minute vergleichen.",
+   "von": 19.447,
+   "bis": 23.777
+  }
+ ]
+}

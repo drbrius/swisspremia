@@ -9,6 +9,7 @@ import { Karussell, KARUSSELL_BEISPIEL, KARUSSELL_BREITE, KARUSSELL_HOEHE } from
 import { EchtReel, ECHT_BEISPIEL } from "./EchtReel.jsx";
 import { Durchblick, DURCHBLICK_BEISPIEL } from "./Durchblick.jsx";
 import { Plakat, PLAKAT_BEISPIEL } from "./Plakat.jsx";
+import { Tisch, TISCH_BEISPIEL } from "./Tisch.jsx";
 
 export { FPS };
 export const BREITE = 1080;
@@ -129,6 +130,18 @@ export const RemotionRoot = () => (
       fps={FPS}
       durationInFrames={PLAKAT_BEISPIEL.gesamt}
       defaultProps={{ reel: PLAKAT_BEISPIEL }}
+      calculateMetadata={({ props }) => ({ durationInFrames: Math.max(1, props.reel.gesamt) })}
+    />
+
+    {/* Serie «Küchentisch»: Figur am Tisch, Laptop, Platine, Schritt-Karten (tisch/bauen.js liefert die Eingabe). */}
+    <Composition
+      id="tisch"
+      component={Tisch}
+      width={BREITE}
+      height={HOEHE}
+      fps={FPS}
+      durationInFrames={TISCH_BEISPIEL.gesamt}
+      defaultProps={{ reel: TISCH_BEISPIEL }}
       calculateMetadata={({ props }) => ({ durationInFrames: Math.max(1, props.reel.gesamt) })}
     />
 
