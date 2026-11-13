@@ -330,9 +330,9 @@ const SCHARF = [["dreissig", "dreißig"], ["Dreissig", "Dreißig"], ["heisst", "
 export const sprich = (z) => SCHARF.reduce((s, [ch, de]) => s.split(ch).join(de), (z.s || z.t).replace(/\*\*/g, ""));
 
 /* Dasselbe fuer die Sprechtexte des Funnels (funnel/stimme.js): scharfes S
-   und «Franschise» – so spricht Marcus das Wort deutsch aus, wie in den
-   Serien, wo es von Hand so geschrieben ist. */
-export const sprechfassung = (text) => SCHARF.reduce((s, [ch, de]) => s.split(ch).join(de), String(text)).replace(/\bFranchise/g, "Franschise");
+   «Franschise» und «Punkt Ce Ha» – so spricht Marcus es deutsch aus, wie
+   in den Serien, wo es von Hand so geschrieben ist. */
+export const sprechfassung = (text) => SCHARF.reduce((s, [ch, de]) => s.split(ch).join(de), String(text)).replace(/\bFranchise/g, "Franschise").replace(/Punkt C H\b/g, "Punkt Ce Ha");
 
 /* Alle Bloecke eines Reels in Sprechreihenfolge, mit Szenenindex
    (der Abbinder ist die letzte «Szene»). */
