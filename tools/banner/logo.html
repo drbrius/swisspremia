@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>SwissPremia – Logo-Vorlage</title>
+<!--
+  Profilbilder und Wasserzeichen. Aufruf: logo.html?form=ring&groesse=800
+  Formen:
+    ring          Petrol, goldener Ring, weisses Kreuz – dasselbe Zeichen wie
+                  die Profilbilder von Facebook, Instagram und LinkedIn
+    kachel        Verlauf wie die Banner, weisse Kachel mit Petrol-Kreuz –
+                  dasselbe Zeichen wie die Wortmarke auf den Bannern
+    wasserzeichen weisse Kachel auf durchsichtigem Grund, fuer Videos
+  Alle Masse sind Anteile der Kantenlaenge, damit jede Groesse gleich aussieht.
+  Plattformen schneiden Profilbilder rund: alles Wichtige liegt im Kreis.
+  Gerendert mit tools/banner/render.js (Chrome headless).
+-->
+<style>
+:root {
+  --petrol: #005786;
+  --petrol-dunkel: #00446a;
+  --slate-tief: #212d39;
+  --gold: #ccba89;
+}
+html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+.logo { position: relative; width: var(--g); height: var(--g); }
+
+/* Kreuz: Balkenbreite 16 %, Laenge 52 % – die Verhaeltnisse der bisherigen
+   Profilbilder (128 und 416 px bei 800 px). */
+.kreuz { position: absolute; inset: 0; }
+.kreuz::before, .kreuz::after {
+  content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  background: var(--kreuz-farbe, #fff);
+}
+.kreuz::before { width: calc(var(--kreuz) * .3077); height: var(--kreuz); }
+.kreuz::after  { width: var(--kreuz); height: calc(var(--kreuz) * .3077); }
+
+/* ===== ring ===== */
+.form-ring { background: var(--petrol); --kreuz: calc(var(--g) * .52); }
+.form-ring .ring {
+  position: absolute; inset: calc(var(--g) * .0275);
+  border: calc(var(--g) * .035) solid var(--gold); border-radius: 50%;
+}
+
+/* ===== kachel ===== */
+.form-kachel {
+  background: linear-gradient(150deg, var(--slate-tief) 0%, var(--petrol-dunkel) 100%);
+  --kachel: calc(var(--g) * .56);
+}
+.form-kachel .ring { display: none; }
+.form-kachel .flaeche,
+.form-wasserzeichen .flaeche {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: var(--kachel); height: var(--kachel); border-radius: 23%; background: #fff;
+  --kreuz: calc(var(--kachel) * .6); --kreuz-farbe: var(--petrol);
+}
+
+/* ===== wasserzeichen: Kachel fuellt fast alles, leichter Schatten fuer helle Szenen ===== */
+.form-wasserzeichen { --kachel: calc(var(--g) * .9); }
+.form-wasserzeichen .ring { display: none; }
+.form-wasserzeichen .flaeche { box-shadow: 0 calc(var(--g) * .01) calc(var(--g) * .04) rgba(0, 0, 0, .28); }
+</style>
+</head>
+<body>
+<div class="logo" id="logo">
+  <div class="ring"></div>
+  <div class="flaeche"><div class="kreuz"></div></div>
+</div>
+<script>
+  const p = new URLSearchParams(location.search);
+  const form = p.get('form') || 'ring';
+  const g = Number(p.get('groesse')) || 800;
+  const logo = document.getElementById('logo');
+  logo.className = 'logo form-' + form;
+  logo.style.setProperty('--g', g + 'px');
+  // Beim Ring sitzt das Kreuz direkt auf dem Petrol, nicht auf einer Kachel.
+  if (form === 'ring') logo.querySelector('.flaeche').style.cssText = 'position:absolute;inset:0;--kreuz:' + (g * .52) + 'px';
+</script>
+</body>
+</html>

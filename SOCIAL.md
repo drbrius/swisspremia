@@ -20,6 +20,7 @@ Du bist eine Person, kein Marketingteam. Vier gepflegte Kanäle schlagen acht ve
 | **WhatsApp Business** | Kein Kanal zum Posten, aber der schnellste Draht zum Lead. | 15 Min. einmalig |
 
 **Bewusst weglassen: TikTok und YouTube.** Beide brauchen Video in einer Frequenz, die du neben der Beratung nicht lieferst. Ein toter Kanal schadet mehr als kein Kanal.
+*Nachtrag 15.11.2026:* Für YouTube liegen Kanalbild, Banner und Wasserzeichen bereit (Abschnitt «YouTube» unten).
 
 ---
 
@@ -71,11 +72,35 @@ Der letzte Satz steht bewusst dort. Nach dem Kaltakquise-Verbot ist das ein Unte
   > Danke für Ihre Nachricht. Ich bin gerade in einer Beratung und melde mich spätestens morgen früh.
 - **Bild:** `whatsapp-profil-640.png`
 
+### YouTube
+
+YouTube Studio → **Anpassung → Branding**. Drei Felder, drei Dateien:
+
+| Feld | Datei | Vorgabe von YouTube |
+|---|---|---|
+| Bild (Kanalbild) | `youtube-kanalbild-800.png` | 800×800, wird rund geschnitten |
+| Bannerbild | `youtube-banner-2560x1440.png` | mind. 2048×1152, höchstens 6 MB |
+| Video-Wasserzeichen | `youtube-wasserzeichen-150.png` | 150×150, unter 1 MB, Anzeige «ganzes Video» |
+
+Das Kanalbild ist dasselbe Zeichen wie auf Facebook, Instagram und LinkedIn (goldener Ring,
+weisses Kreuz), damit der Kanal neben den anderen erkennbar bleibt. Eine Alternative im Stil der
+Banner-Wortmarke liegt als `youtube-kanalbild-kachel-800.png` bereit; in 24 px (Kommentare) bleibt
+der Ring klarer.
+
+Der Banner ist für YouTube eigens aufgebaut: Der Fernseher zeigt das ganze Bild, der Computer den
+Streifen 2560×423 in der Mitte, das Handy nur 1546×423 davon und verkleinert ihn auf rund ein
+Viertel. Deshalb zwei Spalten mit 80 px Titelzeile, die am Handy mit etwa 20 px ankommt. Das Foto
+ist derselbe Bachalpsee wie auf allen Bannern (Pixabay-Inhaltslizenz: kommerziell frei, ohne
+Namensnennung).
+
 ### Banner
 
-Ein Satz, sechs Formate, zwei Varianten: mit Alpensee-Foto (`marke/`) und ohne
-Foto als reiner Verlauf (`marke/ohne-foto/`). Inhalt überall gleich: Wortmarke,
-«Krankenkassen-Prämien vergleichen – in 1 Minute», vier Punkte, Adresse.
+Ein Satz, sechs Formate, zwei Varianten: mit Foto (`marke/`) und ohne Foto als reiner Verlauf
+(`marke/ohne-foto/`). Inhalt überall gleich: Wortmarke, «Krankenkassen-Prämien vergleichen –
+in 1 Minute», vier Punkte, Adresse. Foto überall der Bachalpsee bei Grindelwald (Pixabay
+Nr. 7572681, seit 15.11.2026; vorher der Alpensee der Website von Unsplash). Der Schleier ist
+dort dunkel, wo Text steht, und öffnet sich erst am rechten Rand – gemessen hält Weiss überall
+mindestens 6,5:1 und das Gold der Titelzeile 4,5:1.
 
 | Datei | Plattform | Worauf geachtet wurde |
 |---|---|---|
@@ -83,12 +108,15 @@ Foto als reiner Verlauf (`marke/ohne-foto/`). Inhalt überall gleich: Wortmarke,
 | `linkedin-banner-2256x382.png` | LinkedIn-Unternehmensseite | Logo liegt links unten über der Kante – die linken 230 px sind frei |
 | `linkedin-profil-banner-1584x396.png` | LinkedIn-Profil | Profilfoto links unten – Inhalt beginnt bei 470 px |
 | `x-header-1500x500.png` | X | Profilbild links unten, oben und unten können je 50 px wegfallen |
-| `youtube-banner-2560x1440.png` | YouTube (falls doch) | Nur die Mitte 1546×423 ist auf allen Geräten sichtbar – alles liegt dort |
+| `youtube-banner-2560x1440.png` | YouTube | Nur die Mitte 1546×423 ist auf allen Geräten sichtbar – alles liegt dort, Schrift für die Handy-Verkleinerung gross |
 | `og-bild-1200x630.png` | Link-Vorschau | Bild für geteilte Links (`og:image`), wird vollständig gezeigt |
 
-Neu rendern: `node tools/banner/render.js` (alle) oder `node tools/banner/render.js facebook`.
-Braucht Chrome; das Foto wird beim ersten Lauf nach `tools/banner/cache/` geladen.
-Vorlage und Masse: `tools/banner/vorlage.html`.
+Neu rendern: `node tools/banner/render.js` (alles), `node tools/banner/render.js facebook`
+(ein Format) oder `node tools/banner/render.js --logos` (nur Kanalbilder und Wasserzeichen).
+Braucht Chrome; Fotos werden beim ersten Lauf nach `tools/banner/cache/` geladen, Pixabay-Fotos
+über die Bildsuche der Reels (Schlüssel `PIXABAY_API_KEY`). Welches Format welches Foto nimmt,
+steht in `FOTOS` und `FORMATE` am Anfang von `tools/banner/render.js`; ein anderes Pixabay-Motiv
+ist dort eine Nummer. Vorlagen und Masse: `tools/banner/vorlage.html` und `tools/banner/logo.html`.
 
 ---
 

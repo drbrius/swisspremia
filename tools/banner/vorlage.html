@@ -43,8 +43,10 @@ body {
 .variante-foto .foto { display: block; }
 .schleier {
   position: absolute; inset: 0;
-  /* Links dunkel, damit die Schrift traegt – rechts durchlaessiger, damit das Foto wirkt */
-  background: linear-gradient(100deg, rgba(33, 45, 57, .95) 0%, rgba(20, 56, 84, .88) 48%, rgba(0, 87, 134, .62) 100%);
+  /* Links dunkel, damit die Schrift traegt – erst hinter dem Text (ab ~70 %)
+     durchlaessig, damit das Foto am rechten Rand wirkt. Abgestimmt auf den
+     hellen, blauen Bachalpsee; der Goldknopf rechts braucht keinen Schleier. */
+  background: linear-gradient(100deg, rgba(33, 45, 57, .95) 0%, rgba(20, 56, 84, .88) 45%, rgba(10, 70, 110, .76) 70%, rgba(0, 87, 134, .36) 100%);
   display: none;
 }
 .variante-foto .schleier { display: block; }
@@ -166,17 +168,38 @@ h1 .akzent { color: var(--gold); }
   --foto-lage: 50% 50%; --deko-gross: 440px; --deko-rechts: 60px; --deko-oben: -40px;
 }
 
-/* YouTube: 2560x1440, auf allen Geraeten sichtbar ist nur die Mitte
-   1546x423 (x 507–2053, y 508–931). Alles Wichtige liegt dort. */
+/* YouTube: 2560x1440. Der Fernseher zeigt alles, der Computer den Streifen
+   2560x423 in der Mitte (y 508–931), das Handy nur 1546x423 (x 507–2053)
+   und verkleinert ihn dabei auf rund ein Viertel. Deshalb hier zwei Spalten
+   und grosse Schrift: Die Titelzeile mit 80 px kommt am Handy mit etwa
+   20 px an, die Punkte darunter sind dort nur noch Struktur.
+   Die Markenspalte (Wortmarke + Adresse) baut das Skript unten zusammen. */
 .format-youtube {
   --w: 2560px; --h: 1440px; --kante: 0px;
-  --links: 540px; --oben: 574px; --breite: 1480px; --abstand: 32px;
-  --kreuz: 64px; --name: 42px; --titel: 64px; --titel-breite: 980px; --punkt: 24px;
-  --url: 20px; --url-rechts: 540px; --url-unten: 540px;
-  --foto-lage: 50% 50%; --deko-gross: 900px; --deko-rechts: 140px; --deko-oben: 60px;
+  --links: 547px; --oben: 508px; --breite: 1466px; --abstand: 28px;
+  --kreuz: 100px; --name: 66px; --titel: 80px; --titel-breite: 966px; --punkt: 30px;
+  --url: 24px;
+  --foto-lage: 50% 50%; --deko-gross: 700px; --deko-rechts: 160px; --deko-oben: -260px;
 }
+/* Deko-Kreuze ober- und unterhalb des Streifens: nur der Fernseher zeigt sie. */
+.format-youtube .deko-2 { right: auto; left: 260px; top: 1010px; }
 .format-youtube .kante { display: none; }
-.format-youtube .url { bottom: auto; top: 582px; }
+.format-youtube .inhalt { height: 423px; flex-direction: row; align-items: center; gap: 0; }
+.format-youtube .marke-block {
+  flex: none; width: 400px; display: flex; flex-direction: column; align-items: center; gap: 30px;
+  padding-right: 50px; margin-right: 50px; border-right: 2px solid rgba(204, 186, 137, .55);
+}
+.format-youtube .wortmarke { flex-direction: column; text-align: center; gap: 18px; }
+.format-youtube .claim { font-size: 20px; letter-spacing: .16em; margin-top: 18px; }
+.format-youtube .url { position: static; }
+.format-youtube .text { flex: 1 1 auto; }
+/* Dunkel nur dort, wo die Schrift steht – oben und unten (Fernseher) und an
+   den Seiten (Computer) bleibt das Foto sichtbar. */
+.format-youtube .schleier {
+  background:
+    radial-gradient(ellipse 1600px 640px at 50% 50%, rgba(18, 46, 70, .9) 0%, rgba(18, 46, 70, .84) 40%, rgba(18, 46, 70, .5) 68%, rgba(18, 46, 70, .18) 86%, rgba(18, 46, 70, 0) 100%),
+    linear-gradient(180deg, rgba(33, 45, 57, .55) 0%, rgba(0, 68, 106, .45) 100%);
+}
 
 /* Link-Vorschau (Open Graph) 1200x630 fuer geteilte Links. Wird ganz gezeigt. */
 .format-og {
@@ -223,6 +246,16 @@ h1 .akzent { color: var(--gold); }
   const format = p.get('format') || 'facebook';
   const variante = p.get('variante') || 'foto';
   document.getElementById('banner').className = 'banner format-' + format + ' variante-' + variante;
+  // Foto je Format (render.js legt es in cache/ ab); ohne Angabe der Alpensee.
+  const foto = p.get('foto');
+  if (foto) document.querySelector('.foto').style.backgroundImage = 'url("cache/' + foto + '")';
+  // YouTube: Wortmarke und Adresse als eigene Spalte links neben dem Text.
+  if (format === 'youtube') {
+    const block = document.createElement('div');
+    block.className = 'marke-block';
+    block.append(document.querySelector('.wortmarke'), document.querySelector('.url'));
+    document.querySelector('.inhalt').prepend(block);
+  }
   // Fuer render.js: meldet, ob Figtree wirklich geladen wurde.
   document.fonts.ready.then(() => {
     document.documentElement.setAttribute('data-schrift', document.fonts.check('500 20px Figtree') ? 'figtree' : 'ersatz');
