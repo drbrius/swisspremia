@@ -27,7 +27,9 @@ const STAMM = path.join(__dirname, "..");
 const ZIEL = path.join(STAMM, "kantone");
 const BASIS = "https://www.swisspremia.ch";
 const MARKE = "SwissPremia";
-const HEUTE = new Date().toISOString().slice(0, 10);
+/* STAND=2026-10-26 haelt das Datum fest, wenn nur das Seitengeruest neu
+   gebaut wird und die Praemiendaten gleich bleiben. */
+const HEUTE = process.env.STAND || new Date().toISOString().slice(0, 10);
 
 /* Daten laden wie der Browser. */
 global.window = {};
@@ -105,7 +107,12 @@ function kopf(o) {
 ${o.jsonld}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="${bildUrl(BILD, 720, 900).replace("q=70", "q=45")}" media="(max-width: 700px)" fetchpriority="high">
+  <link rel="preload" as="image" href="${bildUrl(BILD, 1440, 810).replace("q=70", "q=55")}" media="(min-width: 701px)" fetchpriority="high">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/lp.css">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -135,8 +142,8 @@ ${o.jsonld}
     .kt-karten .lp-fact .kt-preis { font-size: 1.35rem; font-weight: 600; color: var(--petrol); margin: 6px 0 2px; }
     .brotkrumen { font-size: .82rem; color: var(--text); margin-bottom: 18px; }
     .brotkrumen a { color: inherit; }
-    .ratgeber-hero { --hero-bild: url("${bildUrl(BILD, 1600, 900)}"); }
-    @media (max-width: 700px) { .ratgeber-hero { --hero-bild: url("${bildUrl(BILD, 800, 1000).replace("q=70", "q=62")}"); } }
+    .ratgeber-hero { --hero-bild: url("${bildUrl(BILD, 1440, 810).replace("q=70", "q=55")}"); }
+    @media (max-width: 700px) { .ratgeber-hero { --hero-bild: url("${bildUrl(BILD, 720, 900).replace("q=70", "q=45")}"); } }
   </style>
 </head>
 <body>
@@ -159,24 +166,28 @@ function kopfzeile() {
   </div>
 </header>
 
+<main>
+
 `;
 }
 
 function fusszeile() {
-  return `<footer class="footer">
+  return `</main>
+
+<footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div>
         <div class="logo footer-logo"><span class="logo-cross" aria-hidden="true"></span> Swiss<strong>Premia</strong></div>
-        <p>Unabhängiger Krankenkassenvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
+        <p>Unabhängiger Krankenkassenvergleich für die Schweiz. Kostenlos und unverbindlich.</p>
       </div>
       <div>
-        <h4>Datenquelle</h4>
+        <h2>Datenquelle</h2>
         <p>Krankenkassen-Prämien ${JAHR}: Bundesamt für Gesundheit (BAG),<br>
         <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a> · <a href="/kantone/">Alle Kantone</a> · <a href="/ratgeber/">Ratgeber</a></p>
       </div>
       <div>
-        <h4>Rechtliches</h4>
+        <h2>Rechtliches</h2>
         <p>Alle Angaben ohne Gewähr. Der Leistungskatalog der Grundversicherung ist gesetzlich festgelegt und bei allen Kassen identisch. SwissPremia ist eine Vergleichsplattform und selbst kein Versicherungsvermittler: Ihre Angaben gehen an einen lizenzierten Vermittler, der Sie berät. Einzelheiten in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</p>
       </div>
     </div>

@@ -314,7 +314,7 @@ h3 { font-weight: 500; }
 /* ===== Fusszeile ===== */
 .footer { background: var(--slate-tief); color: rgba(247, 245, 241, .55); }
 .footer a { color: var(--gold); }
-.footer h4 { letter-spacing: .22em; font-family: Jost, system-ui, sans-serif; }
+.footer h2, .footer h4 { letter-spacing: .22em; font-family: Jost, system-ui, sans-serif; }
 .footer .logo small { color: rgba(247, 245, 241, .42); }
 
 /* =========================================================================

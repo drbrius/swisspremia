@@ -321,7 +321,7 @@ a { color: var(--petrol); text-underline-offset: 3px; }
 
 /* ===== Footer ===== */
 .footer { background: var(--slate-tief); color: rgba(255, 255, 255, .62); padding: 66px 0 28px; }
-.footer h4 { color: #fff; margin-bottom: 12px; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; }
+.footer h2, .footer h4 { color: #fff; margin-bottom: 12px; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; line-height: 1.4; }
 .footer a { color: var(--gold); }
 .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1.3fr; gap: 42px; font-size: .88rem; }
 .footer-logo { color: #fff; margin-bottom: 14px; }
@@ -337,7 +337,9 @@ a { color: var(--petrol); text-underline-offset: 3px; }
    Hero-Bilder
    Quelle: Unsplash (unsplash.com/license – kostenlos, auch kommerziell,
    Namensnennung nicht erforderlich). Geladen direkt über die Unsplash-CDN
-   im Zuschnitt 1600×900, damit nichts im Repo mitgeschleppt wird.
+   im Zuschnitt 1440×810, damit nichts im Repo mitgeschleppt wird.
+   Die Startseite und die Landingpages laden dieselben Adressen per
+   <link rel="preload"> vor – beim Austauschen dort mitändern.
 
    Bild austauschen: neue Foto-ID auf unsplash.com heraussuchen und den
    Teil "photo-…" unten ersetzen. Die Parameter dahinter bleiben gleich.
@@ -345,23 +347,23 @@ a { color: var(--petrol); text-underline-offset: 3px; }
    ========================================================================= */
 .hero--start {
   /* Alpensee – ruhige Schweizer Landschaft */
-  --hero-bild: url("https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+  --hero-bild: url("https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55");
 }
 .lp-hero--neuzuzueger {
   /* Umzugskarton vor einer Wohnungstür */
-  --hero-bild: url("https://images.unsplash.com/photo-1638501478003-4e9761dcfe22?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+  --hero-bild: url("https://images.unsplash.com/photo-1638501478003-4e9761dcfe22?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55");
 }
 .lp-hero--familie {
   /* Schwangere Frau */
-  --hero-bild: url("https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+  --hero-bild: url("https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55");
 }
 .lp-hero--jung {
   /* Junger Erwachsener, natürliche Aufnahme */
-  --hero-bild: url("https://images.unsplash.com/photo-1492462543947-040389c4a66c?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+  --hero-bild: url("https://images.unsplash.com/photo-1492462543947-040389c4a66c?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55");
 }
 .lp-hero--praemien {
   /* Kalender im Oktober – der Monat der Prämienrunde */
-  --hero-bild: url("https://images.unsplash.com/photo-1506785017561-cd70a3c8d1c2?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70");
+  --hero-bild: url("https://images.unsplash.com/photo-1506785017561-cd70a3c8d1c2?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55");
 }
 
 /* =========================================================================
@@ -458,23 +460,23 @@ a { color: var(--petrol); text-underline-offset: 3px; }
 /* -------------------------------------------------------------------------
    Hero-Bilder für kleine Bildschirme
    Auf dem Handy wäre die 1600×900-Fassung reine Datenverschwendung – hier
-   ein hochformatiger 800er-Zuschnitt, der zur schmalen Fläche passt.
+   ein hochformatiger 720er-Zuschnitt, der zur schmalen Fläche passt.
    ------------------------------------------------------------------------- */
 @media (max-width: 700px) {
   .hero--start {
-    --hero-bild: url("https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+    --hero-bild: url("https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45");
   }
   .lp-hero--neuzuzueger {
-    --hero-bild: url("https://images.unsplash.com/photo-1638501478003-4e9761dcfe22?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+    --hero-bild: url("https://images.unsplash.com/photo-1638501478003-4e9761dcfe22?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45");
   }
   .lp-hero--familie {
-    --hero-bild: url("https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+    --hero-bild: url("https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45");
   }
   .lp-hero--jung {
-    --hero-bild: url("https://images.unsplash.com/photo-1492462543947-040389c4a66c?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+    --hero-bild: url("https://images.unsplash.com/photo-1492462543947-040389c4a66c?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45");
   }
   .lp-hero--praemien {
-    --hero-bild: url("https://images.unsplash.com/photo-1506785017561-cd70a3c8d1c2?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62");
+    --hero-bild: url("https://images.unsplash.com/photo-1506785017561-cd70a3c8d1c2?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45");
   }
 }
 

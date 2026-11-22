@@ -23,7 +23,9 @@ var STAMM = pfad.join(__dirname, "..");
 var ZIEL = pfad.join(STAMM, "ratgeber");
 var BASIS = "https://www.swisspremia.ch";
 var MARKE = "SwissPremia";
-var HEUTE = new Date().toISOString().slice(0, 10);
+/* STAND=2026-10-26 haelt das Datum fest, wenn nur das Seitengeruest neu
+   gebaut wird und die Texte gleich bleiben. */
+var HEUTE = process.env.STAND || new Date().toISOString().slice(0, 10);
 
 /* Seiten, die es neben den Ratgebern gibt. Die Sitemap wird als Ganzes
    geschrieben, damit sie nie halb aktuell ist. */
@@ -87,7 +89,12 @@ function kopf(o) {
     o.jsonld +
     '\n  <link rel="preconnect" href="https://fonts.googleapis.com">\n' +
     '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
-    '  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">\n' +
+    '  <link rel="preload" as="image" href="' + bildUrl(o.bild, 720, 900).replace("q=70", "q=45") + '" media="(max-width: 700px)" fetchpriority="high">\n' +
+    '  <link rel="preload" as="image" href="' + bildUrl(o.bild, 1440, 810).replace("q=70", "q=55") + '" media="(min-width: 701px)" fetchpriority="high">\n' +
+    '  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel=\'stylesheet\'">\n' +
+    '  <noscript>\n' +
+    '    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">\n' +
+    '  </noscript>\n' +
     '  <link rel="stylesheet" href="/css/style.css">\n' +
     '  <link rel="stylesheet" href="/css/lp.css">\n' +
     '  <link rel="icon" href="/favicon.ico" sizes="48x48">\n' +
@@ -118,8 +125,8 @@ function kopf(o) {
     '    .brotkrumen a { color: inherit; }\n' +
     /* Hero-Bild als Klasse mit Handy-Variante. Ein Inline-Stil wuerde jede
        Medienabfrage ueberstimmen, und das Handy laedt dann das 1600-px-Bild. */
-    '    .ratgeber-hero { --hero-bild: url("' + bildUrl(o.bild, 1600, 900) + '"); }\n' +
-    '    @media (max-width: 700px) { .ratgeber-hero { --hero-bild: url("' + bildUrl(o.bild, 800, 1000).replace("q=70", "q=62") + '"); } }\n' +
+    '    .ratgeber-hero { --hero-bild: url("' + bildUrl(o.bild, 1440, 810).replace("q=70", "q=55") + '"); }\n' +
+    '    @media (max-width: 700px) { .ratgeber-hero { --hero-bild: url("' + bildUrl(o.bild, 720, 900).replace("q=70", "q=45") + '"); } }\n' +
     '  </style>\n' +
     '</head>\n<body>\n';
 }
@@ -139,26 +146,26 @@ function kopfzeile() {
     '      <a href="/#beratung" class="btn btn-small btn-primary">Kostenlose Beratung</a>\n' +
     '    </nav>\n' +
     '  </div>\n' +
-    '</header>\n\n';
+    '</header>\n\n<main>\n\n';
 }
 
 function fusszeile() {
-  return '<footer class="footer">\n' +
+  return '</main>\n\n<footer class="footer">\n' +
     '  <div class="container">\n' +
     '    <div class="footer-grid">\n' +
     '      <div>\n' +
     '        <div class="logo footer-logo"><span class="logo-cross" aria-hidden="true"></span> Swiss<strong>Premia</strong></div>\n' +
-    '        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>\n' +
+    '        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos und unverbindlich.</p>\n' +
     '      </div>\n' +
     '      <div>\n' +
-    '        <h4>Ratgeber</h4>\n' +
+    '        <h2>Ratgeber</h2>\n' +
     '        <p><a href="/ratgeber/">Alle Ratgeber</a><br>' +
     '<a href="/ratgeber/krankenkasse-wechseln.html">Krankenkasse wechseln</a><br>' +
     '<a href="/ratgeber/praemienregionen.html">Prämienregionen</a><br>' +
     '<a href="/ratgeber/franchise-waehlen.html">Franchise wählen</a></p>\n' +
     '      </div>\n' +
     '      <div>\n' +
-    '        <h4>Rechtliches</h4>\n' +
+    '        <h2>Rechtliches</h2>\n' +
     '        <p>Alle Angaben ohne Gewähr. Der Leistungskatalog der Grundversicherung ist gesetzlich festgelegt und bei allen Kassen identisch. SwissPremia ist eine Vergleichsplattform und selbst kein Versicherungsvermittler: Ihre Angaben gehen an einen lizenzierten Vermittler, der Sie berät. Einzelheiten in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</p>\n' +
     '      </div>\n' +
     '    </div>\n' +

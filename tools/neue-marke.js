@@ -106,7 +106,12 @@ function ratgeberVerweiseEntfernen(inhalt, datei) {
 }
 
 function schriftDerVorlageEntfernen(inhalt) {
-  return inhalt.replace(/[ \t]*<link[^>]+fonts\.googleapis\.com\/css2[^>]*>\n/g, "");
+  /* Die Vorlage laedt die Schrift per preload und haelt fuer Besucher ohne
+     JavaScript einen <noscript>-Block bereit. Beides faellt weg, der leere
+     Block gleich mit. */
+  return inhalt
+    .replace(/[ \t]*<link[^>]+fonts\.googleapis\.com\/css2[^>]*>\n/g, "")
+    .replace(/[ \t]*<noscript>\s*<\/noscript>\n/g, "");
 }
 
 /* Das Theme liegt hinter den Stylesheets der Vorlage und ueberschreibt

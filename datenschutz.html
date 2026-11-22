@@ -9,7 +9,10 @@
   <meta name="robots" content="index, follow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/lp.css">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -32,6 +35,8 @@
     </nav>
   </div>
 </header>
+
+<main>
 
 <section class="section">
   <div class="container narrow">
@@ -61,11 +66,19 @@
       </p>
 
       <h2>2. Welche Daten wir erheben</h2>
-      <h3>Wenn Sie nur rechnen</h3>
+      <h3>Wenn Sie die Auswertung anfordern</h3>
       <p>
-        Der Prämienrechner läuft vollständig in Ihrem Browser. Postleitzahl, Alter, Franchise
-        und Modell werden <strong>nicht an uns übermittelt</strong>, solange Sie kein Formular
-        absenden. Sie können die Website vollständig nutzen, ohne Daten zu hinterlassen.
+        Die Prämien werden in Ihrem Browser berechnet. Ihre persönliche Auswertung zeigen wir
+        Ihnen, <strong>nachdem Sie das Formular mit Ihren Kontaktangaben abgesendet</strong> und
+        der Weitergabe an einen Vermittler zugestimmt haben. Dabei werden Postleitzahl,
+        Altersgruppe, Franchise, Unfalldeckung, Modell, Ihre heutige Krankenkasse und die
+        Auswertung selbst (die angezeigten Prämien) zusammen mit Ihren Kontaktangaben an uns
+        übermittelt. Haben Sie es angekreuzt, senden wir Ihnen die Auswertung zusätzlich per
+        E-Mail. Solange Sie kein Formular absenden, wird nichts davon an uns übermittelt.
+      </p>
+      <p>
+        Die Prämien aller Krankenkassen können Sie auch ohne Angabe von Daten einsehen: beim
+        Bund unter <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a>.
       </p>
 
       <h3>Wenn Sie ein Formular absenden</h3>
@@ -213,6 +226,8 @@
     </p>
   </div>
 </section>
+
+</main>
 
 <footer class="footer">
   <div class="container">

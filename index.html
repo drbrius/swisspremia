@@ -181,7 +181,15 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Das Hero-Foto ist das grösste Element beim Laden. Als CSS-Hintergrund
+       fände der Browser es erst nach dem Stylesheet – so holt er es sofort.
+       Die Adressen müssen exakt denen in css/style.css entsprechen. -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45" media="(max-width: 700px)" fetchpriority="high">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55" media="(min-width: 701px)" fetchpriority="high">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/lp.css">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -208,6 +216,8 @@
     </nav>
   </div>
 </header>
+
+<main>
 
 <!-- ============ HERO ============ -->
 <section class="hero auf-dunkel hero--start">
@@ -581,6 +591,8 @@
 </section>
 
 <!-- ============ FOOTER ============ -->
+</main>
+
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
@@ -589,12 +601,12 @@
         <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
       </div>
       <div>
-        <h4>Datenquelle</h4>
+        <h2>Datenquelle</h2>
         <p>Krankenkassen-Prämien 2027: Bundesamt für Gesundheit (BAG),<br>
         <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a></p>
       </div>
       <div>
-        <h4>Rechtliches</h4>
+        <h2>Rechtliches</h2>
         <p>Alle Angaben ohne Gewähr. Der Leistungskatalog der Grundversicherung ist gesetzlich festgelegt und bei allen Kassen identisch. SwissPremia ist eine Vergleichsplattform und selbst kein Versicherungsvermittler: Ihre Angaben gehen an einen lizenzierten Vermittler, der Sie berät. Einzelheiten in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</p>
       </div>
     </div>
@@ -602,9 +614,37 @@
   </div>
 </footer>
 
-<script src="data/plz.js"></script>
-<script src="data/praemien.js"></script>
-<script src="js/lead-core.js"></script>
-<script src="js/app.js"></script>
+<script src="js/lead-core.js" defer></script>
+<script>
+/* Prämien- und PLZ-Daten sind zusammen rund 250 KB. Mit dem Seitenaufbau
+   geladen, teilen sie sich auf dem Handy die Leitung mit dem Hero-Bild und
+   verzögern es um Sekunden. Gebraucht werden sie erst bei der ersten
+   Eingabe – deshalb kommen sie nach dem load-Ereignis, und der Rechner
+   (js/app.js) direkt danach, damit er beim Start alle Daten vorfindet.
+   Wer früher tippt oder klickt, löst das Laden sofort aus.
+   async = false hält die Reihenfolge ein. */
+(function () {
+  var geladen = false;
+  function laden() {
+    if (geladen) return;
+    geladen = true;
+    ["data/plz.js", "data/praemien.js", "js/app.js"].forEach(function (src) {
+      var s = document.createElement("script");
+      s.src = src;
+      s.async = false;
+      document.body.appendChild(s);
+    });
+  }
+  /* Wer schon tippt oder klickt, bekommt den Rechner sofort. */
+  ["pointerdown", "keydown", "focusin"].forEach(function (ereignis) {
+    document.addEventListener(ereignis, laden, { once: true, passive: true });
+  });
+  /* Sonst nach dem Laden, sobald der Browser das erste Bild gemalt hat. */
+  window.addEventListener("load", function () {
+    if ("requestIdleCallback" in window) requestIdleCallback(laden, { timeout: 1500 });
+    else setTimeout(laden, 300);
+  });
+})();
+</script>
 </body>
 </html>

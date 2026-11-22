@@ -7,7 +7,10 @@
   <meta name="robots" content="noindex">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/lp.css">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -30,6 +33,8 @@
     </div>
   </div>
 </header>
+
+<main>
 
 <section class="section">
   <div class="container narrow">
@@ -90,6 +95,8 @@
   </div>
 </section>
 
+</main>
+
 <footer class="footer">
   <div class="container">
     <p class="copyright">
@@ -101,9 +108,12 @@
   </div>
 </footer>
 
-<script src="../js/lead-core.js"></script>
-<script src="../js/lp.js"></script>
+<script src="../js/lead-core.js" defer></script>
+<script src="../js/lp.js" defer></script>
 <script>
+/* Die Skripte oben laden mit defer und laufen erst nach dem Aufbau
+   der Seite. DOMContentLoaded kommt danach – vorher gibt es LP noch nicht. */
+document.addEventListener("DOMContentLoaded", function () {
   LP.init({});
 
   /* Kontaktbuttons nur zeigen, wenn in js/lead-core.js hinterlegt. */
@@ -128,6 +138,7 @@
 
     if (sichtbar) document.getElementById("sofortKontakt").hidden = false;
   })();
+});
 </script>
 
 </body>

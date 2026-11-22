@@ -57,7 +57,15 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Das Hero-Foto ist das grösste Element beim Laden. Als CSS-Hintergrund
+       fände der Browser es erst nach dem Stylesheet – so holt er es sofort.
+       Die Adressen müssen exakt denen in css/style.css entsprechen. -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45" media="(max-width: 700px)" fetchpriority="high">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1489674297774-eadf82cba14c?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55" media="(min-width: 701px)" fetchpriority="high">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/lp.css">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -76,6 +84,8 @@
     </a>
   </div>
 </header>
+
+<main>
 
 <section class="lp-hero lp-hero--familie">
   <div class="container lp-grid">
@@ -277,15 +287,20 @@
   </div>
 </section>
 
+</main>
+
 <footer class="footer">
   <div class="container">
     <p class="copyright">© 2026 SwissPremia · <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · Prämiendaten: Bundesamt für Gesundheit (BAG), priminfo.admin.ch · Angaben ohne Gewähr</p>
   </div>
 </footer>
 
-<script src="../js/lead-core.js"></script>
-<script src="../js/lp.js"></script>
+<script src="../js/lead-core.js" defer></script>
+<script src="../js/lp.js" defer></script>
 <script>
+/* Die Skripte oben laden mit defer und laufen erst nach dem Aufbau
+   der Seite. DOMContentLoaded kommt danach – vorher gibt es LP noch nicht. */
+document.addEventListener("DOMContentLoaded", function () {
   LP.init({
     sprache: "de",
     formId: "lpForm",
@@ -294,6 +309,7 @@
     prioritaet: "Hoch (Frist vor Geburt)",
     danke: "danke.html"
   });
+});
 </script>
 
 </body>

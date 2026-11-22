@@ -115,7 +115,12 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45" media="(max-width: 700px)" fetchpriority="high">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55" media="(min-width: 701px)" fetchpriority="high">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/lp.css">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -144,8 +149,8 @@
     .ratgeber-kat:first-of-type { margin-top: 0; }
     .brotkrumen { font-size: .82rem; color: var(--text); margin-bottom: 18px; }
     .brotkrumen a { color: inherit; }
-    .ratgeber-hero { --hero-bild: url("https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&crop=entropy&w=1600&h=900&q=70"); }
-    @media (max-width: 700px) { .ratgeber-hero { --hero-bild: url("https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&crop=entropy&w=800&h=1000&q=62"); } }
+    .ratgeber-hero { --hero-bild: url("https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55"); }
+    @media (max-width: 700px) { .ratgeber-hero { --hero-bild: url("https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45"); } }
   </style>
 </head>
 <body>
@@ -164,6 +169,8 @@
     </nav>
   </div>
 </header>
+
+<main>
 
 <section class="lp-hero auf-dunkel ratgeber-hero">
   <div class="container narrow">
@@ -235,19 +242,21 @@
   </div>
 </section>
 
+</main>
+
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div>
         <div class="logo footer-logo"><span class="logo-cross" aria-hidden="true"></span> Swiss<strong>Premia</strong></div>
-        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
+        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos und unverbindlich.</p>
       </div>
       <div>
-        <h4>Ratgeber</h4>
+        <h2>Ratgeber</h2>
         <p><a href="/ratgeber/">Alle Ratgeber</a><br><a href="/ratgeber/krankenkasse-wechseln.html">Krankenkasse wechseln</a><br><a href="/ratgeber/praemienregionen.html">Prämienregionen</a><br><a href="/ratgeber/franchise-waehlen.html">Franchise wählen</a></p>
       </div>
       <div>
-        <h4>Rechtliches</h4>
+        <h2>Rechtliches</h2>
         <p>Alle Angaben ohne Gewähr. Der Leistungskatalog der Grundversicherung ist gesetzlich festgelegt und bei allen Kassen identisch. SwissPremia ist eine Vergleichsplattform und selbst kein Versicherungsvermittler: Ihre Angaben gehen an einen lizenzierten Vermittler, der Sie berät. Einzelheiten in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</p>
       </div>
     </div>
