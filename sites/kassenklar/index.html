@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Krankenkassenvergleich 2027 Schweiz: alle Kassen | Kassenklar</title>
-  <meta name="description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Prämie berechnen und Kasse wechseln – kostenlos, ohne Anmeldung.">
+  <meta name="description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Angaben ausfüllen, Auswertung direkt auf der Seite erhalten – kostenlos und unverbindlich.">
   <link rel="canonical" href="https://www.kassenklar.ch/">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="geo.region" content="CH">
@@ -18,11 +18,11 @@
   <meta property="og:site_name" content="Kassenklar">
   <meta property="og:url" content="https://www.kassenklar.ch/">
   <meta property="og:title" content="Krankenkassenvergleich 2027 Schweiz: alle Kassen | Kassenklar">
-  <meta property="og:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Prämie berechnen und Kasse wechseln – kostenlos, ohne Anmeldung.">
+  <meta property="og:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Angaben ausfüllen, Auswertung direkt auf der Seite erhalten – kostenlos und unverbindlich.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&h=630&q=70">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Krankenkassenvergleich 2027 Schweiz: alle Kassen | Kassenklar">
-  <meta name="twitter:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Prämie berechnen und Kasse wechseln – kostenlos, ohne Anmeldung.">
+  <meta name="twitter:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Angaben ausfüllen, Auswertung direkt auf der Seite erhalten – kostenlos und unverbindlich.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&h=630&q=70">
 
   <script type="application/ld+json">
@@ -108,7 +108,7 @@
         "name": "Was ist ein Krankenkassenvergleich?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch; unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. Kassenklar vergleicht alle zugelassenen Versicherer mit den offiziellen Prämiendaten 2027 des Bundesamts für Gesundheit, kostenlos und ohne Anmeldung."
+          "text": "Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch; unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. Kassenklar vergleicht alle zugelassenen Versicherer mit den offiziellen Prämiendaten 2027 des Bundesamts für Gesundheit, kostenlos und unverbindlich."
         }
       },
       {
@@ -181,6 +181,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Das Hero-Foto ist das grösste Element beim Laden. Als CSS-Hintergrund
+       fände der Browser es erst nach dem Stylesheet – so holt er es sofort.
+       Die Adressen müssen exakt denen in css/style.css entsprechen. -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45" media="(max-width: 700px)" fetchpriority="high">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1527095655060-4026c4af2b25?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55" media="(min-width: 701px)" fetchpriority="high">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/lp.css">
   <link rel="stylesheet" href="/css/theme.css">
@@ -207,6 +212,8 @@
   </div>
 </header>
 
+<main>
+
 <!-- ============ HERO ============ -->
 <section class="hero auf-dunkel hero--start">
   <div class="container hero-inner">
@@ -217,8 +224,8 @@
       <ul class="hero-benefits">
         <li>Alle 34 Versicherer, alle Prämienregionen</li>
         <li>Offizielle BAG-Daten, keine Schätzungen</li>
-        <li>Ohne Anmeldung, ohne Kosten</li>
-        <li>Beratung nur, wenn Sie darum bitten</li>
+        <li>Auswertung sofort auf der Seite, auf Wunsch per E-Mail</li>
+        <li>Kostenlos und unverbindlich</li>
       </ul>
       <div class="hero-cta">
         <a href="#rechner" class="btn btn-gold btn-big">Prämie berechnen</a>
@@ -241,13 +248,16 @@
   </div>
 </section>
 
-<!-- ============ RECHNER ============ -->
+<!-- ============ RECHNER ============
+     Vergleich direkt auf der Seite, mit den BAG-Prämien aus data/praemien.js.
+     Die Auswertung erscheint erst, nachdem das Formular vollständig ausgefüllt,
+     die Einwilligung erteilt und die Anfrage übermittelt ist (js/app.js). -->
 <section id="ablauf" class="section section-alt">
   <div class="container">
     <h2>Drei Schritte, mehr nicht</h2>
     <div class="steps">
-      <div class="step"><span class="step-num">1</span><h3>Berechnen</h3><p>Prämie online berechnen – ohne Anmeldung, ohne Angabe von Kontaktdaten.</p></div>
-      <div class="step"><span class="step-num">2</span><h3>Anfrage senden</h3><p>Gefällt Ihnen ein Angebot? Senden Sie uns unverbindlich Ihre Kontaktangaben.</p></div>
+      <div class="step"><span class="step-num">1</span><h3>Angaben ausfüllen</h3><p>Wohnort, Altersgruppe, Franchise und Modell wählen, heutige Kasse und Kontaktangaben eintragen.</p></div>
+      <div class="step"><span class="step-num">2</span><h3>Auswertung erhalten</h3><p>Nach dem Absenden sehen Sie Ihre Auswertung sofort hier auf der Seite – auf Wunsch zusätzlich per E-Mail.</p></div>
       <div class="step"><span class="step-num">3</span><h3>Beratung erhalten</h3><p>Ein lizenzierter Versicherungsvermittler meldet sich persönlich bei Ihnen, prüft Ihre Situation und holt die Offerten ein.</p></div>
     </div>
   </div>
@@ -255,13 +265,20 @@
 <section id="rechner" class="section">
   <div class="container">
     <h2>Ihre Prämie, in einer Minute</h2>
+    <p class="center-note">Füllen Sie die drei Schritte aus. Danach sehen Sie Ihre persönliche Auswertung mit den günstigsten Krankenkassen Ihrer Prämienregion direkt hier auf der Seite – auf Wunsch zusätzlich per E-Mail.</p>
 
     <div class="tab-panel active" id="panel-kk">
-      <div class="calc-card">
+      <!-- onsubmit: Die Skripte laden mit "defer". Wird abgesendet, bevor
+           js/app.js bereit ist, darf der Browser das Formular nicht selbst
+           verschicken – die Angaben stünden sonst in der Adresszeile. -->
+      <form class="calc-card" id="kkForm" novalidate onsubmit="return false">
         <div class="calc-grid">
+          <div class="field span-2">
+            <p class="feld-gruppe feld-gruppe--erste"><b>1</b> Ihre Prämie <span>– Wohnort, Alter, Franchise und Modell</span></p>
+          </div>
           <div class="field">
-            <label for="kkPlz">Postleitzahl (Wohnort)</label>
-            <input type="text" id="kkPlz" inputmode="numeric" maxlength="4" placeholder="z. B. 8001" autocomplete="postal-code">
+            <label for="kkPlz">Postleitzahl (Wohnort) *</label>
+            <input type="text" id="kkPlz" inputmode="numeric" maxlength="4" placeholder="z. B. 8001" autocomplete="postal-code" required>
             <div class="field-hint" id="kkPlzInfo"></div>
           </div>
           <div class="field" id="kkOrtField" hidden>
@@ -299,9 +316,69 @@
               <option value="3">Flexibles Modell</option>
             </select>
           </div>
+
+          <div class="field span-2">
+            <p class="feld-gruppe"><b>2</b> Ihre heutige Kasse <span>– damit die Auswertung zeigt, was ein Wechsel bringt</span></p>
+          </div>
+          <div class="field span-2">
+            <label for="kkKasse">Aktuelle Krankenkasse (Grundversicherung) *</label>
+            <select id="kkKasse" required>
+              <option value="">Bitte wählen …</option>
+            </select>
+            <div class="field-hint">Steht auf Ihrer Police oder Prämienrechnung.</div>
+          </div>
+
+          <div class="field span-2">
+            <p class="feld-gruppe"><b>3</b> Ihre Kontaktangaben <span>– für Ihre Auswertung und die kostenlose Beratung</span></p>
+          </div>
+          <div class="field">
+            <label for="kkAnrede">Anrede</label>
+            <select id="kkAnrede" autocomplete="honorific-prefix">
+              <option>Frau</option><option>Herr</option><option>Keine Angabe</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="kkVorname">Vorname *</label>
+            <input type="text" id="kkVorname" required autocomplete="given-name">
+          </div>
+          <div class="field">
+            <label for="kkNachname">Nachname *</label>
+            <input type="text" id="kkNachname" required autocomplete="family-name">
+          </div>
+          <div class="field">
+            <label for="kkTelefon">Telefon *</label>
+            <input type="tel" id="kkTelefon" required placeholder="079 123 45 67" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="kkEmail">E-Mail *</label>
+            <input type="email" id="kkEmail" required placeholder="name@beispiel.ch" autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="kkZeit">Wann sind Sie am besten erreichbar?</label>
+            <select id="kkZeit">
+              <option>Egal / jederzeit</option>
+              <option>Vormittag (8–12 Uhr)</option>
+              <option>Nachmittag (12–17 Uhr)</option>
+              <option>Abend (17–20 Uhr)</option>
+            </select>
+          </div>
+          <div class="field span-2">
+            <label class="check consent">
+              <input type="checkbox" id="kkConsent" required>
+              Ich bin einverstanden, dass Kassenklar meine Angaben und meine Auswertung an einen lizenzierten Versicherungsvermittler weitergibt und dieser mich telefonisch oder per E-Mail kontaktiert. Mehr dazu in der <a href="/datenschutz.html">Datenschutzerklärung</a>. *
+            </label>
+          </div>
+          <div class="field span-2">
+            <label class="check mail-option">
+              <input type="checkbox" id="kkPerMail" checked>
+              Auswertung zusätzlich per E-Mail an mich senden
+            </label>
+          </div>
         </div>
-        <button class="btn btn-primary btn-big btn-block" id="kkBerechnen">Prämien 2027 vergleichen</button>
-      </div>
+        <button type="submit" class="btn btn-primary btn-big btn-block" id="kkBerechnen">Auswertung anzeigen</button>
+        <p class="form-error" id="kkError" hidden></p>
+        <p class="form-fussnote">* Pflichtfeld. Kostenlos und unverbindlich – Sie gehen keine Verpflichtung ein.</p>
+      </form>
       <div id="kkResultat" class="results" hidden></div>
     </div>
 
@@ -352,7 +429,7 @@
     <h2>Sprechen wir darüber</h2>
     <p class="center-note">Füllen Sie das Formular aus – ein lizenzierter Versicherungsvermittler meldet sich innert 24 Stunden bei Ihnen.</p>
 
-    <form id="leadForm" class="lead-card" novalidate>
+    <form id="leadForm" class="lead-card" novalidate onsubmit="return false">
       <div id="leadBerechnung" class="lead-summary" hidden></div>
       <div class="calc-grid">
         <div class="field">
@@ -461,7 +538,7 @@
 
       <details>
         <summary>Was ist ein Krankenkassenvergleich?</summary>
-        <p>Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch – unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. Kassenklar vergleicht alle zugelassenen Versicherer mit den <strong>offiziellen Prämiendaten 2027</strong> des Bundesamts für Gesundheit, kostenlos und ohne Anmeldung.</p>
+        <p>Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch – unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. Kassenklar vergleicht alle zugelassenen Versicherer mit den <strong>offiziellen Prämiendaten 2027</strong> des Bundesamts für Gesundheit, kostenlos und unverbindlich.</p>
       </details>
 
       <details>
@@ -528,20 +605,22 @@
 </section>
 
 <!-- ============ FOOTER ============ -->
+</main>
+
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div>
         <div class="logo footer-logo"><svg class="logo-marke" viewBox="0 0 40 40" width="36" height="36" role="img" aria-label="Kassenklar" focusable="false"><title>Kassenklar</title><rect x="9.6" y="6" width="3.6" height="28" fill="currentColor"/><path d="M13.2 20 L26.2 6 L31.4 6 L18.4 20 Z" fill="#b0926f"/><path d="M13.2 20 L26.2 34 L31.4 34 L18.4 20 Z" fill="currentColor"/></svg> Kassen<strong>klar</strong></div>
-        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
+        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos und unverbindlich.</p>
       </div>
       <div>
-        <h4>Datenquelle</h4>
+        <h2>Datenquelle</h2>
         <p>Krankenkassen-Prämien 2027: Bundesamt für Gesundheit (BAG),<br>
         <a href="https://www.priminfo.admin.ch" target="_blank" rel="noopener">priminfo.admin.ch</a></p>
       </div>
       <div>
-        <h4>Rechtliches</h4>
+        <h2>Rechtliches</h2>
         <p>Alle Angaben ohne Gewähr. Der Leistungskatalog der Grundversicherung ist gesetzlich festgelegt und bei allen Kassen identisch. Kassenklar ist eine Vergleichsplattform und selbst kein Versicherungsvermittler: Ihre Angaben gehen an einen lizenzierten Vermittler, der Sie berät. Einzelheiten in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</p>
       </div>
     </div>
@@ -549,9 +628,34 @@
   </div>
 </footer>
 
-<script src="data/plz.js"></script>
-<script src="data/praemien.js"></script>
-<script src="js/lead-core.js"></script>
-<script src="js/app.js"></script>
+<script src="js/lead-core.js" defer></script>
+<script>
+/* Prämien- und PLZ-Daten sind zusammen rund 250 KB. Mit dem Seitenaufbau
+   geladen, teilen sie sich auf dem Handy die Leitung mit dem Hero-Bild und
+   verzögern es um Sekunden. Gebraucht werden sie erst bei der ersten
+   Eingabe – deshalb kommen sie erst, wenn jemand scrollt, tippt oder
+   klickt, spätestens vier Sekunden nach dem Laden. Der Rechner (js/app.js)
+   folgt direkt danach, damit er beim Start alle Daten vorfindet.
+   Nicht beim Leerlauf: Auf langsamen Handys malt der Browser das
+   Hero-Bild oft erst danach, und die Daten bremsen es wieder aus.
+   async = false hält die Reihenfolge ein. */
+(function () {
+  var geladen = false;
+  function laden() {
+    if (geladen) return;
+    geladen = true;
+    ["data/plz.js", "data/praemien.js", "js/app.js"].forEach(function (src) {
+      var s = document.createElement("script");
+      s.src = src;
+      s.async = false;
+      document.body.appendChild(s);
+    });
+  }
+  ["scroll", "pointerdown", "touchstart", "keydown", "focusin"].forEach(function (ereignis) {
+    window.addEventListener(ereignis, laden, { once: true, passive: true, capture: true });
+  });
+  window.addEventListener("load", function () { setTimeout(laden, 4000); });
+})();
+</script>
 </body>
 </html>

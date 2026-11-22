@@ -66,6 +66,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Das Hero-Foto ist das grösste Element beim Laden. Als CSS-Hintergrund
+       fände der Browser es erst nach dem Stylesheet – so holt er es sofort.
+       Die Adressen müssen exakt denen in css/style.css entsprechen. -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&crop=entropy&w=720&h=900&q=45" media="(max-width: 700px)" fetchpriority="high">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&crop=entropy&w=1440&h=810&q=55" media="(min-width: 701px)" fetchpriority="high">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/lp.css">
   <link rel="stylesheet" href="/css/theme.css">
@@ -89,6 +94,8 @@
     </div>
   </div>
 </header>
+
+<main>
 
 <!-- ============ HERO + FORMULAR ============ -->
 <section class="lp-hero lp-hero--neuzuzueger">
@@ -139,7 +146,7 @@
         Ausfüllen – wir melden uns innert 24 Stunden mit Ihrer persönlichen Übersicht.
       </p>
 
-      <form id="lpForm" novalidate>
+      <form id="lpForm" novalidate onsubmit="return false">
         <div class="calc-grid">
           <div class="field">
             <label for="fVorname" data-de="Vorname *" data-en="First name *">Vorname *</label>
@@ -339,6 +346,8 @@
   </div>
 </section>
 
+</main>
+
 <footer class="footer">
   <div class="container">
     <p class="copyright">
@@ -350,9 +359,12 @@
   </div>
 </footer>
 
-<script src="../js/lead-core.js"></script>
-<script src="../js/lp.js"></script>
+<script src="../js/lead-core.js" defer></script>
+<script src="../js/lp.js" defer></script>
 <script>
+/* Die Skripte oben laden mit defer und laufen erst nach dem Aufbau
+   der Seite. DOMContentLoaded kommt danach – vorher gibt es LP noch nicht. */
+document.addEventListener("DOMContentLoaded", function () {
   LP.init({
     formId: "lpForm",
     kampagne: "neuzuzueger",
@@ -360,6 +372,7 @@
     prioritaet: "Hoch (gesetzliche Frist)",
     danke: "danke.html"
   });
+});
 </script>
 
 </body>

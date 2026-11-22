@@ -124,6 +124,7 @@ var SPALTEN = [
   'Sprache',
   'Interessen',
   'Berechnung',
+  'Auswertung',
   'Bemerkung',
   'Einwilligung',
   'Kontaktversuche',
@@ -134,9 +135,11 @@ var SPALTEN = [
 var STATUS_WERTE = ['Neu', 'Kontaktiert', 'Termin', 'Offerte', 'Abschluss', 'Verloren'];
 
 /* Verwaltungsfelder, die den Interessenten nichts angehen. Die Einwilligung
-   steht in der Kundenmail als Satz, nicht als Tabellenzeile. */
+   steht in der Kundenmail als Satz, nicht als Tabellenzeile. Die Auswertung
+   bekommt in der Kundenmail einen eigenen Abschnitt – und nur, wenn die
+   Person «per E-Mail zusenden» angekreuzt hat. */
 var NICHT_ANZEIGEN = ['Website', 'Priorität', 'Kampagne', 'Quelle', 'Sprache', 'Zeitpunkt',
-                      'Einwilligung', 'Einwilligungstext'];
+                      'Einwilligung', 'Einwilligungstext', 'Auswertung', 'Auswertung per E-Mail'];
 
 /* ======================== Webhook-Einstieg ============================== */
 
@@ -155,7 +158,9 @@ function doPost(e) {
     }
 
     leadMelden(daten, zeile);
-    if (KONFIG.AUTO_ANTWORT && daten['E-Mail']) bestaetigungSenden(daten);
+    /* _ohneBestaetigung: Folgemeldung derselben Person (etwa «Offerte
+       anfordern» in der Auswertung) – sie hat ihre Bestätigung schon. */
+    if (KONFIG.AUTO_ANTWORT && daten['E-Mail'] && !daten._ohneBestaetigung) bestaetigungSenden(daten);
     return antwort({ ok: true, zeile: zeile });
   } catch (fehler) {
     // Fehler protokollieren, aber nie den Lead verlieren: Rohdaten sichern.
@@ -633,7 +638,7 @@ var KONTAKT_FELDER = ['Telefon', 'E-Mail', 'PLZ/Ort', 'Erreichbarkeit', 'Sprache
 var SITUATION_FELDER = ['Personen', 'Kinder', 'Geburtstermin', 'Einreise', 'Alter', 'Situation',
                         'Grundversicherung', 'Franchise', 'Zusatzversicherung', 'Interessen', 'Bemerkung'];
 /* Felder, die anderswo in der Mail stehen und in keiner Tabelle wiederholt werden. */
-var EIGENS_FELDER = ['Anrede', 'Vorname', 'Nachname', 'Berechnung', 'Einwilligung', 'Einwilligungstext',
+var EIGENS_FELDER = ['Anrede', 'Vorname', 'Nachname', 'Berechnung', 'Auswertung', 'Einwilligung', 'Einwilligungstext',
                      'Website', 'Priorität', 'Kampagne', 'Quelle', 'Zeitpunkt', 'email'];
 
 /* Zeilen eines Abschnitts: [{name, wert}] – nur ausgefüllte Felder, in fester Reihenfolge. */
@@ -739,6 +744,115 @@ function linkHtml(href, text) {
          htmlSchuetzen(text) + '</a>';
 }
 
+/* ======================== Auswertung =================================== */
+/**
+ * Die Startseite zeigt nach dem Absenden eine Auswertung: drei Kennzahlen
+ * und die Rangliste der günstigsten Kassen. Dieselben Zahlen reisen im
+ * Feld _auswertung mit (js/app.js, auswertungDaten) und werden hier zur
+ * Tabelle – in der Lead-Mail immer, in der Kundenmail nur auf Wunsch.
+ *
+ * Alles daraus ist Fremdeingabe: auf feste Längen und Zeilenzahl gekürzt
+ * und vor dem Einsetzen ins HTML entschärft.
+ */
+function kurz(wert, max) {
+  var s = String(wert == null ? '' : wert).replace(/\s+/g, ' ').trim();
+  return s.length > max ? s.slice(0, max - 1) + '…' : s;
+}
+
+function auswertungLesen(daten) {
+  var a = daten && daten._auswertung;
+  if (!a || typeof a !== 'object') return null;
+
+  var zeilen = (Array.isArray(a.zeilen) ? a.zeilen : []).slice(0, 15).map(function (z) {
+    z = z || {};
+    return {
+      rang: kurz(z.rang, 4), kasse: kurz(z.kasse, 60), modell: kurz(z.modell, 40),
+      monat: kurz(z.monat, 16), jahr: kurz(z.jahr, 16), heute: z.heute === true
+    };
+  }).filter(function (z) { return z.kasse && z.monat; });
+  if (!zeilen.length) return null;
+
+  return {
+    jahr: kurz(a.jahr, 4).replace(/[^0-9]/g, ''),
+    titel: kurz(a.titel, 160),
+    ort: kurz(a.ort, 120),
+    kennzahlen: (Array.isArray(a.kennzahlen) ? a.kennzahlen : []).slice(0, 3).map(function (k) {
+      k = k || {};
+      return { name: kurz(k.name, 40), wert: kurz(k.wert, 30), sub: kurz(k.sub, 200) };
+    }).filter(function (k) { return k.name && k.wert; }),
+    zeilen: zeilen,
+    quelle: kurz(a.quelle, 160)
+  };
+}
+
+/* Kennzahlen und Rangliste als zwei Tabellen. */
+function auswertungHtml(a) {
+  var kopf = '<div style="font-size:13px;line-height:1.5;color:' + FARBE.grau + ';padding-bottom:12px;">' +
+    htmlSchuetzen(a.titel) + (a.ort ? '<br>' + htmlSchuetzen(a.ort) : '') + '</div>';
+
+  var kennzahlen = a.kennzahlen.length
+    ? zeilenTabelleHtml(a.kennzahlen.map(function (k) {
+        return {
+          name: k.name, wert: k.wert,
+          html: '<span style="font-size:16px;color:' + FARBE.petrol + ';">' + htmlSchuetzen(k.wert) + '</span>' +
+                (k.sub ? '<div style="font-size:12px;font-weight:400;line-height:1.5;color:' + FARBE.grau + ';">' +
+                         htmlSchuetzen(k.sub) + '</div>' : '')
+        };
+      }))
+    : '';
+
+  var zelle = 'padding:9px 10px;font-size:13px;line-height:1.45;vertical-align:top;';
+  var kopfZelle = 'padding:8px 10px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600;' +
+                  'color:' + FARBE.grau + ';background-color:' + FARBE.flaeche + ';border-bottom:1px solid ' + FARBE.linie + ';';
+  var zeilen = a.zeilen.map(function (z, i) {
+    var rand = i === a.zeilen.length - 1 ? '' : 'border-bottom:1px solid ' + FARBE.linie + ';';
+    var grund = z.heute ? 'background-color:' + FARBE.creme + ';' : '';
+    return '<tr>' +
+      '<td style="' + zelle + rand + grund + 'color:' + FARBE.grau + ';width:28px;">' + htmlSchuetzen(z.rang) + '</td>' +
+      '<td style="' + zelle + rand + grund + 'color:' + FARBE.slate + ';">' +
+        '<strong>' + htmlSchuetzen(z.kasse) + '</strong>' +
+        '<div style="font-size:12px;color:' + FARBE.grau + ';">' + htmlSchuetzen(z.modell) +
+          (z.heute ? ' · <span style="color:' + FARBE.petrol + ';font-weight:600;">Ihre heutige Kasse</span>' : '') +
+        '</div></td>' +
+      '<td style="' + zelle + rand + grund + 'color:' + FARBE.petrol + ';font-weight:700;white-space:nowrap;text-align:right;">' +
+        htmlSchuetzen(z.monat) + '</td>' +
+      '<td style="' + zelle + rand + grund + 'color:' + FARBE.grau + ';white-space:nowrap;text-align:right;">' +
+        htmlSchuetzen(z.jahr) + '</td>' +
+    '</tr>';
+  }).join('');
+
+  var rangliste =
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" ' +
+      'style="margin-top:14px;border:1px solid ' + FARBE.linie + ';border-radius:8px;">' +
+      '<tr>' +
+        '<td style="' + kopfZelle + '">#</td>' +
+        '<td style="' + kopfZelle + '">Krankenkasse / Modell</td>' +
+        '<td style="' + kopfZelle + 'text-align:right;">pro Monat</td>' +
+        '<td style="' + kopfZelle + 'text-align:right;">pro Jahr</td>' +
+      '</tr>' + zeilen +
+    '</table>';
+
+  var fuss = '<div style="font-size:12px;line-height:1.5;color:' + FARBE.grau + ';padding-top:10px;">' +
+    'Die Leistungen der Grundversicherung sind bei allen Kassen gesetzlich identisch.' +
+    (a.quelle ? ' Quelle: ' + htmlSchuetzen(a.quelle) + '.' : '') + ' Angaben ohne Gewähr.</div>';
+
+  return kopf + kennzahlen + rangliste + fuss;
+}
+
+/* Dieselbe Auswertung für Mailprogramme ohne HTML. */
+function auswertungAlsText(a) {
+  var zeilen = [a.titel, a.ort].filter(String).map(function (z) { return '  ' + z; });
+  a.kennzahlen.forEach(function (k) {
+    zeilen.push('  ' + k.name + ': ' + k.wert + (k.sub ? ' – ' + k.sub : ''));
+  });
+  zeilen.push('');
+  a.zeilen.forEach(function (z) {
+    zeilen.push('  ' + z.rang + '. ' + z.kasse + ' – ' + z.modell + ': ' + z.monat + '/Monat (' + z.jahr + '/Jahr)' +
+                (z.heute ? ' ← Ihre heutige Kasse' : ''));
+  });
+  return zeilen.join('\n');
+}
+
 /**
  * Die Lead-Mail an dich. Aufbau von oben nach unten:
  *   Wer – Anrufen – Kontakt – Situation – Berechnung – Weitere Angaben –
@@ -760,6 +874,7 @@ function leadMelden(daten, zeile) {
   var website = feldWert(daten, 'Website') || 'SwissPremia';
   var berechnung = feldWert(daten, 'Berechnung');
   if (istPlatzhalter(berechnung)) berechnung = '';
+  var auswertung = auswertungLesen(daten);
   var einw = einwilligungStatus(daten, eingang);
 
   var kontakt = [
@@ -810,6 +925,7 @@ function leadMelden(daten, zeile) {
     textAbschnitt('Kontakt', kontakt) +
     textAbschnitt('Situation', situation) +
     (berechnung ? '\nBERECHNUNG AUF DER WEBSITE\n  ' + berechnung + '\n' : '') +
+    (auswertung ? '\nAUSWERTUNG, DIE DIE PERSON GESEHEN HAT\n' + auswertungAlsText(auswertung) + '\n' : '') +
     textAbschnitt('Weitere Angaben', weitere) +
     einwText +
     textAbschnitt('Herkunft', herkunft) +
@@ -875,6 +991,7 @@ function leadMelden(daten, zeile) {
     abschnittMitTabelleHtml('Kontakt', kontakt) +
     abschnittMitTabelleHtml('Situation', situation) +
     berechnungHtml +
+    (auswertung ? abschnittHtml('Auswertung, die die Person gesehen hat') + auswertungHtml(auswertung) : '') +
     abschnittMitTabelleHtml('Weitere Angaben', weitere) +
     abschnittHtml('Einwilligung') + einwHtml +
     abschnittMitTabelleHtml('Herkunft', herkunft);
@@ -898,9 +1015,26 @@ function bestaetigungSenden(daten) {
   var englisch = String(daten.Sprache || '').toLowerCase().indexOf('eng') === 0;
   var uebersicht = angabenAuflisten(daten, false);
 
+  /* Auswertung von der Startseite: Sie kommt nur in die Kundenmail, wenn
+     die Person «per E-Mail zusenden» angekreuzt hat. Die Startseite gibt es
+     nur auf Deutsch, die englische Fassung bleibt deshalb ohne. */
+  var gerechnet = !englisch && !!auswertungLesen(daten);
+  var auswertung = gerechnet && feldWert(daten, 'Auswertung per E-Mail') === 'Ja' ? auswertungLesen(daten) : null;
+  var einstieg = auswertung
+    ? 'Vielen Dank für Ihre Anfrage bei SwissPremia. Hier ist Ihre Auswertung, so wie Sie sie auf der Website gesehen haben.'
+    : 'Vielen Dank für Ihre Anfrage bei SwissPremia – sie ist bei uns eingegangen.';
+  var naechstes = gerechnet
+    ? 'Wir leiten Ihre Anfrage zusammen mit der Auswertung an einen lizenzierten Versicherungsvermittler weiter, ' +
+      'der sich in Kürze bei Ihnen meldet. Er prüft mit Ihnen Modell und Franchise und übernimmt auf Wunsch ' +
+      'Kündigung und Wechsel. '
+    : 'Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
+      'des Bundes zusammen und leiten Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich in Kürze bei Ihnen meldet. ';
+
   var betreff = englisch
     ? 'Your health insurance comparison – we have received your request'
-    : 'Ihr Krankenkassen-Vergleich – Ihre Anfrage ist eingegangen';
+    : auswertung
+      ? 'Ihre Krankenkassen-Auswertung ' + auswertung.jahr + ' – SwissPremia'
+      : 'Ihr Krankenkassen-Vergleich – Ihre Anfrage ist eingegangen';
 
   var text = englisch
     ? 'Hello ' + (daten.Vorname || '') + ',\n\n' +
@@ -914,12 +1048,16 @@ function bestaetigungSenden(daten) {
       'You can withdraw this consent at any time – a short reply to this email is enough.\n\n' +
       'Kind regards\n' + KONFIG.ABSENDER_NAME + '\n' + (KONFIG.ABSENDER_EMAIL || '')
     : 'Guten Tag ' + (daten.Vorname || '') + '\n\n' +
-      'Vielen Dank für Ihre Anfrage bei SwissPremia – sie ist bei uns eingegangen.\n\n' +
+      einstieg + '\n\n' +
+      (auswertung
+        ? 'IHRE AUSWERTUNG\n' + auswertungAlsText(auswertung) + '\n\n' +
+          '  Die Leistungen der Grundversicherung sind bei allen Kassen gesetzlich identisch.' +
+          (auswertung.quelle ? ' Quelle: ' + auswertung.quelle + '.' : '') + ' Angaben ohne Gewähr.\n\n'
+        : '') +
       'IHRE ANGABEN\n' + uebersicht + '\n\n' +
       'Stimmt etwas nicht oder fehlt eine Angabe? Antworten Sie einfach auf diese E-Mail.\n\n' +
       'WAS JETZT PASSIERT\n' +
-      'Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
-      'des Bundes zusammen und leiten Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich in Kürze bei Ihnen meldet. ' +
+      naechstes +
       'Die Beratung ist für Sie kostenlos und unverbindlich.\n\n' +
       'Mit dem Absenden haben Sie der Weitergabe an den Vermittler zugestimmt. ' +
       'Diese Einwilligung können Sie jederzeit widerrufen – eine kurze Antwort auf diese E-Mail genügt.\n\n' +
@@ -940,12 +1078,12 @@ function bestaetigungSenden(daten) {
       'You can withdraw this consent at any time – a short reply to this email is enough.</p>'
     : '<p style="margin:0 0 14px 0;font-size:17px;color:' + FARBE.slate + ';">Guten Tag ' +
         htmlSchuetzen(daten.Vorname || '') + '</p>' +
-      '<p style="margin:0;">Vielen Dank für Ihre Anfrage – sie ist bei uns eingegangen.</p>' +
+      '<p style="margin:0;">' + htmlSchuetzen(einstieg) + '</p>' +
+      (auswertung ? abschnittHtml('Ihre Auswertung') + auswertungHtml(auswertung) : '') +
       abschnittHtml('Ihre Angaben') + tabelle +
       kastenHtml('<strong>Stimmt etwas nicht oder fehlt eine Angabe?</strong> Antworten Sie einfach auf diese E-Mail – sie erreicht uns direkt.') +
       abschnittHtml('Was jetzt passiert') +
-      '<p style="margin:0;">Wir stellen Ihren persönlichen Vergleich auf Basis der offiziellen Prämiendaten ' +
-      'des Bundes zusammen und leiten Ihre Anfrage an einen lizenzierten Versicherungsvermittler weiter, der sich in Kürze bei Ihnen meldet. ' +
+      '<p style="margin:0;">' + htmlSchuetzen(naechstes) +
       'Die Beratung ist für Sie kostenlos und unverbindlich.</p>' +
       '<p style="margin:14px 0 0 0;font-size:13px;color:' + FARBE.grau + ';">Mit dem Absenden haben Sie der Weitergabe an den Vermittler zugestimmt. ' +
       'Diese Einwilligung können Sie jederzeit widerrufen – eine kurze Antwort auf diese E-Mail genügt.</p>';
@@ -1059,10 +1197,29 @@ function testLead() {
     Berechnung: 'Offerten-Anfrage Krankenkasse 2026: Agrisano – Telmed, CHF 380.20/Monat ' +
                 "(PLZ 8001, Erwachsene (26+), Franchise CHF 2'500, ohne Unfall).",
     Sprache: 'Deutsch',
+    /* Auswertung von der Startseite – in der Kundenmail nur bei «Ja». */
+    'Auswertung per E-Mail': 'Ja',
+    Auswertung: '1. Beispielkasse A – Telmed / digitales Modell: CHF 503.50/Mt.',
+    _auswertung: {
+      jahr: 2027,
+      titel: "Grundversicherung (OKP) 2027, Erwachsene (26+), Franchise CHF 2'500, ohne Unfall, alle Modelle",
+      ort: '8001 Zürich (ZH), Prämienregion ZH 1',
+      kennzahlen: [
+        { name: 'Günstigstes Angebot', wert: 'CHF 503.50 /Mt.', sub: 'Beispielkasse A · Telmed / digitales Modell' },
+        { name: 'Ihre heutige Kasse 2027', wert: 'CHF 530.90 /Mt.', sub: 'Beispielkasse C · Hausarzt- / HMO-Modell' },
+        { name: 'Sparpotenzial pro Jahr', wert: 'CHF 329', sub: 'günstigstes Angebot gegenüber Beispielkasse C, bei gleicher Franchise' }
+      ],
+      zeilen: [
+        { rang: 1, kasse: 'Beispielkasse A', modell: 'Telmed / digitales Modell', monat: 'CHF 503.50', jahr: "CHF 6'042", heute: false },
+        { rang: 2, kasse: 'Beispielkasse B', modell: 'Flexibles Modell', monat: 'CHF 503.60', jahr: "CHF 6'043", heute: false },
+        { rang: 14, kasse: 'Beispielkasse C', modell: 'Hausarzt- / HMO-Modell', monat: 'CHF 530.90', jahr: "CHF 6'371", heute: true }
+      ],
+      quelle: 'Bundesamt für Gesundheit (BAG), opendata.swiss / priminfo.admin.ch, Prämien 2027'
+    },
     Einwilligung: 'Ja',
-    Einwilligungstext: 'Ich bin einverstanden, dass SwissPremia meine Angaben an einen lizenzierten ' +
-                       'Versicherungsvermittler weitergibt und dieser mich telefonisch oder per E-Mail ' +
-                       'kontaktiert. Mehr dazu in der Datenschutzerklärung.'
+    Einwilligungstext: 'Ich bin einverstanden, dass SwissPremia meine Angaben und meine Auswertung an einen ' +
+                       'lizenzierten Versicherungsvermittler weitergibt und dieser mich telefonisch oder per ' +
+                       'E-Mail kontaktiert. Mehr dazu in der Datenschutzerklärung.'
   };
   var zeile = KONFIG.SHEET_SPEICHERN ? leadSpeichern(beispiel) : 0;
   leadMelden(beispiel, zeile);

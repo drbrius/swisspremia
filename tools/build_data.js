@@ -147,7 +147,15 @@ for (let i = 1; i < zeilen.length; i++) {
 }
 console.log("Zeilen verwendet:", n, "| uebersprungen:", uebersprungen, "| Jahr:", jahr, "| Gruppen:", gruppen.size);
 
+/* Zwei Fassungen:
+     praemien  – je Modell die TOP_JE_MODELL günstigsten Kassen. Klein genug,
+                 um mit der Startseite zu laden; reicht für Tabellen.
+     voll      – je Kanton ALLE Kassen und Modelle (data/voll/<KT>.js). Die
+                 Auswertung der Startseite lädt die Datei des Kantons nach,
+                 sobald die Postleitzahl ihn verrät – nur so findet sie jede
+                 heutige Kasse wieder (js/app.js, ladeVoll). */
 const praemien = {};
+const voll = {};
 for (const [gkey, g] of gruppen) {
   const jeModell = [[], [], [], []];
   for (const [vkey, prem] of g) {
@@ -158,6 +166,9 @@ for (const [gkey, g] of gruppen) {
   for (const arr of jeModell) { arr.sort((a, b) => a[2] - b[2]); out.push(...arr.slice(0, TOP_JE_MODELL)); }
   out.sort((a, b) => a[2] - b[2]);
   praemien[gkey] = out;
+
+  const kanton = gkey.slice(0, 2);
+  (voll[kanton] = voll[kanton] || {})[gkey] = [].concat(...jeModell).sort((a, b) => a[2] - b[2]);
 }
 
 const versicherer = {};
@@ -172,12 +183,27 @@ if (ohneName.length) console.log("ACHTUNG, ohne Namen:", ohneName.join(", "));
 const daten = {
   jahr,
   quelle: `Bundesamt für Gesundheit (BAG), opendata.swiss / priminfo.admin.ch, Prämien ${jahr}`,
+  /* Wie stark "praemien" gekürzt ist und für welche Kantone es die
+     vollständige Liste gibt – die Auswertung richtet ihre Aussagen danach. */
+  topJeModell: TOP_JE_MODELL,
+  voll: Object.keys(voll).sort(),
   modelle: MODELLE,
   versicherer,
   praemien
 };
 fs.writeFileSync(path.join(AUSGABE, "praemien.js"),
   `// Quelle: BAG priminfo.admin.ch – Prämien ${jahr} (automatisch generiert)\nwindow.KK_DATA = ` + JSON.stringify(daten) + ";\n");
+
+const VOLL_ORDNER = path.join(AUSGABE, "voll");
+fs.mkdirSync(VOLL_ORDNER, { recursive: true });
+let vollBytes = 0;
+for (const kanton of Object.keys(voll)) {
+  const inhalt = `// Quelle: BAG priminfo.admin.ch – Prämien ${jahr}, Kanton ${kanton}, alle Kassen (automatisch generiert)\n` +
+    "window.KK_VOLL = Object.assign(window.KK_VOLL || {}, " + JSON.stringify(voll[kanton]) + ");\n";
+  fs.writeFileSync(path.join(VOLL_ORDNER, kanton + ".js"), inhalt);
+  vollBytes += inhalt.length;
+}
+console.log("voll/: " + Object.keys(voll).length + " Kantone, zusammen " + (vollBytes / 1024).toFixed(0) + " KB");
 if (plzMap) {
   fs.writeFileSync(path.join(AUSGABE, "plz.js"),
     `// Quelle: BAG priminfo.admin.ch – Prämienregionen ${jahr} (automatisch generiert)\nwindow.PLZ_DATA = ` + JSON.stringify(plzMap) + ";\n");

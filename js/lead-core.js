@@ -150,7 +150,7 @@
   var NICHT_ANZEIGEN = [
     "_subject", "_template", "_autoresponse", "_honey", "email", "Website",
     "Priorität", "Kampagne", "Quelle", "Sprache", "Zeitpunkt",
-    "Einwilligung", "Einwilligungstext"
+    "Einwilligung", "Einwilligungstext", "Auswertung", "Auswertung per E-Mail"
   ];
 
   /* Vergleicht Feldnamen unempfindlich gegen beschädigte Sonderzeichen:

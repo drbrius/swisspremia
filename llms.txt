@@ -1,6 +1,6 @@
 # SwissPremia
 
-> Krankenkassenvergleich für die Schweiz. Vergleichsplattform mit den offiziellen Prämiendaten des Bundesamts für Gesundheit (BAG). Kostenlos, ohne Anmeldung. SwissPremia berät nicht selbst und ist kein Versicherungsvermittler; Beratungsanfragen werden an einen lizenzierten Versicherungsvermittler weitergegeben.
+> Krankenkassenvergleich für die Schweiz. Vergleichsplattform mit den offiziellen Prämiendaten des Bundesamts für Gesundheit (BAG). Kostenlos und unverbindlich; die persönliche Auswertung erscheint nach dem Absenden der Kontaktangaben direkt auf der Seite. SwissPremia berät nicht selbst und ist kein Versicherungsvermittler; Beratungsanfragen werden an einen lizenzierten Versicherungsvermittler weitergegeben.
 
 Sprache: Deutsch (Schweiz), Teile auf Englisch. Betreiber: SwissPremia, Lachen SZ. Kontakt: info@swisspremia.ch.
 

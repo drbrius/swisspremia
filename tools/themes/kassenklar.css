@@ -125,6 +125,10 @@ h3 { font-weight: 500; }
   background: var(--slate-tief);
   border-bottom: 1px solid rgba(247, 245, 241, .14);
 }
+/* Die Vorlage stellt Wortmarke und Menü auf eine gemeinsame Grundlinie. Hier
+   ist die Marke zweizeilig (Schriftzug über Unterzeile) – sie steht deshalb
+   als Block mittig neben dem Menü. */
+.topbar-inner { align-items: center; }
 .nav a { color: rgba(247, 245, 241, .74); letter-spacing: .1em; font-size: .8rem; }
 .nav a:hover { color: var(--gold); }
 .logo { color: var(--bg); }
@@ -188,6 +192,8 @@ h3 { font-weight: 500; }
   font-size: .54rem;
   letter-spacing: .26em;
   margin-top: 7px;
+  /* Die Vorlage rückt die Unterzeile neben die Wortmarke ein – hier steht sie darunter. */
+  margin-left: 0;
   color: rgba(247, 245, 241, .5);
 }
 .logo-marke { flex: none; }

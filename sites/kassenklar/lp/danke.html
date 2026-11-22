@@ -31,6 +31,8 @@
   </div>
 </header>
 
+<main>
+
 <section class="section">
   <div class="container narrow">
     <div class="success-card">
@@ -90,6 +92,8 @@
   </div>
 </section>
 
+</main>
+
 <footer class="footer">
   <div class="container">
     <p class="copyright">
@@ -101,9 +105,12 @@
   </div>
 </footer>
 
-<script src="../js/lead-core.js"></script>
-<script src="../js/lp.js"></script>
+<script src="../js/lead-core.js" defer></script>
+<script src="../js/lp.js" defer></script>
 <script>
+/* Die Skripte oben laden mit defer und laufen erst nach dem Aufbau
+   der Seite. DOMContentLoaded kommt danach – vorher gibt es LP noch nicht. */
+document.addEventListener("DOMContentLoaded", function () {
   LP.init({});
 
   /* Kontaktbuttons nur zeigen, wenn in js/lead-core.js hinterlegt. */
@@ -128,6 +135,7 @@
 
     if (sichtbar) document.getElementById("sofortKontakt").hidden = false;
   })();
+});
 </script>
 
 </body>

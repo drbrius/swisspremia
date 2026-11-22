@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Krankenkassenvergleich 2027 Schweiz: alle Kassen | SwissPremia</title>
-  <meta name="description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Prämie berechnen und Kasse wechseln – kostenlos, ohne Anmeldung.">
+  <meta name="description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Angaben ausfüllen, Auswertung direkt auf der Seite erhalten – kostenlos und unverbindlich.">
   <link rel="canonical" href="https://www.swisspremia.ch/">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="geo.region" content="CH">
@@ -18,11 +18,11 @@
   <meta property="og:site_name" content="SwissPremia">
   <meta property="og:url" content="https://www.swisspremia.ch/">
   <meta property="og:title" content="Krankenkassenvergleich 2027 Schweiz: alle Kassen | SwissPremia">
-  <meta property="og:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Prämie berechnen und Kasse wechseln – kostenlos, ohne Anmeldung.">
+  <meta property="og:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Angaben ausfüllen, Auswertung direkt auf der Seite erhalten – kostenlos und unverbindlich.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1573137785546-9d19e4f33f87?auto=format&fit=crop&w=1200&h=630&q=70">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Krankenkassenvergleich 2027 Schweiz: alle Kassen | SwissPremia">
-  <meta name="twitter:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Prämie berechnen und Kasse wechseln – kostenlos, ohne Anmeldung.">
+  <meta name="twitter:description" content="Krankenkassenvergleich 2027: alle Krankenkassen und Prämienregionen der Schweiz mit offiziellen BAG-Daten. Angaben ausfüllen, Auswertung direkt auf der Seite erhalten – kostenlos und unverbindlich.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1573137785546-9d19e4f33f87?auto=format&fit=crop&w=1200&h=630&q=70">
 
   <script type="application/ld+json">
@@ -108,7 +108,7 @@
         "name": "Was ist ein Krankenkassenvergleich?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch; unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. SwissPremia vergleicht alle zugelassenen Versicherer mit den offiziellen Prämiendaten 2027 des Bundesamts für Gesundheit, kostenlos und ohne Anmeldung."
+          "text": "Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch; unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. SwissPremia vergleicht alle zugelassenen Versicherer mit den offiziellen Prämiendaten 2027 des Bundesamts für Gesundheit, kostenlos und unverbindlich."
         }
       },
       {
@@ -228,7 +228,7 @@
       <p class="lead">Der Krankenkassenvergleich für die ganze Schweiz: alle Versicherer, alle Prämienregionen, mit den offiziellen Prämiendaten 2027 des Bundes (BAG&nbsp;/&nbsp;priminfo.admin.ch). Die Leistungen der Grundversicherung sind gesetzlich überall identisch – nur der Preis nicht.</p>
       <ul class="hero-benefits">
         <li>100&nbsp;% kostenlos &amp; unverbindlich</li>
-        <li>Ohne Anmeldung – keine Registrierung nötig</li>
+        <li>Auswertung sofort auf der Seite, auf Wunsch per E-Mail</li>
         <li>Offizielle Prämiendaten 2027 des BAG</li>
         <li>Persönliche Beratung durch Experten</li>
       </ul>
@@ -253,17 +253,27 @@
   </div>
 </section>
 
-<!-- ============ RECHNER ============ -->
+<!-- ============ RECHNER ============
+     Vergleich direkt auf der Seite, mit den BAG-Prämien aus data/praemien.js.
+     Die Auswertung erscheint erst, nachdem das Formular vollständig ausgefüllt,
+     die Einwilligung erteilt und die Anfrage übermittelt ist (js/app.js). -->
 <section id="rechner" class="section">
   <div class="container">
     <h2>Ihre Prämie 2027 berechnen</h2>
+    <p class="center-note">Füllen Sie die drei Schritte aus. Danach sehen Sie Ihre persönliche Auswertung mit den günstigsten Krankenkassen Ihrer Prämienregion direkt hier auf der Seite – auf Wunsch zusätzlich per E-Mail.</p>
 
     <div class="tab-panel active" id="panel-kk">
-      <div class="calc-card">
+      <!-- onsubmit: Die Skripte laden mit "defer". Wird abgesendet, bevor
+           js/app.js bereit ist, darf der Browser das Formular nicht selbst
+           verschicken – die Angaben stünden sonst in der Adresszeile. -->
+      <form class="calc-card" id="kkForm" novalidate onsubmit="return false">
         <div class="calc-grid">
+          <div class="field span-2">
+            <p class="feld-gruppe feld-gruppe--erste"><b>1</b> Ihre Prämie <span>– Wohnort, Alter, Franchise und Modell</span></p>
+          </div>
           <div class="field">
-            <label for="kkPlz">Postleitzahl (Wohnort)</label>
-            <input type="text" id="kkPlz" inputmode="numeric" maxlength="4" placeholder="z. B. 8001" autocomplete="postal-code">
+            <label for="kkPlz">Postleitzahl (Wohnort) *</label>
+            <input type="text" id="kkPlz" inputmode="numeric" maxlength="4" placeholder="z. B. 8001" autocomplete="postal-code" required>
             <div class="field-hint" id="kkPlzInfo"></div>
           </div>
           <div class="field" id="kkOrtField" hidden>
@@ -301,9 +311,69 @@
               <option value="3">Flexibles Modell</option>
             </select>
           </div>
+
+          <div class="field span-2">
+            <p class="feld-gruppe"><b>2</b> Ihre heutige Kasse <span>– damit die Auswertung zeigt, was ein Wechsel bringt</span></p>
+          </div>
+          <div class="field span-2">
+            <label for="kkKasse">Aktuelle Krankenkasse (Grundversicherung) *</label>
+            <select id="kkKasse" required>
+              <option value="">Bitte wählen …</option>
+            </select>
+            <div class="field-hint">Steht auf Ihrer Police oder Prämienrechnung.</div>
+          </div>
+
+          <div class="field span-2">
+            <p class="feld-gruppe"><b>3</b> Ihre Kontaktangaben <span>– für Ihre Auswertung und die kostenlose Beratung</span></p>
+          </div>
+          <div class="field">
+            <label for="kkAnrede">Anrede</label>
+            <select id="kkAnrede" autocomplete="honorific-prefix">
+              <option>Frau</option><option>Herr</option><option>Keine Angabe</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="kkVorname">Vorname *</label>
+            <input type="text" id="kkVorname" required autocomplete="given-name">
+          </div>
+          <div class="field">
+            <label for="kkNachname">Nachname *</label>
+            <input type="text" id="kkNachname" required autocomplete="family-name">
+          </div>
+          <div class="field">
+            <label for="kkTelefon">Telefon *</label>
+            <input type="tel" id="kkTelefon" required placeholder="079 123 45 67" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="kkEmail">E-Mail *</label>
+            <input type="email" id="kkEmail" required placeholder="name@beispiel.ch" autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="kkZeit">Wann sind Sie am besten erreichbar?</label>
+            <select id="kkZeit">
+              <option>Egal / jederzeit</option>
+              <option>Vormittag (8–12 Uhr)</option>
+              <option>Nachmittag (12–17 Uhr)</option>
+              <option>Abend (17–20 Uhr)</option>
+            </select>
+          </div>
+          <div class="field span-2">
+            <label class="check consent">
+              <input type="checkbox" id="kkConsent" required>
+              Ich bin einverstanden, dass SwissPremia meine Angaben und meine Auswertung an einen lizenzierten Versicherungsvermittler weitergibt und dieser mich telefonisch oder per E-Mail kontaktiert. Mehr dazu in der <a href="/datenschutz.html">Datenschutzerklärung</a>. *
+            </label>
+          </div>
+          <div class="field span-2">
+            <label class="check mail-option">
+              <input type="checkbox" id="kkPerMail" checked>
+              Auswertung zusätzlich per E-Mail an mich senden
+            </label>
+          </div>
         </div>
-        <button class="btn btn-primary btn-big btn-block" id="kkBerechnen">Prämien 2027 vergleichen</button>
-      </div>
+        <button type="submit" class="btn btn-primary btn-big btn-block" id="kkBerechnen">Auswertung anzeigen</button>
+        <p class="form-error" id="kkError" hidden></p>
+        <p class="form-fussnote">* Pflichtfeld. Kostenlos und unverbindlich – Sie gehen keine Verpflichtung ein.</p>
+      </form>
       <div id="kkResultat" class="results" hidden></div>
     </div>
 
@@ -418,8 +488,8 @@
   <div class="container">
     <h2>So einfach funktioniert's</h2>
     <div class="steps">
-      <div class="step"><span class="step-num">1</span><h3>Berechnen</h3><p>Prämie online berechnen – ohne Anmeldung, ohne Angabe von Kontaktdaten.</p></div>
-      <div class="step"><span class="step-num">2</span><h3>Anfrage senden</h3><p>Gefällt Ihnen ein Angebot? Senden Sie uns unverbindlich Ihre Kontaktangaben.</p></div>
+      <div class="step"><span class="step-num">1</span><h3>Angaben ausfüllen</h3><p>Wohnort, Altersgruppe, Franchise und Modell wählen, heutige Kasse und Kontaktangaben eintragen.</p></div>
+      <div class="step"><span class="step-num">2</span><h3>Auswertung erhalten</h3><p>Nach dem Absenden sehen Sie Ihre Auswertung sofort hier auf der Seite – auf Wunsch zusätzlich per E-Mail.</p></div>
       <div class="step"><span class="step-num">3</span><h3>Beratung erhalten</h3><p>Ein lizenzierter Versicherungsvermittler meldet sich persönlich bei Ihnen, prüft Ihre Situation und holt die Offerten ein.</p></div>
     </div>
   </div>
@@ -435,7 +505,7 @@
 
       <details>
         <summary>Was ist ein Krankenkassenvergleich?</summary>
-        <p>Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch – unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. SwissPremia vergleicht alle zugelassenen Versicherer mit den <strong>offiziellen Prämiendaten 2027</strong> des Bundesamts für Gesundheit, kostenlos und ohne Anmeldung.</p>
+        <p>Ein Krankenkassenvergleich stellt die Prämien aller Krankenversicherer für dieselbe Grundversicherung nebeneinander. Die Leistungen sind gesetzlich festgelegt und bei jeder Kasse identisch – unterschiedlich ist nur der Preis, abhängig von Wohnort, Alter, Franchise und Versicherungsmodell. SwissPremia vergleicht alle zugelassenen Versicherer mit den <strong>offiziellen Prämiendaten 2027</strong> des Bundesamts für Gesundheit, kostenlos und unverbindlich.</p>
       </details>
 
       <details>
@@ -598,7 +668,7 @@
     <div class="footer-grid">
       <div>
         <div class="logo footer-logo"><span class="logo-cross" aria-hidden="true"></span> Swiss<strong>Premia</strong></div>
-        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos, ohne Anmeldung.</p>
+        <p>Unabhängiger Krankenkassen-Prämienvergleich für die Schweiz. Kostenlos und unverbindlich.</p>
       </div>
       <div>
         <h2>Datenquelle</h2>
