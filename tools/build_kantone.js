@@ -30,6 +30,8 @@ const MARKE = "SwissPremia";
 /* STAND=2026-10-26 haelt das Datum fest, wenn nur das Seitengeruest neu
    gebaut wird und die Praemiendaten gleich bleiben. */
 const HEUTE = process.env.STAND || new Date().toISOString().slice(0, 10);
+/* Google will im Article-Markup Datum mit Uhrzeit und Zeitzone. */
+const ZEITPUNKT = HEUTE + "T08:00:00+01:00";
 
 /* Daten laden wie der Browser. */
 global.window = {};
@@ -250,7 +252,7 @@ function kantonSeite([kt, name, slug]) {
     "@context": "https://schema.org", "@type": "Article",
     "headline": `Krankenkassenvergleich Kanton ${name} ${JAHR}`,
     "description": beschreibung, "image": bildUrl(BILD, 1200, 630),
-    "datePublished": HEUTE, "dateModified": HEUTE, "inLanguage": "de-CH", "mainEntityOfPage": url,
+    "datePublished": ZEITPUNKT, "dateModified": ZEITPUNKT, "inLanguage": "de-CH", "mainEntityOfPage": url,
     "author": { "@type": "Organization", "name": MARKE, "url": BASIS + "/" },
     "publisher": { "@type": "Organization", "name": MARKE, "url": BASIS + "/" },
     "about": { "@type": "AdministrativeArea", "name": `Kanton ${name}`, "containedInPlace": { "@type": "Country", "name": "Schweiz" } },

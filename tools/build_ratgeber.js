@@ -26,6 +26,8 @@ var MARKE = "SwissPremia";
 /* STAND=2026-10-26 haelt das Datum fest, wenn nur das Seitengeruest neu
    gebaut wird und die Texte gleich bleiben. */
 var HEUTE = process.env.STAND || new Date().toISOString().slice(0, 10);
+/* Google will im Article-Markup Datum mit Uhrzeit und Zeitzone. */
+var ZEITPUNKT = HEUTE + "T08:00:00+01:00";
 
 /* Seiten, die es neben den Ratgebern gibt. Die Sitemap wird als Ganzes
    geschrieben, damit sie nie halb aktuell ist. */
@@ -195,8 +197,8 @@ function ratgeberSeite(r) {
     "headline": r.titel,
     "description": r.beschreibung,
     "image": bildUrl(r.bild, 1200, 630),
-    "datePublished": HEUTE,
-    "dateModified": HEUTE,
+    "datePublished": ZEITPUNKT,
+    "dateModified": ZEITPUNKT,
     "inLanguage": "de-CH",
     "mainEntityOfPage": url,
     "author": { "@type": "Organization", "name": MARKE, "url": BASIS + "/" },
