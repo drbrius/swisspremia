@@ -619,9 +619,11 @@
 /* Prämien- und PLZ-Daten sind zusammen rund 250 KB. Mit dem Seitenaufbau
    geladen, teilen sie sich auf dem Handy die Leitung mit dem Hero-Bild und
    verzögern es um Sekunden. Gebraucht werden sie erst bei der ersten
-   Eingabe – deshalb kommen sie nach dem load-Ereignis, und der Rechner
-   (js/app.js) direkt danach, damit er beim Start alle Daten vorfindet.
-   Wer früher tippt oder klickt, löst das Laden sofort aus.
+   Eingabe – deshalb kommen sie erst, wenn jemand scrollt, tippt oder
+   klickt, spätestens vier Sekunden nach dem Laden. Der Rechner (js/app.js)
+   folgt direkt danach, damit er beim Start alle Daten vorfindet.
+   Nicht beim Leerlauf: Auf langsamen Handys malt der Browser das
+   Hero-Bild oft erst danach, und die Daten bremsen es wieder aus.
    async = false hält die Reihenfolge ein. */
 (function () {
   var geladen = false;
@@ -635,15 +637,10 @@
       document.body.appendChild(s);
     });
   }
-  /* Wer schon tippt oder klickt, bekommt den Rechner sofort. */
-  ["pointerdown", "keydown", "focusin"].forEach(function (ereignis) {
-    document.addEventListener(ereignis, laden, { once: true, passive: true });
+  ["scroll", "pointerdown", "touchstart", "keydown", "focusin"].forEach(function (ereignis) {
+    window.addEventListener(ereignis, laden, { once: true, passive: true, capture: true });
   });
-  /* Sonst nach dem Laden, sobald der Browser das erste Bild gemalt hat. */
-  window.addEventListener("load", function () {
-    if ("requestIdleCallback" in window) requestIdleCallback(laden, { timeout: 1500 });
-    else setTimeout(laden, 300);
-  });
+  window.addEventListener("load", function () { setTimeout(laden, 4000); });
 })();
 </script>
 </body>
