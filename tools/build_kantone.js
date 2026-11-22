@@ -254,7 +254,24 @@ function kantonSeite([kt, name, slug]) {
     "author": { "@type": "Organization", "name": MARKE, "url": BASIS + "/" },
     "publisher": { "@type": "Organization", "name": MARKE, "url": BASIS + "/" },
     "about": { "@type": "AdministrativeArea", "name": `Kanton ${name}`, "containedInPlace": { "@type": "Country", "name": "Schweiz" } },
-    "isBasedOn": { "@type": "Dataset", "name": `Prämien der obligatorischen Krankenpflegeversicherung ${JAHR}`, "creator": { "@type": "GovernmentOrganization", "name": "Bundesamt für Gesundheit (BAG)" }, "url": "https://www.priminfo.admin.ch/" }
+    /* Google wertet jeden Dataset-Block aus (Search Console › Datensätze):
+       description ist Pflicht, creator muss Organization oder Person sein
+       (GovernmentOrganization wird abgelehnt), license wird empfohlen. Die
+       Lizenz ist die des BAG-Datensatzes auf opendata.swiss. */
+    "isBasedOn": {
+      "@type": "Dataset",
+      "name": `Prämien der obligatorischen Krankenpflegeversicherung ${JAHR}`,
+      "description": `Offizielle Prämien ${JAHR} der obligatorischen Krankenpflegeversicherung (Grundversicherung) aller in der Schweiz zugelassenen Krankenversicherer, nach Kanton, Prämienregion, Altersgruppe, Franchise, Unfalldeckung und Versicherungsmodell. Herausgegeben vom Bundesamt für Gesundheit (BAG).`,
+      "url": "https://opendata.swiss/de/dataset/health-insurance-premiums",
+      "sameAs": "https://www.priminfo.admin.ch/",
+      "license": "https://opendata.swiss/de/terms-of-use#terms_by",
+      "isAccessibleForFree": true,
+      "creator": { "@type": "Organization", "name": "Bundesamt für Gesundheit (BAG)", "url": "https://www.bag.admin.ch/" },
+      "keywords": ["Krankenkassenprämien", "Grundversicherung", "OKP", "Franchise", "Prämienregion", "Schweiz"],
+      "inLanguage": "de-CH",
+      "temporalCoverage": `${JAHR}`,
+      "spatialCoverage": { "@type": "Place", "name": "Schweiz" }
+    }
   }) + jsonld({
     "@context": "https://schema.org", "@type": "FAQPage",
     "mainEntity": faq.map((q) => ({ "@type": "Question", "name": q.f, "acceptedAnswer": { "@type": "Answer", "text": q.a } }))
